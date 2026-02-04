@@ -707,24 +707,73 @@ export async function getAllNotifications(): Promise<Notification[]> {
 }
 
 export async function getUserNotifications(userId: string): Promise<Notification[]> {
-  // Get global notifications
+  // 1. Get global notifications
   const globalQ = query(notificationsCollection, where("target", "==", "all"))
   const globalSnapshot = await getDocs(globalQ)
 
-  // Get user specific notifications
+  // 2. Get user specific notifications
   const userQ = query(notificationsCollection, where("target", "==", "user"), where("targetId", "==", userId))
   const userSnapshot = await getDocs(userQ)
 
-  // Combine (and sort preferably, but simpler to just concat)
-  const allDocs = [...globalSnapshot.docs, ...userSnapshot.docs]
+  // 3. Get team and event notifications
+  // First, get user's teams to know which IDs to look for
+  const userTeams = await getUserTeams(userId)
+  const teamIds = userTeams.map(t => t.id).filter(id => !!id) as string[]
+  const eventIds = [...new Set(userTeams.map(t => t.eventId))] // Deduplicate event IDs
 
-  // Use a map to deduplicate if needed (though queries are distinct)
-  const notifications = allDocs.map((doc) => ({
-    id: doc.id,
-    ...convertTimestamps(doc.data()),
-  })) as Notification[]
+  let teamDocs: DocumentData[] = []
+  let eventDocs: DocumentData[] = []
 
-  return notifications.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+  // Query for team notifications if user has teams
+  if (teamIds.length > 0) {
+    // Firestore 'in' query limit is 10. For now assuming < 10 teams per user.
+    // If more, we should chunk, but for this app scale it's fine.
+    const teamQ = query(
+      notificationsCollection,
+      where("target", "==", "team"),
+      where("targetId", "in", teamIds.slice(0, 10))
+    )
+    const teamSnapshot = await getDocs(teamQ)
+    teamDocs = teamSnapshot.docs
+  }
+
+  // Query for event notifications if user is in events
+  if (eventIds.length > 0) {
+    const eventQ = query(
+      notificationsCollection,
+      where("target", "==", "event"),
+      where("targetId", "in", eventIds.slice(0, 10))
+    )
+    const eventSnapshot = await getDocs(eventQ)
+    eventDocs = eventSnapshot.docs
+  }
+
+  // Combine all docs
+  const allDocs = [
+    ...globalSnapshot.docs,
+    ...userSnapshot.docs,
+    ...teamDocs,
+    ...eventDocs
+  ]
+
+  // Deduplicate by ID using a Map
+  const uniqueDocs = new Map<string, Notification>()
+
+  allDocs.forEach(doc => {
+    if (!uniqueDocs.has(doc.id)) {
+      uniqueDocs.set(doc.id, {
+        id: doc.id,
+        ...convertTimestamps(doc.data()),
+      } as Notification)
+    }
+  })
+
+  // Convert to array and sort
+  return Array.from(uniqueDocs.values()).sort((a, b) => {
+    const timeA = a.createdAt?.getTime() || 0
+    const timeB = b.createdAt?.getTime() || 0
+    return timeB - timeA
+  })
 }
 
 export async function markNotificationAsRead(notificationId: string, userId: string): Promise<void> {
