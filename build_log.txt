@@ -1,0 +1,295 @@
+
+> my-v0-project@0.1.0 build
+> next build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Ôû▓ Next.js 16.0.10 (Turbopack)
+
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+
+> Build error occurred
+Error: Turbopack build failed with 5 errors:
+./app/app/perfil/page.tsx:45:1
+Module not found: Can't resolve '@/components/player-icon'
+  43 |   PLAYER_ICONS,
+  44 | } from "@/lib/firebase"
+> 45 | import { PlayerIcon } from "@/components/player-icon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  46 | import { Input } from "@/components/ui/input"
+  47 | import { Label } from "@/components/ui/label"
+  48 | import {
+
+Import map: aliased to relative './components/player-icon' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./app/app/perfil/page.tsx [Client Component Browser]
+    ./app/app/perfil/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/app/perfil/page.tsx [Client Component SSR]
+    ./app/app/perfil/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/app/perfil/page.tsx:20:1
+Export PLAYER_ICONS doesn't exist in target module
+  18 | import { Footer } from "@/components/footer"
+  19 | import { useAuth } from "@/lib/auth-context"
+> 20 | import { 
+     | ^^^^^^^^^
+> 21 |   logoutUser, 
+     | ^^^^^^^^^^^^^^
+> 22 |   getUserPendingInvites, 
+     | ^^^^^^^^^^^^^^
+> 23 |   acceptInvite, 
+     | ^^^^^^^^^^^^^^
+> 24 |   rejectInvite,
+     | ^^^^^^^^^^^^^^
+> 25 |   getTeamById,
+     | ^^^^^^^^^^^^^^
+> 26 |   getEventById,
+     | ^^^^^^^^^^^^^^
+> 27 |   getUserLeadingTeams,
+     | ^^^^^^^^^^^^^^
+> 28 |   getUserTeams,
+     | ^^^^^^^^^^^^^^
+> 29 |   getTeamMembers,
+     | ^^^^^^^^^^^^^^
+> 30 |   getProfile,
+     | ^^^^^^^^^^^^^^
+> 31 |   updateProfile,
+     | ^^^^^^^^^^^^^^
+> 32 |   canUserEditProfile,
+     | ^^^^^^^^^^^^^^
+> 33 |   getUserNotifications,
+     | ^^^^^^^^^^^^^^
+> 34 |   markNotificationAsRead,
+     | ^^^^^^^^^^^^^^
+> 35 |   leaveTeam,
+     | ^^^^^^^^^^^^^^
+> 36 |   type Team,
+     | ^^^^^^^^^^^^^^
+> 37 |   type Event,
+     | ^^^^^^^^^^^^^^
+> 38 |   type TeamInvite,
+     | ^^^^^^^^^^^^^^
+> 39 |   type UserProfile,
+     | ^^^^^^^^^^^^^^
+> 40 |   type Notification,
+     | ^^^^^^^^^^^^^^
+> 41 |   TEAM_ICONS,
+     | ^^^^^^^^^^^^^^
+> 42 |   TEAM_COLORS,
+     | ^^^^^^^^^^^^^^
+> 43 |   PLAYER_ICONS,
+     | ^^^^^^^^^^^^^^
+> 44 | } from "@/lib/firebase"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^
+  45 | import { PlayerIcon } from "@/components/player-icon"
+  46 | import { Input } from "@/components/ui/input"
+  47 | import { Label } from "@/components/ui/label"
+
+The export PLAYER_ICONS was not found in module [project]/lib/firebase.ts [app-client] (ecmascript).
+Did you mean to import TEAM_ICONS?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/app/perfil/page.tsx [Client Component Browser]
+    ./app/app/perfil/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/app/perfil/page.tsx [Client Component SSR]
+    ./app/app/perfil/page.tsx [Server Component]
+
+
+./app/app/perfil/page.tsx:20:1
+Export PLAYER_ICONS doesn't exist in target module
+  18 | import { Footer } from "@/components/footer"
+  19 | import { useAuth } from "@/lib/auth-context"
+> 20 | import { 
+     | ^^^^^^^^^
+> 21 |   logoutUser, 
+     | ^^^^^^^^^^^^^^
+> 22 |   getUserPendingInvites, 
+     | ^^^^^^^^^^^^^^
+> 23 |   acceptInvite, 
+     | ^^^^^^^^^^^^^^
+> 24 |   rejectInvite,
+     | ^^^^^^^^^^^^^^
+> 25 |   getTeamById,
+     | ^^^^^^^^^^^^^^
+> 26 |   getEventById,
+     | ^^^^^^^^^^^^^^
+> 27 |   getUserLeadingTeams,
+     | ^^^^^^^^^^^^^^
+> 28 |   getUserTeams,
+     | ^^^^^^^^^^^^^^
+> 29 |   getTeamMembers,
+     | ^^^^^^^^^^^^^^
+> 30 |   getProfile,
+     | ^^^^^^^^^^^^^^
+> 31 |   updateProfile,
+     | ^^^^^^^^^^^^^^
+> 32 |   canUserEditProfile,
+     | ^^^^^^^^^^^^^^
+> 33 |   getUserNotifications,
+     | ^^^^^^^^^^^^^^
+> 34 |   markNotificationAsRead,
+     | ^^^^^^^^^^^^^^
+> 35 |   leaveTeam,
+     | ^^^^^^^^^^^^^^
+> 36 |   type Team,
+     | ^^^^^^^^^^^^^^
+> 37 |   type Event,
+     | ^^^^^^^^^^^^^^
+> 38 |   type TeamInvite,
+     | ^^^^^^^^^^^^^^
+> 39 |   type UserProfile,
+     | ^^^^^^^^^^^^^^
+> 40 |   type Notification,
+     | ^^^^^^^^^^^^^^
+> 41 |   TEAM_ICONS,
+     | ^^^^^^^^^^^^^^
+> 42 |   TEAM_COLORS,
+     | ^^^^^^^^^^^^^^
+> 43 |   PLAYER_ICONS,
+     | ^^^^^^^^^^^^^^
+> 44 | } from "@/lib/firebase"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^
+  45 | import { PlayerIcon } from "@/components/player-icon"
+  46 | import { Input } from "@/components/ui/input"
+  47 | import { Label } from "@/components/ui/label"
+
+The export PLAYER_ICONS was not found in module [project]/lib/firebase.ts [app-ssr] (ecmascript).
+Did you mean to import TEAM_ICONS?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/app/perfil/page.tsx [Client Component Browser]
+    ./app/app/perfil/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/app/perfil/page.tsx [Client Component SSR]
+    ./app/app/perfil/page.tsx [Server Component]
+
+
+./app/app/equipo/[id]/page.tsx:30:1
+Export updateTeamCategories doesn't exist in target module
+  28 | import { Footer } from "@/components/footer"
+  29 | import { useAuth } from "@/lib/auth-context"
+> 30 | import { 
+     | ^^^^^^^^^
+> 31 |   getTeamById,
+     | ^^^^^^^^^^^^^^
+> 32 |   getEventById,
+     | ^^^^^^^^^^^^^^
+> 33 |   getTeamMembers,
+     | ^^^^^^^^^^^^^^
+> 34 |   getProfile,
+     | ^^^^^^^^^^^^^^
+> 35 |   getProfileByGamertag,
+     | ^^^^^^^^^^^^^^
+> 36 |   createInvite,
+     | ^^^^^^^^^^^^^^
+> 37 |   deleteTeam,
+     | ^^^^^^^^^^^^^^
+> 38 |   removeMemberFromTeam,
+     | ^^^^^^^^^^^^^^
+> 39 |   updateTeamCategories,
+     | ^^^^^^^^^^^^^^
+> 40 |   type Team,
+     | ^^^^^^^^^^^^^^
+> 41 |   type Event,
+     | ^^^^^^^^^^^^^^
+> 42 |   type TeamMember,
+     | ^^^^^^^^^^^^^^
+> 43 |   type UserProfile,
+     | ^^^^^^^^^^^^^^
+> 44 |   type TeamCategoryEntry,
+     | ^^^^^^^^^^^^^^
+> 45 | } from "@/lib/firebase"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^
+  46 | import { TeamIcon } from "@/components/team-icon"
+  47 |
+  48 | interface MemberWithProfile extends TeamMember {
+
+The export updateTeamCategories was not found in module [project]/lib/firebase.ts [app-client] (ecmascript).
+Did you mean to import updateTeam?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/app/equipo/[id]/page.tsx [Client Component Browser]
+    ./app/app/equipo/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/app/equipo/[id]/page.tsx [Client Component SSR]
+    ./app/app/equipo/[id]/page.tsx [Server Component]
+
+
+./app/app/equipo/[id]/page.tsx:30:1
+Export updateTeamCategories doesn't exist in target module
+  28 | import { Footer } from "@/components/footer"
+  29 | import { useAuth } from "@/lib/auth-context"
+> 30 | import { 
+     | ^^^^^^^^^
+> 31 |   getTeamById,
+     | ^^^^^^^^^^^^^^
+> 32 |   getEventById,
+     | ^^^^^^^^^^^^^^
+> 33 |   getTeamMembers,
+     | ^^^^^^^^^^^^^^
+> 34 |   getProfile,
+     | ^^^^^^^^^^^^^^
+> 35 |   getProfileByGamertag,
+     | ^^^^^^^^^^^^^^
+> 36 |   createInvite,
+     | ^^^^^^^^^^^^^^
+> 37 |   deleteTeam,
+     | ^^^^^^^^^^^^^^
+> 38 |   removeMemberFromTeam,
+     | ^^^^^^^^^^^^^^
+> 39 |   updateTeamCategories,
+     | ^^^^^^^^^^^^^^
+> 40 |   type Team,
+     | ^^^^^^^^^^^^^^
+> 41 |   type Event,
+     | ^^^^^^^^^^^^^^
+> 42 |   type TeamMember,
+     | ^^^^^^^^^^^^^^
+> 43 |   type UserProfile,
+     | ^^^^^^^^^^^^^^
+> 44 |   type TeamCategoryEntry,
+     | ^^^^^^^^^^^^^^
+> 45 | } from "@/lib/firebase"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^
+  46 | import { TeamIcon } from "@/components/team-icon"
+  47 |
+  48 | interface MemberWithProfile extends TeamMember {
+
+The export updateTeamCategories was not found in module [project]/lib/firebase.ts [app-ssr] (ecmascript).
+Did you mean to import updateTeam?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/app/equipo/[id]/page.tsx [Client Component Browser]
+    ./app/app/equipo/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/app/equipo/[id]/page.tsx [Client Component SSR]
+    ./app/app/equipo/[id]/page.tsx [Server Component]
+
+
+    at <unknown> (./app/app/perfil/page.tsx:45:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/app/perfil/page.tsx:20:1)
+    at <unknown> (./app/app/perfil/page.tsx:20:1)
+    at <unknown> (./app/app/equipo/[id]/page.tsx:30:1)
+    at <unknown> (./app/app/equipo/[id]/page.tsx:30:1)

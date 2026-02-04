@@ -4,8 +4,8 @@ import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { 
-  ChevronLeft, Loader2, Check, Users, Palette, ImageIcon
+import {
+  ChevronLeft, Loader2, Check, Users, Palette, ImageIcon, Bot, Plus, X
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,11 +15,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { useAuth } from "@/lib/auth-context"
-import { 
-  getEventById, 
+import {
+  getEventById,
   createTeam,
   getUserTeamInEvent,
   type Event,
+  type TeamCategoryEntry,
   TEAM_ICONS,
   TEAM_COLORS,
 } from "@/lib/firebase"
@@ -36,7 +37,8 @@ export default function CrearEquipoPage() {
 
   const [teamName, setTeamName] = useState("")
   const [selectedIcon, setSelectedIcon] = useState<typeof TEAM_ICONS[number]>("robot")
-  const [selectedColor, setSelectedColor] = useState(TEAM_COLORS[0].value)
+  const [selectedColor, setSelectedColor] = useState<string>(TEAM_COLORS[0].value)
+  const [categories, setCategories] = useState<TeamCategoryEntry[]>([])
 
   const eventId = params.id as string
 
@@ -81,12 +83,23 @@ export default function CrearEquipoPage() {
     setError("")
 
     try {
+      // Filter valid categories
+      if (categories.length === 0) {
+        throw new Error("Debes seleccionar al menos una categoria")
+      }
+
+      const invalidCategory = categories.find(c => !c.prototypeName.trim())
+      if (invalidCategory) {
+        throw new Error(`Debes asignar un nombre al robot para la categoria "${invalidCategory.category}"`)
+      }
+
       const teamId = await createTeam(
         eventId,
         teamName.trim(),
         user.uid,
         selectedIcon,
-        selectedColor
+        selectedColor,
+        categories
       )
       router.push(`/equipo/${teamId}`)
     } catch (err: unknown) {
@@ -95,6 +108,8 @@ export default function CrearEquipoPage() {
       setCreating(false)
     }
   }
+
+
 
   if (loading || authLoading) {
     return (
@@ -179,11 +194,10 @@ export default function CrearEquipoPage() {
                         key={icon}
                         type="button"
                         onClick={() => setSelectedIcon(icon)}
-                        className={`aspect-square rounded-lg border-2 flex items-center justify-center transition-all ${
-                          selectedIcon === icon
-                            ? "border-primary bg-primary/10"
-                            : "border-border hover:border-primary/50"
-                        }`}
+                        className={`aspect-square rounded-lg border-2 flex items-center justify-center transition-all ${selectedIcon === icon
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                          }`}
                       >
                         <TeamIcon icon={icon} color={selectedColor} size={24} />
                       </button>
@@ -203,11 +217,10 @@ export default function CrearEquipoPage() {
                         key={color.value}
                         type="button"
                         onClick={() => setSelectedColor(color.value)}
-                        className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center transition-all ${
-                          selectedColor === color.value
-                            ? "border-foreground ring-2 ring-foreground/20"
-                            : "border-transparent"
-                        }`}
+                        className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center transition-all ${selectedColor === color.value
+                          ? "border-foreground ring-2 ring-foreground/20"
+                          : "border-transparent"
+                          }`}
                         style={{ backgroundColor: color.value }}
                         title={color.name}
                       >
@@ -219,11 +232,86 @@ export default function CrearEquipoPage() {
                   </div>
                 </div>
 
+                {/* Categories */}
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2">
+                    <Bot className="h-4 w-4" />
+                    Categorias y Prototipos
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Selecciona las categorias y asigna un nombre a tu robot para cada una.
+                  </p>
+
+                  {!event.categories || event.categories.length === 0 ? (
+                    <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 text-sm">
+                      Este evento no tiene categorias definidas. Contacta al administrador.
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {event.categories.map((category) => {
+                        const isSelected = categories.some(c => c.category === category)
+                        const currentEntry = categories.find(c => c.category === category) || { category, prototypeName: "" }
+
+                        return (
+                          <div key={category} className="p-3 rounded-lg border border-border bg-card">
+                            <div className="flex items-start gap-3">
+                              <div className="pt-1">
+                                <input
+                                  type="checkbox"
+                                  id={`cat-${category}`}
+                                  checked={isSelected}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      // Add category
+                                      setCategories([...categories, { category, prototypeName: "" }])
+                                    } else {
+                                      // Remove category
+                                      setCategories(categories.filter(c => c.category !== category))
+                                    }
+                                  }}
+                                  className="h-4 w-4 rounded border-primary text-primary focus:ring-primary"
+                                />
+                              </div>
+                              <div className="flex-1 space-y-2">
+                                <Label htmlFor={`cat-${category}`} className="font-medium cursor-pointer">
+                                  {category}
+                                </Label>
+
+                                {isSelected && (
+                                  <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    className="pt-1"
+                                  >
+                                    <Input
+                                      placeholder={`Nombre del robot para ${category}`}
+                                      value={currentEntry.prototypeName}
+                                      onChange={(e) => {
+                                        const updated = categories.map(c =>
+                                          c.category === category
+                                            ? { ...c, prototypeName: e.target.value }
+                                            : c
+                                        )
+                                        setCategories(updated)
+                                      }}
+                                      className="h-9"
+                                    />
+                                  </motion.div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+
                 {/* Preview */}
                 <div className="p-4 rounded-lg bg-secondary/30 border border-border">
                   <p className="text-sm text-muted-foreground mb-3">Vista previa:</p>
                   <div className="flex items-center gap-3">
-                    <div 
+                    <div
                       className="w-12 h-12 rounded-lg flex items-center justify-center"
                       style={{ backgroundColor: selectedColor + "20" }}
                     >
@@ -236,8 +324,8 @@ export default function CrearEquipoPage() {
                   </div>
                 </div>
 
-                <Button 
-                  className="w-full" 
+                <Button
+                  className="w-full"
                   onClick={handleCreate}
                   disabled={!teamName.trim() || creating}
                 >

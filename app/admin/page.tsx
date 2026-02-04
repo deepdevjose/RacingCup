@@ -38,7 +38,6 @@ import {
   Trophy,
   Calendar,
   Search,
-  LogOut,
   Loader2,
   Lock,
   Plus,
@@ -48,11 +47,16 @@ import {
   Trash2,
   Settings2,
   Hash,
+  Bell,
+  Megaphone,
+  AlertTriangle,
+  Info,
 } from "lucide-react"
 import {
   getAllEvents,
   createEvent,
   updateEvent,
+  deleteEvent,
   getAllTeams,
   getTeamMembers,
   getProfile,
@@ -60,15 +64,20 @@ import {
   updateTeamSeed,
   deleteTeam,
   getAllProfiles,
+  createNotification,
+  getAllNotifications,
+  deleteNotification,
   type Event,
   type EventStatus,
   type Team,
   type UserProfile,
   type TeamMember,
+  type Notification,
+  type NotificationType,
+  type NotificationTarget,
 } from "@/lib/firebase"
+import { useAuth } from "@/lib/auth-context"
 import { TeamIcon } from "@/components/team-icon"
-
-const ADMIN_PASSWORD = "admin"
 
 const statusLabels: Record<EventStatus, string> = {
   registro_abierto: "Registro abierto",
@@ -83,14 +92,14 @@ interface TeamWithDetails extends Team {
 }
 
 export default function AdminPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [password, setPassword] = useState("")
-  const [authError, setAuthError] = useState(false)
+  const { user, profile, loading: authLoading } = useAuth()
+  const isAdmin = profile?.admin === true
 
   // Data
   const [events, setEvents] = useState<Event[]>([])
   const [teams, setTeams] = useState<TeamWithDetails[]>([])
   const [users, setUsers] = useState<UserProfile[]>([])
+  const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(false)
 
   // Filters
@@ -100,9 +109,23 @@ export default function AdminPage() {
 
   // Dialogs
   const [isNewEventOpen, setIsNewEventOpen] = useState(false)
+  const [isEditEventOpen, setIsEditEventOpen] = useState(false)
+  const [selectedEventForEdit, setSelectedEventForEdit] = useState<Event | null>(null)
   const [isEditTeamOpen, setIsEditTeamOpen] = useState(false)
   const [selectedTeam, setSelectedTeam] = useState<TeamWithDetails | null>(null)
   const [updating, setUpdating] = useState(false)
+  const [isDeleteEventOpen, setIsDeleteEventOpen] = useState(false)
+  const [eventToDelete, setEventToDelete] = useState<Event | null>(null)
+  const [isNewNotificationOpen, setIsNewNotificationOpen] = useState(false)
+  
+  // New notification form
+  const [newNotification, setNewNotification] = useState({
+    title: "",
+    message: "",
+    type: "announcement" as NotificationType,
+    target: "all" as NotificationTarget,
+    targetId: "",
+  })
 
   // New event form
   const [newEvent, setNewEvent] = useState({
@@ -117,35 +140,26 @@ export default function AdminPage() {
     status: "registro_abierto" as EventStatus,
   })
 
-  const handleLogin = () => {
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true)
-      setAuthError(false)
+  // Load data when admin is authenticated
+  useEffect(() => {
+    if (isAdmin) {
       loadData()
-    } else {
-      setAuthError(true)
     }
-  }
-
-  const handleLogout = () => {
-    setIsAuthenticated(false)
-    setPassword("")
-    setEvents([])
-    setTeams([])
-    setUsers([])
-  }
+  }, [isAdmin])
 
   async function loadData() {
     setLoading(true)
     try {
-      const [eventsData, teamsData, usersData] = await Promise.all([
+      const [eventsData, teamsData, usersData, notificationsData] = await Promise.all([
         getAllEvents(),
         getAllTeams(),
         getAllProfiles(),
+        getAllNotifications(),
       ])
       
       setEvents(eventsData)
       setUsers(usersData)
+      setNotifications(notificationsData)
 
       // Load team details
       const teamsWithDetails = await Promise.all(
@@ -180,13 +194,13 @@ export default function AdminPage() {
     try {
       await createEvent({
         name: newEvent.name,
-        date: newEvent.date,
+        date: new Date(newEvent.date),
         location: newEvent.location,
         description: newEvent.description,
         minTeamSize: newEvent.minTeamSize,
         maxTeamSize: newEvent.maxTeamSize,
         format: newEvent.format,
-        categories: newEvent.categories.split(",").map((c) => c.trim()),
+        categories: newEvent.categories.split(",").map((c) => c.trim()).filter(Boolean),
         status: newEvent.status,
       })
       await loadData()
@@ -204,6 +218,93 @@ export default function AdminPage() {
       })
     } catch (error) {
       console.error("Error creating event:", error)
+    } finally {
+      setUpdating(false)
+    }
+  }
+
+  const handleEditEvent = async () => {
+    if (!selectedEventForEdit?.id) return
+    setUpdating(true)
+    try {
+      await updateEvent(selectedEventForEdit.id, {
+        name: selectedEventForEdit.name,
+        date: selectedEventForEdit.date instanceof Date 
+          ? selectedEventForEdit.date 
+          : new Date(selectedEventForEdit.date),
+        location: selectedEventForEdit.location,
+        description: selectedEventForEdit.description,
+        minTeamSize: selectedEventForEdit.minTeamSize,
+        maxTeamSize: selectedEventForEdit.maxTeamSize,
+        format: selectedEventForEdit.format,
+        categories: selectedEventForEdit.categories,
+        status: selectedEventForEdit.status,
+      })
+      await loadData()
+      setIsEditEventOpen(false)
+      setSelectedEventForEdit(null)
+    } catch (error) {
+      console.error("Error updating event:", error)
+    } finally {
+      setUpdating(false)
+    }
+  }
+
+  const handleDeleteEvent = async () => {
+    if (!eventToDelete?.id) return
+    setUpdating(true)
+    try {
+      await deleteEvent(eventToDelete.id)
+      await loadData()
+      setIsDeleteEventOpen(false)
+      setEventToDelete(null)
+    } catch (error) {
+      console.error("Error deleting event:", error)
+    } finally {
+      setUpdating(false)
+    }
+  }
+
+  const openEditEvent = (event: Event) => {
+    setSelectedEventForEdit({ ...event })
+    setIsEditEventOpen(true)
+  }
+
+  const handleCreateNotification = async () => {
+    if (!user) return
+    setUpdating(true)
+    try {
+      await createNotification({
+        title: newNotification.title,
+        message: newNotification.message,
+        type: newNotification.type,
+        target: newNotification.target,
+        targetId: newNotification.target !== "all" ? newNotification.targetId : undefined,
+        createdBy: user.uid,
+      })
+      await loadData()
+      setIsNewNotificationOpen(false)
+      setNewNotification({
+        title: "",
+        message: "",
+        type: "announcement",
+        target: "all",
+        targetId: "",
+      })
+    } catch (error) {
+      console.error("Error creating notification:", error)
+    } finally {
+      setUpdating(false)
+    }
+  }
+
+  const handleDeleteNotification = async (id: string) => {
+    setUpdating(true)
+    try {
+      await deleteNotification(id)
+      await loadData()
+    } catch (error) {
+      console.error("Error deleting notification:", error)
     } finally {
       setUpdating(false)
     }
@@ -281,7 +382,17 @@ export default function AdminPage() {
     teachers: users.filter((u) => u.isTeacher).length,
   }
 
-  if (!isAuthenticated) {
+  // Loading state
+  if (authLoading) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </main>
+    )
+  }
+
+  // Not logged in
+  if (!user) {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
@@ -291,40 +402,45 @@ export default function AdminPage() {
             </div>
             <CardTitle className="text-2xl">Panel de Administracion</CardTitle>
             <CardDescription>
-              Ingresa la contrasena para acceder
+              Debes iniciar sesion para acceder
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                handleLogin()
-              }}
-              className="space-y-4"
-            >
-              <div className="space-y-2">
-                <Label htmlFor="password">Contrasena</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Ingresa la contrasena"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={authError ? "border-destructive" : ""}
-                />
-                {authError && (
-                  <p className="text-sm text-destructive">Contrasena incorrecta</p>
-                )}
-              </div>
-              <Button type="submit" className="w-full">
-                Acceder
-              </Button>
-              <div className="text-center">
-                <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
-                  Volver al inicio
-                </Link>
-              </div>
-            </form>
+          <CardContent className="space-y-4">
+            <Link href="/login">
+              <Button className="w-full">Iniciar sesion</Button>
+            </Link>
+            <div className="text-center">
+              <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
+                Volver al inicio
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
+    )
+  }
+
+  // Logged in but not admin
+  if (!isAdmin) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-destructive/10 text-destructive mx-auto mb-4">
+              <XCircle className="h-8 w-8" />
+            </div>
+            <CardTitle className="text-2xl">Acceso denegado</CardTitle>
+            <CardDescription>
+              No tienes permisos de administrador
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground text-center">
+              Contacta al administrador del sistema si crees que esto es un error.
+            </p>
+            <Link href="/">
+              <Button variant="outline" className="w-full">Volver al inicio</Button>
+            </Link>
           </CardContent>
         </Card>
       </main>
@@ -342,13 +458,12 @@ export default function AdminPage() {
               <span className="font-mono text-lg font-bold">Racing Cup Admin</span>
             </div>
             <div className="flex items-center gap-4">
+              <span className="text-sm text-muted-foreground hidden sm:inline">
+                {profile?.displayName}
+              </span>
               <Link href="/">
                 <Button variant="ghost" size="sm">Ver sitio</Button>
               </Link>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Salir
-              </Button>
             </div>
           </div>
         </div>
@@ -444,6 +559,10 @@ export default function AdminPage() {
                 <Hash className="h-4 w-4" />
                 Usuarios
               </TabsTrigger>
+              <TabsTrigger value="notifications" className="gap-2">
+                <Bell className="h-4 w-4" />
+                Notificaciones
+              </TabsTrigger>
             </TabsList>
 
             {/* EVENTS TAB */}
@@ -495,6 +614,23 @@ export default function AdminPage() {
                             <Badge variant="secondary">
                               {teams.filter((t) => t.eventId === event.id).length} equipos
                             </Badge>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openEditEvent(event)}
+                            >
+                              <Settings2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setEventToDelete(event)
+                                setIsDeleteEventOpen(true)
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
                           </div>
                         </div>
                       </CardContent>
@@ -685,7 +821,7 @@ export default function AdminPage() {
                       </TableHeader>
                       <TableBody>
                         {filteredUsers.map((user) => (
-                          <TableRow key={user.id}>
+                          <TableRow key={user.userId}>
                             <TableCell className="font-mono">{user.gamertag}</TableCell>
                             <TableCell>{user.displayName}</TableCell>
                             <TableCell className="text-muted-foreground">{user.email}</TableCell>
@@ -707,6 +843,87 @@ export default function AdminPage() {
                   )}
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* NOTIFICATIONS TAB */}
+            <TabsContent value="notifications" className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold">Gestion de Notificaciones</h2>
+                <Button onClick={() => setIsNewNotificationOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nueva notificacion
+                </Button>
+              </div>
+
+              <div className="grid gap-4">
+                {notifications.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-10 text-center">
+                      <Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                      <p className="text-muted-foreground">No hay notificaciones creadas</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  notifications.map((notification) => {
+                    const targetEvent = notification.target === "event" 
+                      ? events.find(e => e.id === notification.targetId)
+                      : null
+                    const targetTeam = notification.target === "team"
+                      ? teams.find(t => t.id === notification.targetId)
+                      : null
+                    
+                    return (
+                      <Card key={notification.id}>
+                        <CardContent className="py-4">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex items-start gap-3">
+                              <div className={`p-2 rounded-full ${
+                                notification.type === "announcement" ? "bg-primary/10 text-primary" :
+                                notification.type === "warning" ? "bg-yellow-500/10 text-yellow-500" :
+                                "bg-blue-500/10 text-blue-500"
+                              }`}>
+                                {notification.type === "announcement" ? <Megaphone className="h-4 w-4" /> :
+                                 notification.type === "warning" ? <AlertTriangle className="h-4 w-4" /> :
+                                 <Info className="h-4 w-4" />}
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <h3 className="font-semibold">{notification.title}</h3>
+                                  <Badge variant="outline" className="text-xs">
+                                    {notification.target === "all" ? "Todos" :
+                                     notification.target === "event" ? `Evento: ${targetEvent?.name || "—"}` :
+                                     `Equipo: ${targetTeam?.name || "—"}`}
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  {notification.message}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-2">
+                                  {new Date(notification.createdAt).toLocaleDateString("es-MX", {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit"
+                                  })} - Leido por {notification.readBy?.length || 0} usuarios
+                                </p>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => notification.id && handleDeleteNotification(notification.id)}
+                              disabled={updating}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )
+                  })
+                )}
+              </div>
             </TabsContent>
           </Tabs>
         )}
@@ -818,6 +1035,148 @@ export default function AdminPage() {
         </DialogContent>
       </Dialog>
 
+      {/* Edit Event Dialog */}
+      <Dialog open={isEditEventOpen} onOpenChange={setIsEditEventOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Editar evento</DialogTitle>
+            <DialogDescription>
+              Modifica los detalles del evento
+            </DialogDescription>
+          </DialogHeader>
+          {selectedEventForEdit && (
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label>Nombre del evento</Label>
+                <Input
+                  value={selectedEventForEdit.name}
+                  onChange={(e) => setSelectedEventForEdit({ ...selectedEventForEdit, name: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Fecha</Label>
+                  <Input
+                    type="date"
+                    value={selectedEventForEdit.date instanceof Date 
+                      ? selectedEventForEdit.date.toISOString().split('T')[0] 
+                      : new Date(selectedEventForEdit.date).toISOString().split('T')[0]}
+                    onChange={(e) => setSelectedEventForEdit({ ...selectedEventForEdit, date: new Date(e.target.value) })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Ubicacion</Label>
+                  <Input
+                    value={selectedEventForEdit.location}
+                    onChange={(e) => setSelectedEventForEdit({ ...selectedEventForEdit, location: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Descripcion</Label>
+                <Textarea
+                  value={selectedEventForEdit.description}
+                  onChange={(e) => setSelectedEventForEdit({ ...selectedEventForEdit, description: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Min miembros</Label>
+                  <Input
+                    type="number"
+                    value={selectedEventForEdit.minTeamSize}
+                    onChange={(e) => setSelectedEventForEdit({ ...selectedEventForEdit, minTeamSize: Number(e.target.value) })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Max miembros</Label>
+                  <Input
+                    type="number"
+                    value={selectedEventForEdit.maxTeamSize}
+                    onChange={(e) => setSelectedEventForEdit({ ...selectedEventForEdit, maxTeamSize: Number(e.target.value) })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Estado</Label>
+                  <Select
+                    value={selectedEventForEdit.status}
+                    onValueChange={(v) => setSelectedEventForEdit({ ...selectedEventForEdit, status: v as EventStatus })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="registro_abierto">Registro abierto</SelectItem>
+                      <SelectItem value="cerrado">Cerrado</SelectItem>
+                      <SelectItem value="en_curso">En curso</SelectItem>
+                      <SelectItem value="finalizado">Finalizado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Formato</Label>
+                <Input
+                  value={selectedEventForEdit.format}
+                  onChange={(e) => setSelectedEventForEdit({ ...selectedEventForEdit, format: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Categorias (separadas por coma)</Label>
+                <Input
+                  value={selectedEventForEdit.categories.join(", ")}
+                  onChange={(e) => setSelectedEventForEdit({ 
+                    ...selectedEventForEdit, 
+                    categories: e.target.value.split(",").map((c) => c.trim()).filter(Boolean) 
+                  })}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditEventOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleEditEvent} disabled={updating || !selectedEventForEdit?.name}>
+              {updating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              Guardar cambios
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Event Confirmation Dialog */}
+      <Dialog open={isDeleteEventOpen} onOpenChange={setIsDeleteEventOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Eliminar evento</DialogTitle>
+            <DialogDescription>
+              Esta accion no se puede deshacer. Se eliminara el evento permanentemente.
+            </DialogDescription>
+          </DialogHeader>
+          {eventToDelete && (
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                Estas a punto de eliminar el evento:
+              </p>
+              <p className="font-semibold mt-2">{eventToDelete.name}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Esto tambien afectara a {teams.filter((t) => t.eventId === eventToDelete.id).length} equipos registrados.
+              </p>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteEventOpen(false)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteEvent} disabled={updating}>
+              {updating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+              Eliminar evento
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Edit Team Dialog */}
       <Dialog open={isEditTeamOpen} onOpenChange={setIsEditTeamOpen}>
         <DialogContent>
@@ -870,6 +1229,136 @@ export default function AdminPage() {
             >
               {updating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
               Eliminar equipo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* New Notification Dialog */}
+      <Dialog open={isNewNotificationOpen} onOpenChange={setIsNewNotificationOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Crear notificacion</DialogTitle>
+            <DialogDescription>
+              Envia un anuncio o aviso a los participantes
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Titulo</Label>
+              <Input
+                value={newNotification.title}
+                onChange={(e) => setNewNotification({ ...newNotification, title: e.target.value })}
+                placeholder="Ej: Aviso importante"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Mensaje</Label>
+              <Textarea
+                value={newNotification.message}
+                onChange={(e) => setNewNotification({ ...newNotification, message: e.target.value })}
+                placeholder="Escribe el contenido de la notificacion..."
+                rows={4}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Tipo</Label>
+                <Select
+                  value={newNotification.type}
+                  onValueChange={(v) => setNewNotification({ ...newNotification, type: v as NotificationType })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="announcement">
+                      <div className="flex items-center gap-2">
+                        <Megaphone className="h-4 w-4" />
+                        Anuncio
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="warning">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4" />
+                        Advertencia
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="info">
+                      <div className="flex items-center gap-2">
+                        <Info className="h-4 w-4" />
+                        Informacion
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Destinatarios</Label>
+                <Select
+                  value={newNotification.target}
+                  onValueChange={(v) => setNewNotification({ ...newNotification, target: v as NotificationTarget, targetId: "" })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos los usuarios</SelectItem>
+                    <SelectItem value="event">Participantes de evento</SelectItem>
+                    <SelectItem value="team">Miembros de equipo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            {newNotification.target === "event" && (
+              <div className="space-y-2">
+                <Label>Seleccionar evento</Label>
+                <Select
+                  value={newNotification.targetId}
+                  onValueChange={(v) => setNewNotification({ ...newNotification, targetId: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona un evento" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {events.map((event) => (
+                      <SelectItem key={event.id} value={event.id!}>{event.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            
+            {newNotification.target === "team" && (
+              <div className="space-y-2">
+                <Label>Seleccionar equipo</Label>
+                <Select
+                  value={newNotification.targetId}
+                  onValueChange={(v) => setNewNotification({ ...newNotification, targetId: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona un equipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {teams.map((team) => (
+                      <SelectItem key={team.id} value={team.id!}>{team.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsNewNotificationOpen(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleCreateNotification} 
+              disabled={updating || !newNotification.title || !newNotification.message || (newNotification.target !== "all" && !newNotification.targetId)}
+            >
+              {updating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Bell className="h-4 w-4 mr-2" />}
+              Enviar notificacion
             </Button>
           </DialogFooter>
         </DialogContent>

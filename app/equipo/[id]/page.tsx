@@ -6,7 +6,8 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { 
   ChevronLeft, Loader2, Users, Copy, Check, Share2, 
-  UserPlus, Trash2, Crown, Hash, AlertCircle, LogOut
+  UserPlus, Trash2, Crown, Hash, AlertCircle, LogOut,
+  Bot, Plus, X, Settings
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -35,10 +36,12 @@ import {
   createInvite,
   deleteTeam,
   removeMemberFromTeam,
+  updateTeamCategories,
   type Team,
   type Event,
   type TeamMember,
   type UserProfile,
+  type TeamCategoryEntry,
 } from "@/lib/firebase"
 import { TeamIcon } from "@/components/team-icon"
 
@@ -61,6 +64,11 @@ export default function EquipoDetailPage() {
   const [inviteSuccess, setInviteSuccess] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [leaving, setLeaving] = useState(false)
+  
+  // Categories management
+  const [isEditCategoriesOpen, setIsEditCategoriesOpen] = useState(false)
+  const [editableCategories, setEditableCategories] = useState<TeamCategoryEntry[]>([])
+  const [savingCategories, setSavingCategories] = useState(false)
 
   const teamId = params.id as string
   const isLeader = user && team?.leaderUserId === user.uid
@@ -158,6 +166,41 @@ export default function EquipoDetailPage() {
     } catch (error) {
       console.error("Error leaving team:", error)
       setLeaving(false)
+    }
+  }
+
+  const openEditCategories = () => {
+    setEditableCategories(team?.categories || [])
+    setIsEditCategoriesOpen(true)
+  }
+
+  const handleAddCategory = () => {
+    setEditableCategories([...editableCategories, { category: "", prototypeName: "" }])
+  }
+
+  const handleRemoveCategory = (index: number) => {
+    setEditableCategories(editableCategories.filter((_, i) => i !== index))
+  }
+
+  const handleCategoryChange = (index: number, field: keyof TeamCategoryEntry, value: string) => {
+    const updated = [...editableCategories]
+    updated[index] = { ...updated[index], [field]: value }
+    setEditableCategories(updated)
+  }
+
+  const handleSaveCategories = async () => {
+    if (!team?.id) return
+    setSavingCategories(true)
+    try {
+      // Filter out empty entries
+      const validCategories = editableCategories.filter(c => c.category.trim() && c.prototypeName.trim())
+      await updateTeamCategories(team.id, validCategories)
+      setTeam({ ...team, categories: validCategories })
+      setIsEditCategoriesOpen(false)
+    } catch (error) {
+      console.error("Error saving categories:", error)
+    } finally {
+      setSavingCategories(false)
     }
   }
 
@@ -331,6 +374,66 @@ export default function EquipoDetailPage() {
             </motion.div>
           )}
 
+          {/* Team Categories & Prototypes */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.18 }}
+          >
+            <Card className="border-border/50 mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Bot className="h-5 w-5 text-primary" />
+                    Categorias y Prototipos
+                  </span>
+                  {isLeader && (
+                    <Button variant="outline" size="sm" onClick={openEditCategories}>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Editar
+                    </Button>
+                  )}
+                </CardTitle>
+                <CardDescription>
+                  Categorias en las que participa el equipo y nombres de los robots/prototipos
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {(!team.categories || team.categories.length === 0) ? (
+                  <div className="text-center py-6 text-muted-foreground">
+                    <Bot className="h-10 w-10 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">No hay categorias registradas</p>
+                    {isLeader && (
+                      <Button variant="link" size="sm" onClick={openEditCategories}>
+                        Agregar categorias
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {team.categories.map((entry, index) => (
+                      <div 
+                        key={index}
+                        className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30"
+                      >
+                        <div 
+                          className="w-10 h-10 rounded-lg flex items-center justify-center"
+                          style={{ backgroundColor: team.color + "20" }}
+                        >
+                          <Bot className="h-5 w-5" style={{ color: team.color }} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">{entry.prototypeName}</p>
+                          <p className="text-sm text-muted-foreground">{entry.category}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+
           {/* Team Members */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -453,6 +556,63 @@ export default function EquipoDetailPage() {
         </div>
       </div>
       <Footer />
+
+      {/* Edit Categories Dialog */}
+      <Dialog open={isEditCategoriesOpen} onOpenChange={setIsEditCategoriesOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Editar Categorias y Prototipos</DialogTitle>
+            <DialogDescription>
+              Agrega las categorias en las que participara tu equipo y el nombre de cada robot o prototipo
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto">
+            {editableCategories.map((entry, index) => (
+              <div key={index} className="flex gap-2 items-start">
+                <div className="flex-1 space-y-2">
+                  <Input
+                    placeholder="Categoria (ej: Seguidor de linea)"
+                    value={entry.category}
+                    onChange={(e) => handleCategoryChange(index, "category", e.target.value)}
+                  />
+                  <Input
+                    placeholder="Nombre del robot/prototipo"
+                    value={entry.prototypeName}
+                    onChange={(e) => handleCategoryChange(index, "prototypeName", e.target.value)}
+                  />
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleRemoveCategory(index)}
+                  className="shrink-0 mt-1"
+                >
+                  <X className="h-4 w-4 text-destructive" />
+                </Button>
+              </div>
+            ))}
+            <Button
+              variant="outline"
+              onClick={handleAddCategory}
+              className="w-full"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Agregar categoria
+            </Button>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditCategoriesOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveCategories} disabled={savingCategories}>
+              {savingCategories ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : null}
+              Guardar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   )
 }

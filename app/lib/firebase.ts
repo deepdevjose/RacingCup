@@ -26,13 +26,12 @@ import {
 } from "firebase/firestore"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDh99IVYNqsie8ex_ko9CQUJlzl2vnyDfQ",
-  authDomain: "racing-cup-dbd5a.firebaseapp.com",
-  projectId: "racing-cup-dbd5a",
-  storageBucket: "racing-cup-dbd5a.firebasestorage.app",
-  messagingSenderId: "273529090223",
-  appId: "1:273529090223:web:d8dfef90a763641a9a245a",
-  measurementId: "G-PWF78H8925"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
 // Initialize Firebase
@@ -47,18 +46,18 @@ export type InviteStatus = "pending" | "accepted" | "rejected"
 
 // Team icons (20 options)
 export const TEAM_ICONS = [
-  "robot", "cpu", "zap", "rocket", "target",
+  "robot", "cpu", "zap", "rocket", "target", 
   "shield", "flame", "star", "bolt", "gear",
   "circuit", "chip", "drone", "claw", "laser",
   "antenna", "motor", "wheel", "sensor", "battery"
 ] as const
 
-// Player icons (20 options)
+// Player icons (different from team icons)
 export const PLAYER_ICONS = [
-  "user", "smile", "gamepad", "ghost", "sword",
-  "crown", "skull", "heart", "star", "zap",
-  "shield", "flag", "bell", "map-pin", "camera",
-  "headphones", "music", "video", "mic", "monitor"
+  "user", "smile", "gamepad", "headphones", "glasses",
+  "crown", "medal", "lightning", "diamond", "heart",
+  "fire", "sword", "compass", "music", "camera",
+  "puzzle", "flag", "globe", "mountain", "wave"
 ] as const
 
 // Team colors (6 options)
@@ -83,11 +82,6 @@ export interface UserProfile {
   createdAt: Date
 }
 
-export interface TeamCategoryEntry {
-  category: string
-  prototypeName: string
-}
-
 export interface Event {
   id?: string
   name: string
@@ -106,6 +100,11 @@ export interface Event {
   createdAt: Date
 }
 
+export interface TeamCategoryEntry {
+  category: string
+  prototypeName: string // Robot or prototype name for this category
+}
+
 export interface Team {
   id?: string
   eventId: string
@@ -114,9 +113,9 @@ export interface Team {
   icon: typeof TEAM_ICONS[number]
   color: string
   inviteCode: string
+  categories: TeamCategoryEntry[] // Multiple categories per team with prototype names
   seed?: number
   isConfirmed: boolean
-  categories?: TeamCategoryEntry[]
   createdAt: Date
 }
 
@@ -129,18 +128,6 @@ export interface TeamMember {
   joinedAt: Date
 }
 
-// ==================== TYPES (Continued) ====================
-
-export type TeamStatus = "preregistrado" | "por_confirmar" | "confirmado"
-
-export interface PublicTeam extends Team {
-  status: TeamStatus
-  institution: string
-  city: string
-  category: string
-  members: { name: string }[]
-}
-
 export interface TeamInvite {
   id?: string
   teamId: string
@@ -151,10 +138,8 @@ export interface TeamInvite {
   createdAt: Date
 }
 
-// ==================== NOTIFICATION TYPES ====================
-
-export type NotificationType = "announcement" | "invite" | "alert" | "info" | "warning"
-export type NotificationTarget = "all" | "user" | "team" | "event"
+export type NotificationType = "announcement" | "warning" | "info"
+export type NotificationTarget = "all" | "event" | "team"
 
 export interface Notification {
   id?: string
@@ -162,51 +147,10 @@ export interface Notification {
   message: string
   type: NotificationType
   target: NotificationTarget
-  targetId?: string
-  readBy?: string[]
-  createdBy?: string
+  targetId?: string // eventId or teamId if not "all"
+  createdBy: string
+  readBy: string[] // userIds who have read this notification
   createdAt: Date
-}
-
-// ... (existing code)
-
-// ==================== PUBLIC FUNCTIONS ====================
-
-export async function getPublicTeams(): Promise<PublicTeam[]> {
-  const teamsSnapshot = await getDocs(teamsCollection)
-
-  const publicTeams: PublicTeam[] = []
-
-  // This is not efficient for many teams, but fine for demo
-  for (const docSnapshot of teamsSnapshot.docs) {
-    const teamData = convertTimestamps(docSnapshot.data()) as Team
-    const teamId = docSnapshot.id
-
-    // Get members
-    const members = await getTeamMembers(teamId)
-    const membersWithNames = await Promise.all(members.map(async (m) => {
-      const profile = await getProfile(m.userId)
-      return { name: profile?.displayName || "Usuario" }
-    }))
-
-    // Get leader profile for institution/school
-    const leaderProfile = await getProfile(teamData.leaderUserId)
-
-    // Get event for category/location
-    const event = await getEventById(teamData.eventId)
-
-    publicTeams.push({
-      ...teamData,
-      id: teamId,
-      status: teamData.isConfirmed ? "confirmado" : "por_confirmar",
-      institution: leaderProfile?.school || "Sin escuela",
-      city: event?.location || "Sin ubicación",
-      category: "all", // Placeholder as team doesn't have specific category
-      members: membersWithNames,
-    })
-  }
-
-  return publicTeams
 }
 
 // ==================== AUTH FUNCTIONS ====================
@@ -263,37 +207,12 @@ export async function updateProfile(userId: string, updates: Partial<UserProfile
   await updateDoc(docRef, updates)
 }
 
-export async function canUserEditProfile(userId: string): Promise<{ canEdit: boolean; reason?: string }> {
-  const profile = await getProfile(userId)
-  if (!profile) return { canEdit: false, reason: "Perfil no encontrado" }
-  return { canEdit: true }
-}
-
 export async function isGamertagAvailable(gamertag: string, excludeUserId?: string): Promise<boolean> {
   const q = query(profilesCollection, where("gamertag", "==", gamertag))
   const snapshot = await getDocs(q)
   if (snapshot.empty) return true
   if (excludeUserId && snapshot.docs.length === 1 && snapshot.docs[0].id === excludeUserId) return true
   return false
-}
-
-export async function isTeamNameAvailable(eventId: string, name: string): Promise<boolean> {
-  // Firestore case-insensitive filtering is hard without a normalized field. 
-  // For now, we'll fetch teams in the event and check in client-side (assuming <100 teams/event)
-  // Or better, use a simpler strict equality for now if volume is low.
-  // Ideally, store a lowercase name field. 
-
-  // Let's do client-side filter for robustness in this demo
-  const q = query(teamsCollection, where("eventId", "==", eventId))
-  const snapshot = await getDocs(q)
-
-  const normalizedName = name.trim().toLowerCase()
-  const exists = snapshot.docs.some(doc => {
-    const team = doc.data() as Team
-    return team.name.trim().toLowerCase() === normalizedName
-  })
-
-  return !exists
 }
 
 export async function getProfileByGamertag(gamertag: string): Promise<UserProfile | null> {
@@ -383,12 +302,6 @@ export async function createTeam(
   color: string,
   categories: TeamCategoryEntry[] = []
 ): Promise<string> {
-  // Check if team name is available
-  const isNameSafe = await isTeamNameAvailable(eventId, name)
-  if (!isNameSafe) {
-    throw new Error("Ya existe un equipo con ese nombre en este evento")
-  }
-
   // Check if user already has a team in this event
   const existingTeam = await getUserTeamInEvent(leaderUserId, eventId)
   if (existingTeam) {
@@ -463,9 +376,9 @@ export async function getUserTeamInEvent(userId: string, eventId: string): Promi
     where("inviteStatus", "==", "accepted")
   )
   const memberSnapshot = await getDocs(memberQ)
-
+  
   if (memberSnapshot.empty) return null
-
+  
   const teamId = memberSnapshot.docs[0].data().teamId
   return getTeamById(teamId)
 }
@@ -479,32 +392,24 @@ export async function getUserLeadingTeams(userId: string): Promise<Team[]> {
   })) as Team[]
 }
 
-export async function getUserTeams(userId: string): Promise<Team[]> {
-  const membersCollection = collection(db, "team_members")
-  const q = query(membersCollection, where("userId", "==", userId), where("inviteStatus", "==", "accepted"))
-  const snapshot = await getDocs(q)
-
-  const teams: Team[] = []
-  for (const doc of snapshot.docs) {
-    const teamId = doc.data().teamId
-    const team = await getTeamById(teamId)
-    if (team) teams.push(team)
-  }
-  return teams
-}
-
-export async function leaveTeam(userId: string, teamId: string): Promise<void> {
-  const membersCollection = collection(db, "team_members")
-  const q = query(membersCollection, where("teamId", "==", teamId), where("userId", "==", userId))
-  const snapshot = await getDocs(q)
-  for (const doc of snapshot.docs) {
-    await deleteDoc(doc.ref)
-  }
-}
-
 export async function updateTeam(id: string, updates: Partial<Team>): Promise<void> {
   const docRef = doc(db, "teams", id)
   await updateDoc(docRef, updates)
+}
+
+export async function updateTeamConfirmation(teamId: string, isConfirmed: boolean): Promise<void> {
+  const docRef = doc(db, "teams", teamId)
+  await updateDoc(docRef, { isConfirmed })
+}
+
+export async function updateTeamSeed(teamId: string, seed: number): Promise<void> {
+  const docRef = doc(db, "teams", teamId)
+  await updateDoc(docRef, { seed })
+}
+
+export async function updateTeamCategories(teamId: string, categories: TeamCategoryEntry[]): Promise<void> {
+  const docRef = doc(db, "teams", teamId)
+  await updateDoc(docRef, { categories })
 }
 
 export async function deleteTeam(id: string): Promise<void> {
@@ -515,7 +420,7 @@ export async function deleteTeam(id: string): Promise<void> {
   for (const doc of snapshot.docs) {
     await deleteDoc(doc.ref)
   }
-
+  
   // Delete invites
   const invitesCollection = collection(db, "team_invites")
   const inviteQ = query(invitesCollection, where("teamId", "==", id))
@@ -523,14 +428,10 @@ export async function deleteTeam(id: string): Promise<void> {
   for (const doc of inviteSnapshot.docs) {
     await deleteDoc(doc.ref)
   }
-
+  
   // Delete team
   const docRef = doc(db, "teams", id)
   await deleteDoc(docRef)
-}
-
-export async function updateTeamCategories(teamId: string, categories: TeamCategoryEntry[]): Promise<void> {
-  await updateTeam(teamId, { categories })
 }
 
 // ==================== TEAM MEMBER FUNCTIONS ====================
@@ -619,7 +520,7 @@ export async function acceptInvite(inviteId: string, userId: string): Promise<vo
   // Check if user is leader of another team - if so, delete that team
   const userLeadingTeams = await getUserLeadingTeams(userId)
   const teamsInSameEvent = userLeadingTeams.filter(t => t.eventId === invite.eventId)
-
+  
   for (const team of teamsInSameEvent) {
     if (team.id) await deleteTeam(team.id)
   }
@@ -660,14 +561,6 @@ export async function unconfirmTeam(teamId: string): Promise<void> {
   await updateTeam(teamId, { isConfirmed: false })
 }
 
-export async function updateTeamConfirmation(teamId: string, isConfirmed: boolean): Promise<void> {
-  await updateTeam(teamId, { isConfirmed })
-}
-
-export async function updateTeamSeed(teamId: string, seed: number): Promise<void> {
-  await updateTeam(teamId, { seed })
-}
-
 export async function getAllTeams(): Promise<Team[]> {
   const snapshot = await getDocs(teamsCollection)
   return snapshot.docs.map((doc) => ({
@@ -684,6 +577,8 @@ export async function getAllProfiles(): Promise<UserProfile[]> {
   })) as UserProfile[]
 }
 
+// ==================== HELPERS ====================
+
 // ==================== NOTIFICATION FUNCTIONS ====================
 
 const notificationsCollection = collection(db, "notifications")
@@ -697,52 +592,116 @@ export async function createNotification(notification: Omit<Notification, "id" |
   return docRef.id
 }
 
-export async function getAllNotifications(): Promise<Notification[]> {
-  const q = query(notificationsCollection, orderBy("createdAt", "desc"))
-  const snapshot = await getDocs(q)
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...convertTimestamps(doc.data()),
-  })) as Notification[]
-}
-
 export async function getUserNotifications(userId: string): Promise<Notification[]> {
-  // Get global notifications
-  const globalQ = query(notificationsCollection, where("target", "==", "all"))
-  const globalSnapshot = await getDocs(globalQ)
-
-  // Get user specific notifications
-  const userQ = query(notificationsCollection, where("target", "==", "user"), where("targetId", "==", userId))
-  const userSnapshot = await getDocs(userQ)
-
-  // Combine (and sort preferably, but simpler to just concat)
-  const allDocs = [...globalSnapshot.docs, ...userSnapshot.docs]
-
-  // Use a map to deduplicate if needed (though queries are distinct)
-  const notifications = allDocs.map((doc) => ({
+  // Get all notifications that are for "all" users
+  const allSnapshot = await getDocs(query(notificationsCollection, where("target", "==", "all")))
+  const allNotifications = allSnapshot.docs.map((doc) => ({
     id: doc.id,
     ...convertTimestamps(doc.data()),
   })) as Notification[]
 
-  return notifications.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+  // Get notifications for events the user is part of
+  const userTeams = await getUserTeams(userId)
+  const eventIds = [...new Set(userTeams.map((t) => t.eventId))]
+  const teamIds = userTeams.map((t) => t.id).filter(Boolean) as string[]
+
+  let eventNotifications: Notification[] = []
+  if (eventIds.length > 0) {
+    const eventSnapshot = await getDocs(
+      query(notificationsCollection, where("target", "==", "event"), where("targetId", "in", eventIds))
+    )
+    eventNotifications = eventSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...convertTimestamps(doc.data()),
+    })) as Notification[]
+  }
+
+  let teamNotifications: Notification[] = []
+  if (teamIds.length > 0) {
+    const teamSnapshot = await getDocs(
+      query(notificationsCollection, where("target", "==", "team"), where("targetId", "in", teamIds))
+    )
+    teamNotifications = teamSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...convertTimestamps(doc.data()),
+    })) as Notification[]
+  }
+
+  // Combine and sort by date
+  const allUserNotifications = [...allNotifications, ...eventNotifications, ...teamNotifications]
+  return allUserNotifications.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 }
 
 export async function markNotificationAsRead(notificationId: string, userId: string): Promise<void> {
   const docRef = doc(db, "notifications", notificationId)
   const snapshot = await getDoc(docRef)
   if (!snapshot.exists()) return
-
-  const currentReadBy = snapshot.data().readBy || []
-  if (!currentReadBy.includes(userId)) {
+  
+  const notification = snapshot.data() as Notification
+  if (!notification.readBy.includes(userId)) {
     await updateDoc(docRef, {
-      readBy: [...currentReadBy, userId]
+      readBy: [...notification.readBy, userId],
     })
   }
+}
+
+export async function getAllNotifications(): Promise<Notification[]> {
+  const snapshot = await getDocs(notificationsCollection)
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...convertTimestamps(doc.data()),
+  })) as Notification[]
 }
 
 export async function deleteNotification(id: string): Promise<void> {
   const docRef = doc(db, "notifications", id)
   await deleteDoc(docRef)
+}
+
+// ==================== MEMBER FUNCTIONS (Extended) ====================
+
+export async function getUserTeams(userId: string): Promise<Team[]> {
+  // Get all team memberships for user
+  const membersCollection = collection(db, "team_members")
+  const q = query(membersCollection, where("userId", "==", userId), where("inviteStatus", "==", "accepted"))
+  const snapshot = await getDocs(q)
+  
+  const teamIds = snapshot.docs.map((doc) => doc.data().teamId)
+  if (teamIds.length === 0) return []
+  
+  const teams: Team[] = []
+  for (const teamId of teamIds) {
+    const team = await getTeamById(teamId)
+    if (team) teams.push(team)
+  }
+  return teams
+}
+
+export async function leaveTeam(userId: string, teamId: string): Promise<void> {
+  const membersCollection = collection(db, "team_members")
+  const q = query(membersCollection, where("userId", "==", userId), where("teamId", "==", teamId))
+  const snapshot = await getDocs(q)
+  
+  for (const doc of snapshot.docs) {
+    await deleteDoc(doc.ref)
+  }
+}
+
+export async function canUserEditProfile(userId: string): Promise<{ canEdit: boolean; reason?: string }> {
+  // Check if user is in any team with event in "en_curso" or "cerrado" status
+  const userTeams = await getUserTeams(userId)
+  
+  for (const team of userTeams) {
+    const event = await getEventById(team.eventId)
+    if (event && (event.status === "en_curso" || event.status === "cerrado")) {
+      return {
+        canEdit: false,
+        reason: `No puedes editar tu perfil mientras el evento "${event.name}" esta ${event.status === "en_curso" ? "en curso" : "cerrado"}`
+      }
+    }
+  }
+  
+  return { canEdit: true }
 }
 
 // ==================== HELPERS ====================

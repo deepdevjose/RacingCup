@@ -1,24 +1,12 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Sparkles } from "lucide-react"
 
 export function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [particles, setParticles] = useState<Array<{ left: string; top: string; delay: string; duration: string }>>([])
-
-  useEffect(() => {
-    setParticles(
-      Array.from({ length: 20 }).map(() => ({
-        left: `${Math.random() * 100}%`,
-        top: `${Math.random() * 100}%`,
-        delay: `${Math.random() * 2}s`,
-        duration: `${2 + Math.random() * 3}s`,
-      }))
-    )
-  }, [])
 
   useEffect(() => {
     const container = containerRef.current
@@ -51,15 +39,15 @@ export function HeroSection() {
 
       {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden">
-        {particles.map((p, i) => (
+        {Array.from({ length: 20 }).map((_, i) => (
           <div
             key={i}
             className="absolute w-1 h-1 bg-primary/40 rounded-full animate-pulse"
             style={{
-              left: p.left,
-              top: p.top,
-              animationDelay: p.delay,
-              animationDuration: p.duration,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 2}s`,
+              animationDuration: `${2 + Math.random() * 3}s`,
             }}
           />
         ))}

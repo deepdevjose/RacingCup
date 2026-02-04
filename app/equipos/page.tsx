@@ -17,8 +17,6 @@ import {
 } from "@/components/ui/select"
 import {
   Users,
-  MapPin,
-  Building2,
   Search,
   Filter,
   CheckCircle,
@@ -26,47 +24,50 @@ import {
   Loader2,
   Bot,
 } from "lucide-react"
-import { getPublicTeams, type Team, type TeamStatus } from "@/lib/firebase"
+import { getAllTeams, getTeamMembers, getAllEvents, type Team, type Event, type TeamMember } from "@/lib/firebase"
+import { TeamIcon } from "@/components/team-icon"
 
-const categories = [
-  { value: "all", label: "Todas las categorías" },
-  { value: "sumo_3kg", label: "Sumo 3kg" },
-  { value: "seguidor_linea", label: "Seguidor de línea" },
-  { value: "innovacion", label: "Innovación" },
-]
-
-const statusLabels: Record<TeamStatus, { label: string; variant: "default" | "secondary" | "outline" }> = {
-  preregistrado: { label: "Preregistrado", variant: "outline" },
-  por_confirmar: { label: "Por confirmar", variant: "secondary" },
-  confirmado: { label: "Confirmado", variant: "default" },
-}
-
-function getCategoryLabel(value: string): string {
-  const cat = categories.find((c) => c.value === value)
-  return cat?.label || value
+interface TeamWithDetails extends Team {
+  members: TeamMember[]
+  event?: Event
 }
 
 export default function EquiposPage() {
-  const [teams, setTeams] = useState<Team[]>([])
-  const [filteredTeams, setFilteredTeams] = useState<Team[]>([])
+  const [teams, setTeams] = useState<TeamWithDetails[]>([])
+  const [filteredTeams, setFilteredTeams] = useState<TeamWithDetails[]>([])
+  const [events, setEvents] = useState<Event[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
+  const [eventFilter, setEventFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
 
   useEffect(() => {
-    async function loadTeams() {
+    async function loadData() {
       try {
-        const data = await getPublicTeams()
-        setTeams(data)
-        setFilteredTeams(data)
+        const [teamsData, eventsData] = await Promise.all([
+          getAllTeams(),
+          getAllEvents(),
+        ])
+        
+        // Load members for each team
+        const teamsWithDetails = await Promise.all(
+          teamsData.map(async (team) => {
+            const members = await getTeamMembers(team.id!)
+            const event = eventsData.find((e) => e.id === team.eventId)
+            return { ...team, members, event }
+          })
+        )
+        
+        setTeams(teamsWithDetails)
+        setFilteredTeams(teamsWithDetails)
+        setEvents(eventsData)
       } catch (error) {
-        console.error("[v0] Error loading teams:", error)
+        console.error("Error loading teams:", error)
       } finally {
         setIsLoading(false)
       }
     }
-    loadTeams()
+    loadData()
   }, [])
 
   useEffect(() => {
@@ -75,29 +76,31 @@ export default function EquiposPage() {
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
-      result = result.filter(
-        (team) =>
-          team.name.toLowerCase().includes(query) ||
-          team.institution.toLowerCase().includes(query) ||
-          team.city.toLowerCase().includes(query)
+      result = result.filter((team) =>
+        team.name.toLowerCase().includes(query)
       )
     }
 
-    // Category filter
-    if (categoryFilter !== "all") {
-      result = result.filter((team) => team.category === categoryFilter)
+    // Event filter
+    if (eventFilter !== "all") {
+      result = result.filter((team) => team.eventId === eventFilter)
     }
 
     // Status filter
     if (statusFilter !== "all") {
-      result = result.filter((team) => team.status === statusFilter)
+      if (statusFilter === "confirmed") {
+        result = result.filter((team) => team.isConfirmed)
+      } else {
+        result = result.filter((team) => !team.isConfirmed)
+      }
     }
 
     setFilteredTeams(result)
-  }, [teams, searchQuery, categoryFilter, statusFilter])
+  }, [teams, searchQuery, eventFilter, statusFilter])
 
-  const confirmedCount = teams.filter((t) => t.status === "confirmado").length
-  const pendingCount = teams.filter((t) => t.status === "por_confirmar").length
+  const confirmedCount = teams.filter((t) => t.isConfirmed).length
+  const pendingCount = teams.filter((t) => !t.isConfirmed).length
+  const totalMembers = teams.reduce((acc, t) => acc + t.members.length, 0)
 
   return (
     <main className="min-h-screen bg-background">
@@ -113,7 +116,7 @@ export default function EquiposPage() {
               Equipos Participantes
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Conoce a los equipos que competirán en el torneo de robótica más
+              Conoce a los equipos que competiran en el torneo de robotica mas
               importante del año
             </p>
           </div>
@@ -151,7 +154,7 @@ export default function EquiposPage() {
             <Card>
               <CardContent className="p-4 text-center">
                 <div className="text-2xl font-bold">
-                  {teams.reduce((acc, t) => acc + t.members.length, 0)}
+                  {totalMembers}
                 </div>
                 <div className="text-sm text-muted-foreground">
                   Participantes
@@ -171,15 +174,16 @@ export default function EquiposPage() {
                 className="pl-10"
               />
             </div>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <Select value={eventFilter} onValueChange={setEventFilter}>
               <SelectTrigger className="w-full sm:w-[200px]">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Categoría" />
+                <SelectValue placeholder="Evento" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.value} value={cat.value}>
-                    {cat.label}
+                <SelectItem value="all">Todos los eventos</SelectItem>
+                {events.map((event) => (
+                  <SelectItem key={event.id} value={event.id!}>
+                    {event.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -190,8 +194,8 @@ export default function EquiposPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos los estados</SelectItem>
-                <SelectItem value="confirmado">Confirmados</SelectItem>
-                <SelectItem value="por_confirmar">Por confirmar</SelectItem>
+                <SelectItem value="confirmed">Confirmados</SelectItem>
+                <SelectItem value="pending">Por confirmar</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -207,13 +211,13 @@ export default function EquiposPage() {
                 <Bot className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">
                   {teams.length === 0
-                    ? "Aún no hay equipos registrados"
+                    ? "Aun no hay equipos registrados"
                     : "No se encontraron equipos"}
                 </h3>
                 <p className="text-muted-foreground mb-6">
                   {teams.length === 0
-                    ? "Sé el primero en registrar tu equipo"
-                    : "Intenta con otros filtros de búsqueda"}
+                    ? "Se el primero en registrar tu equipo"
+                    : "Intenta con otros filtros de busqueda"}
                 </p>
                 {teams.length === 0 && (
                   <Link href="/registro">
@@ -232,60 +236,66 @@ export default function EquiposPage() {
                 >
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                          {team.name}
-                        </h3>
-                        <Badge variant="outline" className="mt-1">
-                          {getCategoryLabel(team.category)}
-                        </Badge>
+                      <div className="flex items-center gap-3">
+                        <TeamIcon icon={team.icon} color={team.color} size="md" />
+                        <div>
+                          <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                            {team.name}
+                          </h3>
+                          {team.event && (
+                            <Badge variant="outline" className="mt-1">
+                              {team.event.name}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
-                      <Badge variant={statusLabels[team.status].variant}>
-                        {team.status === "confirmado" ? (
+                      <Badge variant={team.isConfirmed ? "default" : "secondary"}>
+                        {team.isConfirmed ? (
                           <CheckCircle className="h-3 w-3 mr-1" />
                         ) : (
                           <Clock className="h-3 w-3 mr-1" />
                         )}
-                        {statusLabels[team.status].label}
+                        {team.isConfirmed ? "Confirmado" : "Pendiente"}
                       </Badge>
                     </div>
 
                     <div className="space-y-2 text-sm text-muted-foreground">
                       <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 shrink-0" />
-                        <span className="truncate">{team.institution}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 shrink-0" />
-                        <span>{team.city}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
                         <Users className="h-4 w-4 shrink-0" />
                         <span>{team.members.length} integrantes</span>
                       </div>
+                      {team.seed && (
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">Seed: #{team.seed}</span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Members preview */}
-                    <div className="mt-4 pt-4 border-t border-border">
-                      <div className="text-xs text-muted-foreground mb-2">
-                        Integrantes:
+                    {/* Categories & Prototypes */}
+                    {team.categories && team.categories.length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-border">
+                        <div className="text-xs text-muted-foreground mb-2">
+                          Categorias y prototipos:
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {team.categories.map((entry, idx) => (
+                            <Badge key={idx} variant="outline" className="text-xs">
+                              <Bot className="h-3 w-3 mr-1" />
+                              {entry.prototypeName} ({entry.category})
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-1">
-                        {team.members.slice(0, 3).map((member, i) => (
-                          <span
-                            key={i}
-                            className="text-xs bg-muted px-2 py-1 rounded-full"
-                          >
-                            {member.name.split(" ")[0]}
-                          </span>
-                        ))}
-                        {team.members.length > 3 && (
-                          <span className="text-xs bg-muted px-2 py-1 rounded-full">
-                            +{team.members.length - 3}
-                          </span>
-                        )}
+                    )}
+
+                    {/* Members count */}
+                    {team.members.length > 0 && !team.categories?.length && (
+                      <div className="mt-4 pt-4 border-t border-border">
+                        <div className="text-xs text-muted-foreground mb-2">
+                          {team.members.length} miembro{team.members.length !== 1 ? "s" : ""} en el equipo
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -297,7 +307,7 @@ export default function EquiposPage() {
             <Card className="bg-primary/5 border-primary/20">
               <CardContent className="py-10">
                 <h3 className="text-xl font-semibold mb-2">
-                  ¿Quieres participar?
+                  Quieres participar?
                 </h3>
                 <p className="text-muted-foreground mb-6">
                   Registra a tu equipo y compite contra los mejores
