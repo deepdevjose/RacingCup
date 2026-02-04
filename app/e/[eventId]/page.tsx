@@ -1,23 +1,27 @@
 'use client'
 
 import { useState } from 'react'
+import { useParams } from 'next/navigation'
 import Hero from '@/components/landing/Hero'
 import Navbar from '@/components/common/Navbar'
 import Standings from '@/components/landing/Standings'
 import BracketViewer from '@/components/landing/BracketViewer'
 import TeamsList from '@/components/landing/TeamsList'
 import Footer from '@/components/common/Footer'
+import ScrollManager from '@/components/common/ScrollManager'
 import '@/components/landing/LandingPage.css'
+import { Event, Tab } from '@/types'
 
 /**
  * EventPage - Dynamic event page
  * Route: /e/[eventId]
  */
-export default function EventPage({ params }) {
+export default function EventPage() {
+    const params = useParams<{ eventId: string }>()
     const { eventId } = params
-    const [activeTab, setActiveTab] = useState('standings')
+    const [activeTab, setActiveTab] = useState<string>('standings')
 
-    const event = {
+    const event: Event = {
         id: eventId,
         name: '5ª Racing Cup',
         date: '15 de Marzo, 2026',
@@ -25,7 +29,7 @@ export default function EventPage({ params }) {
         description: 'Torneo de eliminación directa con los mejores equipos de la región.'
     }
 
-    const tabs = [
+    const tabs: Tab[] = [
         { id: 'standings', label: 'Standings', icon: '🏆' },
         { id: 'bracket', label: 'Bracket', icon: '🎯' },
         { id: 'teams', label: 'Equipos', icon: '👥' },
