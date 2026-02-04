@@ -1,0 +1,89 @@
+/**
+ * Navbar Styles - Vroomgame Replica
+ */
+
+.navbar {
+    position: fixed;
+    /* Fixed to always stay on screen */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 50px 2rem 1.5rem;
+    background: transparent;
+}
+
+.navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* Brand - Left */
+.navbar-brand {
+    font-family: 'Racing Sans One', cursive;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #F5F5F0;
+    font-style: italic;
+    text-decoration: none;
+    transform: skewX(-10deg);
+}
+
+/* Menu - Center */
+.navbar-menu {
+    display: flex;
+    gap: 3rem;
+    list-style: none;
+}
+
+.nav-link {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #F5F5F0;
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    display: inline-block;
+    /* Required for transform */
+}
+
+.nav-link:hover {
+    opacity: 1;
+    transform: rotate(10deg) scale(1.1);
+    color: #E32636;
+    /* Optional: Red color on hover for more pop */
+}
+
+/* Social - Right */
+.navbar-social {
+    display: flex;
+    align-items: center;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #F5F5F0;
+    color: #000;
+    border-radius: 50%;
+    transition: transform 0.4s ease;
+}
+
+.social-link:hover {
+    transform: scale(1.3) rotate(360deg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar-menu {
+        display: none;
+    }
+}

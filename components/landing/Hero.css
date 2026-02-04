@@ -1,0 +1,149 @@
+/**
+ * Hero CSS - Exact Replica
+ */
+
+.hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    /* Exact dark navy from vroomgame analysis */
+    background-color: #101020;
+    /* Blue vignette glow - REMOVED for solid background */
+}
+
+/* Center Layout */
+.hero-center {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+/* Car Logo Image */
+.hero-car-img {
+    width: 91vw;
+    max-width: 1040px;
+    min-width: 520px;
+    height: auto;
+    filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.6));
+    z-index: 15;
+    transition: transform 0.4s ease-out;
+}
+
+.hero-car-img:hover {
+    transform: scale(1.05);
+    /* Slight grow on hover */
+}
+
+
+
+/* Bottom Left Badge */
+.hero-badge-left {
+    position: absolute;
+    bottom: 2rem;
+    left: 2rem;
+    z-index: 20;
+}
+
+.badge-circle {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    background: #F5F5F0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    animation: spin 10s linear infinite;
+}
+
+.badge-text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.badge-text text {
+    font-size: 11px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.2em;
+    fill: #000;
+}
+
+.badge-center {
+    font-family: 'Racing Sans One', cursive;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000;
+}
+
+/* Bottom Right Hand */
+.hero-hand-right {
+    position: absolute;
+    bottom: 3.5rem;
+    right: 3.5rem;
+    z-index: 20;
+    animation: bounce 1.5s ease-in-out infinite;
+}
+
+.hand-icon-img {
+    width: 54px;
+    height: auto;
+    filter: drop-shadow(2px 2px 0 #000);
+    margin-right: 18px;
+}
+
+/* Keyframes */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+
+
+    .hero-badge-left {
+        display: none;
+        /* Hide interactive badge on mobile often better */
+    }
+}

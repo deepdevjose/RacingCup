@@ -1,0 +1,109 @@
+/**
+ * Footer Styles
+ */
+
+.footer {
+    padding: var(--space-16) var(--space-4) var(--space-8);
+    border-top: 4px solid var(--color-primary);
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--space-12);
+}
+
+/* Brand */
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.footer-logo {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    color: var(--color-accent);
+    text-shadow: 3px 3px 0 #000;
+}
+
+.footer-tagline {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+/* Links */
+.footer-links {
+    display: flex;
+    gap: var(--space-12);
+    justify-content: flex-end;
+}
+
+.footer-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.footer-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+}
+
+.footer-section ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.footer-section a {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    transition: color var(--transition-fast);
+}
+
+.footer-section a:hover {
+    color: var(--color-accent);
+}
+
+/* Bottom */
+.footer-bottom {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--space-8);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: var(--space-8);
+}
+
+.footer-copyright,
+.footer-credits {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+        text-align: center;
+    }
+
+    .footer-links {
+        justify-content: center;
+        gap: var(--space-8);
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+}
