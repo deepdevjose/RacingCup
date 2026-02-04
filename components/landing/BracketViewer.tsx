@@ -4,9 +4,30 @@ import './BracketViewer.css'
  * BracketViewer - Interactive tournament bracket
  * Displays single elimination bracket tree
  */
-function BracketViewer({ eventId }) {
+
+interface Match {
+    id: string
+    teamA: string
+    teamB: string
+    winner: string | null
+}
+
+interface Round {
+    name: string
+    matches: Match[]
+}
+
+interface Bracket {
+    rounds: Round[]
+}
+
+interface BracketViewerProps {
+    eventId: string
+}
+
+function BracketViewer({ eventId }: BracketViewerProps) {
     // Demo bracket data - 8 teams, 3 rounds
-    const bracket = {
+    const bracket: Bracket = {
         rounds: [
             // Round 1 (Quarterfinals)
             {
@@ -36,7 +57,7 @@ function BracketViewer({ eventId }) {
         ]
     }
 
-    const MatchCard = ({ match }) => {
+    const MatchCard = ({ match }: { match: Match }) => {
         const isComplete = match.winner !== null
 
         return (

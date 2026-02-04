@@ -3,12 +3,17 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import './TeamsList.css'
+import { Team } from '@/types'
 
 /**
  * TeamsList - Display registered teams
  */
-function TeamsList({ eventId }) {
-    const containerRef = useRef(null)
+interface TeamsListProps {
+    eventId: string
+}
+
+function TeamsList({ eventId }: TeamsListProps) {
+    const containerRef = useRef<HTMLDivElement>(null)
 
     useGSAP(() => {
         gsap.from(".team-card", {
@@ -25,7 +30,7 @@ function TeamsList({ eventId }) {
     }, { scope: containerRef })
 
     // Demo teams data
-    const teams = [
+    const teams: Team[] = [
         { id: 'team-1', name: 'Velocity Demons', members: ['Player1', 'Player2', 'Player3'], seed: 1 },
         { id: 'team-2', name: 'Speed Phantoms', members: ['Alpha', 'Beta', 'Gamma'], seed: 2 },
         { id: 'team-3', name: 'Turbo Warriors', members: ['Racer1', 'Racer2'], seed: 3 },
@@ -62,7 +67,7 @@ function TeamsList({ eventId }) {
                         <div className="team-members">
                             <span className="members-label">👤 Miembros:</span>
                             <div className="members-list">
-                                {team.members.map((member, mIndex) => (
+                                {team.members?.map((member: string, mIndex: number) => (
                                     <span key={mIndex} className="member-tag">{member}</span>
                                 ))}
                             </div>

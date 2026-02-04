@@ -9,14 +9,15 @@ import TeamsList from '@/components/landing/TeamsList'
 import Footer from '@/components/common/Footer'
 import ScrollManager from '@/components/common/ScrollManager'
 import '@/components/landing/LandingPage.css'
+import { Event, Tab } from '@/types'
 
 /**
  * LandingPage - Main public event page
  */
 export default function Home() {
-    const [activeTab, setActiveTab] = useState('standings')
+    const [activeTab, setActiveTab] = useState<string>('standings')
 
-    const event = {
+    const event: Event = {
         id: 'racing-cup-5',
         name: '5ª Racing Cup',
         date: '15 de Marzo, 2026',
@@ -24,7 +25,7 @@ export default function Home() {
         description: 'Torneo de eliminación directa con los mejores equipos de la región.'
     }
 
-    const tabs = [
+    const tabs: Tab[] = [
         { id: 'standings', label: 'Standings', icon: '🏆' },
         { id: 'bracket', label: 'Bracket', icon: '🎯' },
         { id: 'teams', label: 'Equipos', icon: '👥' },

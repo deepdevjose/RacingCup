@@ -21,9 +21,9 @@ function Navbar() {
 
                 {/* Center: Main Navigation */}
                 <ul className="navbar-menu">
-                    <li><Link href="/" className="nav-link">THE GAME</Link></li>
-                    <li><Link href="/news" className="nav-link">NEWS</Link></li>
-                    <li><Link href="/contact" className="nav-link">CONTACT</Link></li>
+                    <li><Link href="/" className="nav-link">El torneo</Link></li>
+                    <li><Link href="/news" className="nav-link">Racing Cars</Link></li>
+                    <li><Link href="/contact" className="nav-link">Zumo RC</Link></li>
                 </ul>
 
                 {/* Right: Facebook Icon */}

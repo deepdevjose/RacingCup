@@ -2,15 +2,20 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import './Hero.css'
+import { Event } from '@/types'
 
 /**
  * Hero - EXACT Vroomgame replica
  * Dark Navy background, center logo, badges
  */
-function Hero({ event }) {
-    const containerRef = useRef(null)
-    const carRef = useRef(null)
-    const badgeRef = useRef(null)
+interface HeroProps {
+    event: Event
+}
+
+function Hero({ event }: HeroProps) {
+    const containerRef = useRef<HTMLDivElement>(null)
+    const carRef = useRef<HTMLImageElement>(null)
+    const badgeRef = useRef<HTMLDivElement>(null)
 
     useGSAP(() => {
         // Car entrance - Zoom in and slight rotation
