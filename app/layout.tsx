@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import './globals.css'
 
 export const metadata = {
@@ -5,7 +6,7 @@ export const metadata = {
     description: 'Torneo de carreras con los mejores equipos de la región',
 }
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html lang="es" suppressHydrationWarning>
             <head>
