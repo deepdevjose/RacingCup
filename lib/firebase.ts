@@ -79,6 +79,7 @@ export interface UserProfile {
   school: string
   isTeacher: boolean
   admin?: boolean
+  isOrganizer?: boolean
   playerIcon?: typeof PLAYER_ICONS[number]
   createdAt: Date
 }
@@ -106,6 +107,36 @@ export interface Event {
   createdAt: Date
 }
 
+export interface CategoryResult {
+  firstTeamId: string
+  secondTeamId?: string
+  thirdTeamId?: string
+  confirmedAt: Date // Firebase returns Timestamp, converted to Date by helper
+}
+
+export interface Event {
+  id?: string
+  name: string
+  description: string
+  date: Date
+  location: string
+  format: string
+  status: EventStatus
+  maxTeamSize: number
+  minTeamSize: number
+  categories: string[]
+  winnersConfirmed: boolean
+  // Deprecated global winners, kept for backward compat if needed, but we move to map
+  firstTeamId?: string
+  secondTeamId?: string
+  thirdTeamId?: string
+
+  // New: Per-category winners
+  categoryWinners?: Record<string, CategoryResult>
+
+  createdAt: Date
+}
+
 export interface Team {
   id?: string
   eventId: string
@@ -127,6 +158,58 @@ export interface TeamMember {
   userId: string
   inviteStatus: InviteStatus
   joinedAt: Date
+}
+
+// ==================== TOURNAMENT TYPES ====================
+
+export type MatchStatus = "pending" | "in_progress" | "completed"
+
+export interface Match {
+  id?: string
+  eventId: string
+  categoryId: string
+  round: number // 1 (Final), 2 (Semis), 4 (Quarters), etc. OR 1, 2, 3 incremental
+  matchNumber: number // Sequential order for rendering
+  teamAId?: string
+  teamBId?: string
+  scoreA?: number // Win Points / General Score
+  scoreB?: number
+  // Specific Scoring Fields
+  koPointsA?: number // Minisumo
+  koPointsB?: number
+  goalsA?: number // Robofut
+  goalsB?: number
+  timeA?: number // RC Car (seconds/ms)
+  timeB?: number
+
+  winnerId?: string
+  nextMatchId?: string // Link to subsequent match in bracket
+  stage?: "group" | "bracket" // "group" = qualifiers, "bracket" = elimination
+  status: MatchStatus
+  createdAt: Date
+}
+
+export interface TournamentStats {
+  id?: string
+  eventId: string
+  categoryId: string
+  teamId: string
+  played: number
+  won: number
+  lost: number
+  draw: number
+  points: number // Winpoints
+
+  // Specific Stats
+  koPoints?: number
+  goals?: number
+  totalTime?: number // Sum of times? Or Best Time? Usually Best Time for Ranking, Total for tie-break?
+  // User asked for "RC Car: winpoints, time". 
+  // If RC Car is Head-to-Head (Match), usually Points > Time. 
+  // If it's Time Attack, then Time is primary. 
+  // Assuming Head-to-Head based on "Match" structure.
+
+  updatedAt: Date
 }
 
 // ==================== TYPES (Continued) ====================
@@ -168,8 +251,6 @@ export interface Notification {
   createdAt: Date
 }
 
-// ... (existing code)
-
 // ==================== PUBLIC FUNCTIONS ====================
 
 export async function getPublicTeams(): Promise<PublicTeam[]> {
@@ -177,7 +258,6 @@ export async function getPublicTeams(): Promise<PublicTeam[]> {
 
   const publicTeams: PublicTeam[] = []
 
-  // This is not efficient for many teams, but fine for demo
   for (const docSnapshot of teamsSnapshot.docs) {
     const teamData = convertTimestamps(docSnapshot.data()) as Team
     const teamId = docSnapshot.id
@@ -278,12 +358,7 @@ export async function isGamertagAvailable(gamertag: string, excludeUserId?: stri
 }
 
 export async function isTeamNameAvailable(eventId: string, name: string): Promise<boolean> {
-  // Firestore case-insensitive filtering is hard without a normalized field. 
-  // For now, we'll fetch teams in the event and check in client-side (assuming <100 teams/event)
-  // Or better, use a simpler strict equality for now if volume is low.
-  // Ideally, store a lowercase name field. 
 
-  // Let's do client-side filter for robustness in this demo
   const q = query(teamsCollection, where("eventId", "==", eventId))
   const snapshot = await getDocs(q)
 
@@ -362,6 +437,17 @@ export async function deleteEvent(id: string): Promise<void> {
   await deleteDoc(docRef)
 }
 
+export async function setCategoryWinner(eventId: string, categoryId: string, result: CategoryResult): Promise<void> {
+  const docRef = doc(db, "events", eventId)
+  await updateDoc(docRef, {
+    [`categoryWinners.${categoryId}`]: {
+      ...result,
+      confirmedAt: Timestamp.now()
+    },
+    winnersConfirmed: true
+  })
+}
+
 // ==================== TEAM FUNCTIONS ====================
 
 const teamsCollection = collection(db, "teams")
@@ -383,7 +469,6 @@ export async function createTeam(
   color: string,
   categories: TeamCategoryEntry[] = []
 ): Promise<string> {
-  // Check if team name is available
   const isNameSafe = await isTeamNameAvailable(eventId, name)
   if (!isNameSafe) {
     throw new Error("Ya existe un equipo con ese nombre en este evento")
@@ -806,4 +891,282 @@ function convertTimestamps(data: DocumentData): DocumentData {
   return result
 }
 
+
+// ==================== TOURNAMENT FUNCTIONS ====================
+
+const matchesCollection = collection(db, "matches")
+const statsCollection = collection(db, "tournament_stats")
+
+// --- Matches ---
+
+export async function createMatch(match: Omit<Match, "id" | "createdAt">): Promise<string> {
+  const docRef = await addDoc(matchesCollection, {
+    ...match,
+    createdAt: Timestamp.now(),
+  })
+  return docRef.id
+}
+
+export async function getMatchesByEvent(eventId: string): Promise<Match[]> {
+  const q = query(matchesCollection, where("eventId", "==", eventId))
+  const snapshot = await getDocs(q)
+  const matches = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...convertTimestamps(doc.data()),
+  })) as Match[]
+
+  return matches.sort((a, b) => a.matchNumber - b.matchNumber)
+}
+
+export async function getMatchesByCategory(eventId: string, categoryId: string): Promise<Match[]> {
+  const q = query(
+    matchesCollection,
+    where("eventId", "==", eventId),
+    where("categoryId", "==", categoryId)
+  )
+  const snapshot = await getDocs(q)
+  const matches = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...convertTimestamps(doc.data()),
+  })) as Match[]
+
+  return matches.sort((a, b) => a.matchNumber - b.matchNumber)
+}
+
+export async function updateMatch(matchId: string, updates: Partial<Match>): Promise<void> {
+  const docRef = doc(db, "matches", matchId)
+  await updateDoc(docRef, updates)
+}
+
+export async function deleteMatch(matchId: string): Promise<void> {
+  const docRef = doc(db, "matches", matchId)
+  await deleteDoc(docRef)
+}
+
+// --- Stats / Standings ---
+
+export async function getTournamentStats(eventId: string, categoryId: string): Promise<TournamentStats[]> {
+  const q = query(
+    statsCollection,
+    where("eventId", "==", eventId),
+    where("categoryId", "==", categoryId)
+  )
+  const snapshot = await getDocs(q)
+  const stats = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...convertTimestamps(doc.data()),
+  })) as TournamentStats[]
+
+  // Sort by points (descending) -> primary stat -> totalTime (ascending, if points tie)
+  return stats.sort((a, b) => {
+    // Primary: Points (Winpoints)
+    if (b.points !== a.points) {
+      return b.points - a.points
+    }
+
+    // Secondary: KO Points (Minisumo) - Descending
+    const koA = a.koPoints || 0
+    const koB = b.koPoints || 0
+    if (koA !== koB) return koB - koA
+
+    // Secondary: Goals (Robofut) - Descending
+    const goalsA = a.goals || 0
+    const goalsB = b.goals || 0
+    if (goalsA !== goalsB) return goalsB - goalsA
+
+    // Tertiary: Time (RC Car) - Ascending (Lower is better usually)
+    const timeA = a.totalTime ?? Number.MAX_SAFE_INTEGER
+    const timeB = b.totalTime ?? Number.MAX_SAFE_INTEGER
+
+    return timeA - timeB
+  })
+}
+
+export async function updateTeamStats(
+  eventId: string,
+  categoryId: string,
+  teamId: string,
+  updates: Partial<TournamentStats>
+): Promise<void> {
+  // Check if stats doc exists for this team/event/category
+  const q = query(
+    statsCollection,
+    where("eventId", "==", eventId),
+    where("categoryId", "==", categoryId),
+    where("teamId", "==", teamId)
+  )
+  const snapshot = await getDocs(q)
+
+  if (snapshot.empty) {
+    // Create new
+    await addDoc(statsCollection, {
+      eventId,
+      categoryId,
+      teamId,
+      played: 0,
+      won: 0,
+      lost: 0,
+      draw: 0,
+      points: 0,
+      totalTime: 0,
+      ...updates,
+      updatedAt: Timestamp.now(),
+    })
+  } else {
+    // Update existing
+    const docRef = snapshot.docs[0].ref
+    await updateDoc(docRef, {
+      ...updates,
+      updatedAt: Timestamp.now(),
+    })
+  }
+}
+
 export { db, auth }
+
+/**
+ * Updates stats for teams based on match results.
+ * Handles incrementing stats, not just overwriting.
+ * Intended to be called when a match is marked completed or results change.
+ * 
+ * NOTE: This naive implementation assumes we are adding results. 
+ * If editing a previously saved result, we ideally need to subtract old and add new.
+ * For MVP/Proof of Concept, we will assume "Save" = "Add".
+ * The proper way is backend triggers or passing 'oldMatch' state.
+ * 
+ * To handle repeated saves:
+ * We can fetch current Stats, update them. 
+ * But if we call this 5 times, we add points 5 times.
+ * RISK: User clicks save multiple times.
+ * MITIGATION: We'll overwrite specific match contribution? No, that's complex without subcollections.
+ * SIMPLEST MITIGATION for MVP:
+ * For "Qualifiers", we are calculating total points. 
+ * We should probably recalc from scratch if we want to be safe?
+ * Or just warn user "Only save once".
+ * 
+ * BETTER APPROACH:
+ * Fetch all matches for this team in this stage.
+ * Recalculate totals.
+ * Save totals.
+ * This is robust against edits and multiple saves.
+ */
+export async function updateStandingStats(eventId: string, categoryId: string): Promise<void> {
+  // 1. Fetch ALL matches for this category
+  const matches = await getMatchesByCategory(eventId, categoryId)
+
+  // 2. Fetch ALL stats (or we will create/overwrite them)
+  // Actually efficient to just recalc all teams involved.
+
+  // Map teamId -> Stats accumulator
+  const teamStats = new Map<string, {
+    played: number,
+    won: number,
+    lost: number,
+    draw: number,
+    points: number, // Winpoints
+    koPoints: number,
+    goals: number,
+    bestTime: number, // Track best time
+    totalTime: number // Track total time (optional)
+  }>()
+
+  // Helper to init
+  const getInit = () => ({
+    played: 0,
+    won: 0,
+    lost: 0,
+    draw: 0,
+    points: 0,
+    koPoints: 0,
+    goals: 0,
+    bestTime: Number.MAX_SAFE_INTEGER,
+    totalTime: 0
+  })
+
+  // 3. Iterate matches and sum up
+  // Only count "completed" matches? Yes.
+  // Only count "group" (Qualifier) matches? 
+  // Usually points are for Group Phase. Bracket doesn't give points usually.
+  // The user said: "Qualifying Phase -> Table with Points".
+  // So distinct scope: Match.stage === "group" (or undefined fallback if we treat all as such initially)
+
+  const validMatches = matches.filter(m => m.status === "completed" && m.stage === "group")
+
+  for (const m of validMatches) {
+    if (m.teamAId) {
+      if (!teamStats.has(m.teamAId)) teamStats.set(m.teamAId, getInit())
+      const s = teamStats.get(m.teamAId)!
+
+      s.played++
+      // Points (stored in scoreA)
+      s.points += (m.scoreA || 0)
+
+      // Specifics
+      s.koPoints += (m.koPointsA || 0)
+      s.goals += (m.goalsA || 0)
+
+      // Time: User asked for "Best Time" (rc car) usually? Or Total?
+      // "rc car: winpoints and time".
+      // If it's Race mode, usually you keep your Best Lap or Best Race Time?
+      // Let's track Best Time.
+      if (m.timeA && m.timeA > 0) {
+        if (m.timeA < s.bestTime) s.bestTime = m.timeA
+        s.totalTime += m.timeA
+      }
+
+      // Won/Lost (Derived from points? Or strict winnerId?)
+      // If winnerId set:
+      if (m.winnerId === m.teamAId) s.won++
+      else if (m.winnerId === m.teamBId) s.lost++
+      else if (!m.winnerId && m.status === 'completed') s.draw++ // Tie?
+    }
+
+    if (m.teamBId) {
+      if (!teamStats.has(m.teamBId)) teamStats.set(m.teamBId, getInit())
+      const s = teamStats.get(m.teamBId)!
+
+      s.played++
+      s.points += (m.scoreB || 0)
+      s.koPoints += (m.koPointsB || 0)
+      s.goals += (m.goalsB || 0)
+
+      if (m.timeB && m.timeB > 0) {
+        if (m.timeB < s.bestTime) s.bestTime = m.timeB
+        s.totalTime += m.timeB
+      }
+
+      if (m.winnerId === m.teamBId) s.won++
+      else if (m.winnerId === m.teamAId) s.lost++
+      else if (!m.winnerId && m.status === 'completed') s.draw++
+    }
+  }
+
+  // 4. Save to Firestore
+  // We update everyone found in the matches.
+  // What about teams with 0 matches? They won't be in the loop.
+  // They should stay at 0 or whatever they were initialized with.
+  // `updateTeamStats` handles create if not exists.
+
+  const updates = Array.from(teamStats.entries()).map(async ([teamId, stats]) => {
+    // Fix infinite bestTime if no races
+    const safeBestTime = stats.bestTime === Number.MAX_SAFE_INTEGER ? 0 : stats.bestTime
+
+    // We'll update totalTime with BestTime if that's what's used for sorting?
+    // In my sort logic earlier: `a.totalTime - b.totalTime` (asc).
+    // So if I map `bestTime` to `totalTime` field, the sorter works for "Best Time".
+    // "totalTime" name is ambiguous, I'll use it to store the Sorting Metric for time.
+
+    await updateTeamStats(eventId, categoryId, teamId, {
+      played: stats.played,
+      won: stats.won,
+      lost: stats.lost,
+      draw: stats.draw,
+      points: stats.points,
+      koPoints: stats.koPoints,
+      goals: stats.goals,
+      totalTime: safeBestTime // Storing best time here for sorting compatibility
+    })
+  })
+
+  await Promise.all(updates)
+}
