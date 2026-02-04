@@ -120,11 +120,11 @@
 
 .bar-arrow {
     position: absolute;
-    right: 3.4rem;
-    /* Aligns with center of the login button (2rem padding + 20px center) */
+    right: 1rem;
+    /* Push further right -> closer to edge */
     top: 50%;
     transform: translateY(-50%);
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: #E32636;
     font-weight: bold;
     animation: bounceArrow 1s infinite alternate ease-in-out;
@@ -133,11 +133,11 @@
 
 @keyframes bounceArrow {
     from {
-        transform: translateY(-50%);
+        transform: translateY(-50%) rotate(-10deg);
     }
 
     to {
-        transform: translateY(-20%);
+        transform: translateY(-30%) rotate(0deg);
     }
 }
 
@@ -217,5 +217,9 @@
     .navbar-social {
         z-index: 101;
         /* Keep visible above menu if needed, or hide */
+    }
+
+    .bar-arrow {
+        display: none;
     }
 }

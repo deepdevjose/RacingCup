@@ -15,10 +15,12 @@ function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const navRef = useRef<HTMLElement>(null)
     const bannerRef = useRef<HTMLDivElement>(null)
+    const loginBtnRef = useRef<HTMLAnchorElement>(null) // Ref for login button
 
     useGSAP(() => {
         const banner = bannerRef.current
-        if (!banner) return
+        const loginBtn = loginBtnRef.current
+        if (!banner || !loginBtn) return
 
         // Initial state: hidden above viewport
         gsap.set(banner, { yPercent: -100 })
@@ -27,11 +29,28 @@ function Navbar() {
             start: "top top",
             end: 99999,
             onUpdate: (self) => {
-                // Show banner when scrolling UP (dir -1) and not at absolute top
+                // Show banner AND animate login button when scrolling UP (dir -1)
                 if (self.direction === -1 && self.scroll() > 100) {
                     gsap.to(banner, { yPercent: 0, duration: 0.3, ease: "power2.out" })
+
+                    // Pulse/Shake animation for login button to attract attention
+                    gsap.to(loginBtn, {
+                        scale: 1.2,
+                        color: "#E32636",
+                        duration: 0.3,
+                        overwrite: true
+                    })
                 } else {
                     gsap.to(banner, { yPercent: -100, duration: 0.3, ease: "power2.in" })
+
+                    // Reset login button
+                    gsap.to(loginBtn, {
+                        scale: 1,
+                        color: "#000000", // Assuming default is black relative to container, or inherit
+                        clearProps: "color", // Clear color to revert to CSS hover styles
+                        duration: 0.3,
+                        overwrite: true
+                    })
                 }
             }
         })
@@ -43,7 +62,7 @@ function Navbar() {
             <div className="announcement-bar" ref={bannerRef}>
                 <div className="bar-content">
                     <span>📢 Haz tu pre-registro, la entrada solo cuesta <strong>$50 pesitos</strong></span>
-                    <span className="bar-arrow">🡣</span>
+                    <span className="bar-arrow">⤵</span>
                 </div>
             </div>
 
@@ -81,7 +100,7 @@ function Navbar() {
                     </a>
 
                     {/* Login Icon */}
-                    <Link href="/login" className="social-link login-btn" aria-label="Iniciar Sesión">
+                    <Link href="/login" className="social-link login-btn" aria-label="Iniciar Sesión" ref={loginBtnRef}>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
