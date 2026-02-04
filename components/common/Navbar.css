@@ -67,6 +67,8 @@
 }
 
 .social-link {
+    position: relative;
+    /* Anchor for absolute particles */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -86,6 +88,32 @@
 .login-btn:hover {
     background-color: #E32636;
     color: white;
+    transform: scale(1.2);
+    /* Extra expansion on hover */
+    box-shadow: 0 0 15px rgba(227, 38, 54, 0.6);
+    /* Glow effect */
+    animation: wobble 0.6s ease-in-out both;
+    /* Movement! */
+}
+
+@keyframes wobble {
+
+    0%,
+    100% {
+        transform: scale(1.2) rotate(0deg);
+    }
+
+    25% {
+        transform: scale(1.2) rotate(-15deg);
+    }
+
+    50% {
+        transform: scale(1.2) rotate(15deg);
+    }
+
+    75% {
+        transform: scale(1.2) rotate(-5deg);
+    }
 }
 
 /* Top Announcement Bar */
@@ -222,4 +250,34 @@
     .bar-arrow {
         display: none;
     }
+}
+
+/* --- Explosive Effect Styles --- */
+.exploding {
+    background: transparent !important;
+    color: transparent !important;
+    pointer-events: none;
+    user-select: none;
+}
+
+.exploding svg,
+.exploding path {
+    visibility: hidden;
+}
+
+.particle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.particle--debris {
+    background: #E32636;
+    /* Using our brand red instead of blue */
+}
+
+.particle--fire {
+    border-radius: 50%;
 }

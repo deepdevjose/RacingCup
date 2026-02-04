@@ -4,6 +4,14 @@ import './globals.css'
 export const metadata = {
     title: 'Racing Cup',
     description: 'Torneo de carreras con los mejores equipos de la región',
+    icons: {
+        icon: [
+            { url: '/logo.png' },
+            { url: '/logo.png', sizes: '32x32' },
+            { url: '/logo.png', sizes: '192x192' },
+        ],
+        apple: { url: '/logo.png' },
+    },
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
