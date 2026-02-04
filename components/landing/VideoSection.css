@@ -1,0 +1,68 @@
+/**
+ * Video Section Styles
+ * Black background, centered video
+ */
+
+.video-section {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #E32636;
+    padding: 6rem 2rem;
+    color: #FFFFFF;
+}
+
+.video-container {
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+    z-index: 2;
+}
+
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    /* 16:9 Aspect Ratio */
+    height: 0;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(255, 255, 255, 0.05);
+    /* Subtle white glow */
+    background: #111;
+}
+
+.video-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Video Description Text */
+.video-description {
+    max-width: 700px;
+    margin: 4rem auto 0 auto;
+    text-align: center;
+}
+
+.video-description p {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .video-section {
+        padding: 4rem 1rem;
+        min-height: auto;
+    }
+
+    .video-description p {
+        font-size: 1rem;
+    }
+}

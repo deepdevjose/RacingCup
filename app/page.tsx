@@ -8,6 +8,8 @@ import BracketViewer from '@/components/landing/BracketViewer'
 import TeamsList from '@/components/landing/TeamsList'
 import Footer from '@/components/common/Footer'
 import ScrollManager from '@/components/common/ScrollManager'
+import TournamentSection from '@/components/landing/TournamentSection'
+import VideoSection from '@/components/landing/VideoSection'
 import '@/components/landing/LandingPage.css'
 import { Event, Tab } from '@/types'
 
@@ -38,6 +40,9 @@ export default function Home() {
             <Navbar />
 
             <Hero event={event} />
+
+            <TournamentSection />
+            <VideoSection />
 
             <section className="section section-secondary">
                 <div className="container">
