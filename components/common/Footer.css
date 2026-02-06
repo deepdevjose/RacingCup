@@ -2,108 +2,160 @@
  * Footer Styles
  */
 
-.footer {
-    padding: var(--space-16) var(--space-4) var(--space-8);
-    border-top: 4px solid var(--color-primary);
+.footer-section {
+    width: 100%;
+    background-color: #000000;
+    color: #ffffff;
+    padding: 80px 40px 60px 40px;
+    font-family: 'Outfit', sans-serif;
+    position: relative;
+    z-index: 10;
 }
 
 .footer-container {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: var(--space-12);
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-/* Brand */
-.footer-brand {
+/* Contact */
+.footer-contact {
+    margin-bottom: 60px;
+}
+
+.footer-label {
+    font-size: 14px;
+    color: #888888;
+    margin-bottom: 8px;
+    margin-top: 0;
+}
+
+.footer-email {
+    display: block;
+    font-size: 48px;
+    font-weight: 800;
+    color: #ffffff;
+    text-decoration: none;
+    letter-spacing: -0.02em;
+    transition: color 0.3s;
+}
+
+.footer-email:hover {
+    color: #FFD700;
+}
+
+/* Socials */
+.footer-socials {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 60px;
 }
 
-.footer-logo {
-    font-family: var(--font-display);
-    font-size: var(--text-3xl);
-    color: var(--color-accent);
-    text-shadow: 3px 3px 0 #000;
-}
-
-.footer-tagline {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    font-style: italic;
-}
-
-/* Links */
-.footer-links {
+.social-link {
     display: flex;
-    gap: var(--space-12);
-    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: opacity 0.3s;
 }
 
-.footer-section {
+.social-link:hover {
+    opacity: 0.7;
+}
+
+.social-icon {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    background-color: #ffffff;
+    border-radius: 50%;
 }
 
-.footer-title {
-    font-family: var(--font-heading);
-    font-size: var(--text-sm);
-    font-weight: var(--font-bold);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-text-primary);
-    margin-bottom: var(--space-2);
+.social-icon svg {
+    display: block;
+    flex-shrink: 0;
 }
 
-.footer-section ul {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+.social-text {
+    font-size: 14px;
+    color: #ffffff;
 }
 
-.footer-section a {
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    transition: color var(--transition-fast);
+/* Credits */
+.footer-credits {
+    margin-bottom: 40px;
+    font-size: 13px;
+    color: #666666;
+    line-height: 1.8;
 }
 
-.footer-section a:hover {
-    color: var(--color-accent);
+.footer-credits p {
+    margin: 0;
+}
+
+.footer-credits a {
+    color: #888888;
+    text-decoration: underline;
+}
+
+/* Divider */
+.footer-divider {
+    width: 100%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 30px;
 }
 
 /* Bottom */
 .footer-bottom {
-    grid-column: 1 / -1;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: var(--space-8);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: var(--space-8);
 }
 
-.footer-copyright,
-.footer-credits {
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
+.vroom-logo-text {
+    font-family: 'Luckiest Guy', 'Impact', sans-serif;
+    font-size: 24px;
+    color: #ffffff;
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: 0.02em;
 }
 
-/* Responsive */
+.footer-copyright {
+    font-size: 12px;
+    color: #555555;
+}
+
+.footer-copyright p {
+    margin: 0;
+}
+
 @media (max-width: 768px) {
-    .footer-container {
-        grid-template-columns: 1fr;
-        gap: var(--space-8);
-        text-align: center;
+    .footer-section {
+        padding: 60px 20px 40px 20px;
     }
 
-    .footer-links {
-        justify-content: center;
-        gap: var(--space-8);
+    .footer-email {
+        font-size: 28px;
+    }
+
+    .footer-socials {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
     }
 
     .footer-bottom {
         flex-direction: column;
-        gap: var(--space-2);
+        align-items: flex-start;
+        gap: 20px;
     }
 }

@@ -12,6 +12,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const PARTNERS = [
     { name: 'Racing Cup', src: '/logo.png', width: 150, height: 150 },
+    { name: 'TICS', src: '/tics.png', width: 80, height: 80 },
     { name: 'ITSOEH', src: '/itsoeg.png', width: 200, height: 80 },
     { name: 'Educación', src: '/educacion.png', width: 200, height: 80 },
     { name: 'Sparko', src: '/sparko.png', width: 180, height: 80 },
@@ -157,7 +158,7 @@ export default function TournamentSection() {
                                 alt={`${partner.name} Logo`}
                                 width={partner.width}
                                 height={partner.height}
-                                className="partner-logo"
+                                className={`partner-logo ${partner.name === 'TICS' ? 'partner-logo-tics' : ''}`}
                             />
                         </div>
                     ))}

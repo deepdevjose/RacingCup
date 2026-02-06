@@ -9,7 +9,11 @@ import TeamsList from '@/components/landing/TeamsList'
 import Footer from '@/components/common/Footer'
 import ScrollManager from '@/components/common/ScrollManager'
 import TournamentSection from '@/components/landing/TournamentSection'
+import CountdownSection from '@/components/landing/CountdownSection'
 import VideoSection from '@/components/landing/VideoSection'
+import NewsSection from '@/components/landing/NewsSection'
+import CarouselSection from '@/components/landing/CarouselSection'
+import VroomSection from '@/components/landing/VroomSection'
 import '@/components/landing/LandingPage.css'
 import { Event, Tab } from '@/types'
 
@@ -40,46 +44,18 @@ export default function Home() {
             <Navbar />
 
             <Hero event={event} />
-
+            <CountdownSection />
             <TournamentSection />
             <VideoSection />
+            <NewsSection />
+            <CarouselSection />
+            <VroomSection />
 
-            <section className="section section-secondary">
-                <div className="container">
-                    <nav className="tabs-nav">
-                        {tabs.map(tab => (
-                            <button
-                                key={tab.id}
-                                className={`tab-btn ${activeTab === tab.id ? 'tab-btn-active' : ''}`}
-                                onClick={() => setActiveTab(tab.id)}
-                            >
-                                <span className="tab-icon">{tab.icon}</span>
-                                <span className="tab-label">{tab.label}</span>
-                            </button>
-                        ))}
-                    </nav>
-
-                    <div className="tab-content">
-                        {activeTab === 'standings' && <Standings eventId={event.id} />}
-                        {activeTab === 'bracket' && <BracketViewer eventId={event.id} />}
-                        {activeTab === 'teams' && <TeamsList eventId={event.id} />}
-                        {activeTab === 'rules' && (
-                            <div className="rules-content card">
-                                <h3 className="section-title">Reglas del Torneo</h3>
-                                <ul className="rules-list">
-                                    <li>Eliminación directa (single elimination)</li>
-                                    <li>Equipos de 2-4 jugadores</li>
-                                    <li>Un usuario solo puede estar en un equipo por evento</li>
-                                    <li>Resultados confirmados por staff oficial</li>
-                                    <li>Certificados emitidos al finalizar el evento</li>
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </section>
+            {/* <section className="section section-secondary"> REMOVED </section> */}
 
             <Footer />
         </div>
     )
 }
+
+

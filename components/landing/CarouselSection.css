@@ -1,0 +1,103 @@
+/**
+ * Carousel Section Styles
+ */
+
+.carousel-section {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    /* Reverted to Strip Size */
+    background-color: #000000;
+    /* Dark background better for cinematic feel */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 2rem 0;
+    /* Add padding back to center strip vertically if needed, or remove for full bleed strip */
+    padding: 0;
+    /* Let's go full bleed strip */
+}
+
+.carousel-wrapper {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+}
+
+.carousel-track {
+    display: flex;
+    gap: 0;
+    width: max-content;
+    height: 100%;
+}
+
+.carousel-item {
+    flex: 0 0 auto;
+    height: 100%;
+    width: auto;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-item img {
+    height: 100%;
+    width: auto;
+    max-width: none;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.8) contrast(1.1);
+    /* Cinematic look */
+    transition: filter 0.5s ease;
+}
+
+/* Cinematic Vignette Overlay */
+.carousel-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.8) 100%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Static Overlay Title */
+.gallery-title-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    pointer-events: none;
+    width: 100%;
+    text-align: center;
+}
+
+.gallery-title-overlay h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 8rem;
+    /* Smaller than full screen but still big */
+    font-weight: 900;
+    text-transform: uppercase;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.1em;
+    mix-blend-mode: overlay;
+}
+
+/* Hover Effects */
+.carousel-section:hover .carousel-item img {
+    filter: brightness(0.4) blur(1px);
+}
+
+.carousel-item:hover img {
+    filter: brightness(1) !important;
+    z-index: 2;
+    transform: scale(1.02);
+}

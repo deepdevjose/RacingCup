@@ -85,7 +85,7 @@ function Navbar() {
             {/* Top Announcement Bar */}
             <div className="announcement-bar" ref={bannerRef}>
                 <div className="bar-content">
-                    <span>📢 Haz tu pre-registro, la entrada solo cuesta <strong>$50 pesitos</strong></span>
+                    <span>📢 Haz tu pre-registro, la entrada solo cuesta <strong>$100 pesitos</strong></span>
                     <span className="bar-arrow">⤵</span>
                 </div>
             </div>
@@ -122,7 +122,7 @@ function Navbar() {
                         href="https://www.facebook.com/ITIC.ITSOEHmx"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="social-link"
+                        className="social-link facebook-link"
                         aria-label="Facebook"
                         onClick={(e) => handlePopClick(e, "https://www.facebook.com/ITIC.ITSOEHmx", true)}
                     >

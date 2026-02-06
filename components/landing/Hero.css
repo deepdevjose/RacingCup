@@ -7,6 +7,7 @@
     width: 100%;
     min-height: 100vh;
     padding-bottom: 2rem;
+    padding-top: 3rem;
     /* Extra space to prevent next section peeking */
     display: flex;
     align-items: center;
@@ -46,6 +47,48 @@
 }
 
 
+
+/* Partners Section (Below Main Logo) */
+.hero-partners {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.hero-partners-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.partner-logo-hero {
+    height: 80px;
+    width: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+    transition: transform 0.3s ease;
+}
+
+.partner-logo-hero:hover {
+    transform: scale(1.1);
+}
+
+.partner-logo-itsoeh {
+    height: 60px;
+}
+
+.hero-career-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    text-align: center;
+    letter-spacing: 0.05em;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
 
 /* Bottom Left Badge */
 .hero-badge-left {

@@ -292,4 +292,10 @@
     .partner-logo {
         height: 50px;
     }
+
+}
+
+.partner-logo-tics {
+    height: 160px !important;
+    max-width: 350px;
 }

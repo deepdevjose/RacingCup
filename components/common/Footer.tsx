@@ -1,53 +1,39 @@
+'use client'
+
 import './Footer.css'
 
-/**
- * Footer - Site footer with social links
- */
-function Footer() {
-    const currentYear = new Date().getFullYear()
-
+export default function Footer() {
     return (
-        <footer className="footer section-dark">
-            <div className="container footer-container">
-                {/* Logo */}
-                <div className="footer-brand">
-                    <span className="footer-logo">RACING CUP</span>
-                    <p className="footer-tagline">Competencia. Velocidad. Gloria.</p>
+        <footer className="footer-section">
+            <div className="footer-container">
+
+                {/* Contact Info */}
+                <div className="footer-contact">
+                    <p className="footer-label">Para más información, partnership y prensa:</p>
+                    <a href="mailto:tics@itsoeh.com.mx" className="footer-email">
+                        tics@itsoeh.com.mx
+                    </a>
                 </div>
 
-                {/* Links */}
-                <div className="footer-links">
-                    <div className="footer-section">
-                        <h4 className="footer-title">Plataforma</h4>
-                        <ul>
-                            <li><a href="/">Inicio</a></li>
-                            <li><a href="/auth">Iniciar Sesión</a></li>
-                            <li><a href="/auth?register=true">Registrarse</a></li>
-                        </ul>
-                    </div>
-
-                    <div className="footer-section">
-                        <h4 className="footer-title">Comunidad</h4>
-                        <ul>
-                            <li><a href="#">Discord</a></li>
-                            <li><a href="#">Twitter</a></li>
-                            <li><a href="#">Instagram</a></li>
-                        </ul>
-                    </div>
+                {/* Credits */}
+                <div className="footer-credits">
+                    <p>Racing Cup </p>
+                    <p>Website design & code by <a href="https://github.com/deepdevjose">Deep Dev Jose</a> and <a href="https://github.com/lalo">Lalo</a>.</p>
                 </div>
 
-                {/* Copyright */}
+                <div className="footer-divider"></div>
+
+                {/* Bottom Row */}
                 <div className="footer-bottom">
-                    <p className="footer-copyright">
-                        © {currentYear} Racing Cup. Todos los derechos reservados.
-                    </p>
-                    <p className="footer-credits">
-                        Hecho con 🏎️ por el equipo Racing Cup
-                    </p>
+                    <div className="footer-logo">
+                        <h2 className="vroom-logo-text">RACING CUP</h2>
+                    </div>
+                    <div className="footer-copyright">
+                        <p>Copyright © 2026 Racing Cup. All rights reserved.</p>
+                    </div>
                 </div>
+
             </div>
         </footer>
     )
 }
-
-export default Footer

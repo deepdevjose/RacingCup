@@ -1,0 +1,79 @@
+/**
+ * Vroom Section Styles
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+/* Fun, chunky font */
+
+.vroom-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background-color: #FFD700;
+    /* Vibrant Yellow matches reference */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Dot Pattern Overlay */
+.vroom-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.4) 2px, transparent 2px);
+    background-size: 30px 30px;
+    /* Spaced out dots */
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Background Text Container */
+.vroom-text-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.vroom-title {
+    font-family: 'Luckiest Guy', 'Impact', sans-serif;
+    font-size: 25vw;
+    /* Massive */
+    color: #F8F8F0;
+    /* Off-white text matching reference */
+    margin: 0;
+    line-height: 0.8;
+    transform: rotate(-5deg) skew(-5deg);
+    /* Dynamic curve/skew feel */
+    text-shadow: 10px 10px 0px rgba(0, 0, 0, 0.05);
+    /* Subtle depth */
+    letter-spacing: -0.05em;
+    white-space: nowrap;
+}
+
+/* 3D Container */
+.vroom-3d-container {
+    position: relative;
+    z-index: 10;
+    width: 60%;
+    height: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Placeholder visualization if needed, but kept transparent for now */
+}
+
+/* Placeholder box - hidden in prod, useful for dev */
+.placeholder-content {
+    width: 100%;
+    height: 100%;
+    /* border: 2px dashed rgba(0,0,0,0.1); */
+}
