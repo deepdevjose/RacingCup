@@ -32,9 +32,10 @@
 
 /* Car Logo Image */
 .hero-car-img {
-    width: 91vw;
-    max-width: 1040px;
-    min-width: 520px;
+    width: 72vw;
+    max-width: 830px;
+    min-width: 400px;
+    padding-top: 2rem;
     height: auto;
     filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.6));
     z-index: 15;
@@ -65,7 +66,7 @@
 }
 
 .partner-logo-hero {
-    height: 80px;
+    height: 64px;
     width: auto;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
     transition: transform 0.3s ease;
@@ -76,7 +77,7 @@
 }
 
 .partner-logo-itsoeh {
-    height: 60px;
+    height: 48px;
 }
 
 .hero-career-text {
@@ -99,8 +100,8 @@
 }
 
 .badge-circle {
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
     position: relative;
     background: #F5F5F0;
     border-radius: 50%;

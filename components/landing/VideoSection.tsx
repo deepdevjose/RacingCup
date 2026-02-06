@@ -92,7 +92,7 @@ export default function VideoSection() {
                     <video
                         width="100%"
                         height="100%"
-                        src="/racingcup.mp4"
+                        src="/videos/racingcup.mp4"
                         title="Racing Cup Video"
                         controls
                         autoPlay

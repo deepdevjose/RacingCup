@@ -2,17 +2,18 @@
  * News Section Styles
  * Replicating "Vroom! News"
  */
-@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
-/* For Gothic look */
+/* UnifrakturMaguntia font for gothic title */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
 
 .news-section {
     position: relative;
     width: 100%;
     min-height: 100vh;
     padding: 4rem 2rem;
-    color: #000000;
-    background-color: #F0F0E6;
-    /* Match video section transition */
+    color: #FFFFFF;
+    /* Start with white text on red background */
+    background-color: #000000;
+    /* Start with same color as VideoSection for smooth transition */
     overflow: hidden;
 }
 
@@ -22,10 +23,12 @@
     left: 0;
     width: 100%;
     height: 100%;
+    background-color: #F0F0E6;
+    /* Off-white overlay that fades in */
     background-image: radial-gradient(#aaa 1px, transparent 1px);
     background-size: 20px 20px;
-    opacity: 0.6;
-    /* Subtle texture */
+    opacity: 0;
+    /* Starts invisible, GSAP will animate this */
     pointer-events: none;
     z-index: 0;
 }
@@ -55,7 +58,7 @@
 
 /* Main Gothic Title */
 .news-title {
-    font-family: 'Pirata One', cursive;
+    font-family: 'UnifrakturMaguntia', cursive;
     /* Gothic Style */
     font-size: 8rem;
     margin: 0;

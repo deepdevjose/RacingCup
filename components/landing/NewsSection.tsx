@@ -21,8 +21,8 @@ interface WeatherData {
 }
 
 const NEWS_ITEMS: NewsItem[] = [
-    { id: 1, title: 'Nuevo modo zumo RC!', icon: '🎮', link: '#' },
-    { id: 2, title: 'Nuevo modo roboFut!', icon: '🎮', link: '#' },
+    { id: 1, title: 'Nuevo modo Sumo RC!', icon: '🎮', link: '#' },
+    { id: 2, title: 'Nuevo modo RoboFut!', icon: '🎮', link: '#' },
     { id: 3, title: 'Torneo en directo en esta web!', icon: '🏆', link: '#' },
     { id: 4, title: 'Fotos de la pasada temporada!', icon: '🎥', link: '#' },
 ]
@@ -137,17 +137,47 @@ export default function NewsSection() {
     }, [])
 
     useGSAP(() => {
-        const newsItems = gsap.utils.toArray('.news-item')
+        const newsItems = gsap.utils.toArray('.news-item') as HTMLElement[]
 
-        gsap.from(newsItems, {
-            y: 50,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: "power2.out",
+        // Set initial state
+        gsap.set(newsItems, {
+            y: 60,
+            opacity: 0
+        })
+
+        // Animate each item as it enters the viewport
+        ScrollTrigger.batch(newsItems, {
+            onEnter: (batch) => {
+                gsap.to(batch, {
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.6,
+                    stagger: 0.15,
+                    ease: "power2.out"
+                })
+            },
+            start: "top 85%"
+        })
+
+        // Animate the texture overlay to fade in - synced with VideoSection description transition
+        gsap.to('.texture-overlay-news', {
+            opacity: 1,
             scrollTrigger: {
-                trigger: sectionRef.current,
+                trigger: '.video-description',
                 start: "top 70%",
+                end: "top 40%",
+                scrub: true
+            }
+        })
+
+        // Animate text color from white to black - synced with background change
+        gsap.to('.news-container', {
+            color: '#000000',
+            scrollTrigger: {
+                trigger: '.video-description',
+                start: "top 70%",
+                end: "top 40%",
+                scrub: true
             }
         })
 

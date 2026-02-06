@@ -14,6 +14,11 @@ export const metadata = {
     },
 }
 
+export const viewport = {
+    width: 'device-width',
+    initialScale: 0.8,
+}
+
 import SmoothScroll from '../components/common/SmoothScroll'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -23,7 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link
-                    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Racing+Sans+One&display=swap"
+                    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Pirata+One&family=Racing+Sans+One&family=UnifrakturMaguntia&display=swap"
                     rel="stylesheet"
                 />
             </head>

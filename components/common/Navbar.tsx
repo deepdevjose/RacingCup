@@ -111,7 +111,8 @@ function Navbar() {
                 <ul className={`navbar-menu ${isMenuOpen ? 'active' : ''}`}>
                     <li><Link href="/" className="nav-link" onClick={() => setIsMenuOpen(false)}>El torneo</Link></li>
                     <li><Link href="/news" className="nav-link" onClick={() => setIsMenuOpen(false)}>Racing Cars</Link></li>
-                    <li><Link href="/contact" className="nav-link" onClick={() => setIsMenuOpen(false)}>Zumo RC</Link></li>
+                    <li><Link href="/contact" className="nav-link" onClick={() => setIsMenuOpen(false)}>Sumo RC</Link></li>
+                    <li><Link href="/contact" className="nav-link" onClick={() => setIsMenuOpen(false)}>RoboFut</Link></li>
                     <li><Link href="/about" className="nav-link" onClick={() => setIsMenuOpen(false)}>Acerca de</Link></li>
                 </ul>
 

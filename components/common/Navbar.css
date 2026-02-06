@@ -9,7 +9,7 @@
     left: 0;
     right: 0;
     z-index: 100;
-    padding: 50px 2rem 1.5rem;
+    padding: 36px 1.4rem 1rem;
     background: transparent;
 }
 
@@ -24,8 +24,9 @@
 /* Brand - Left */
 .navbar-brand {
     font-family: 'Racing Sans One', cursive;
-    font-size: 2rem;
+    font-size: 1.4rem;
     font-weight: 900;
+    padding-left: 1rem;
     color: #F5F5F0;
     font-style: italic;
     text-decoration: none;
@@ -35,13 +36,13 @@
 /* Menu - Center */
 .navbar-menu {
     display: flex;
-    gap: 3rem;
+    gap: 2.1rem;
     list-style: none;
 }
 
 .nav-link {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.1rem;
     font-weight: 700;
     color: #F5F5F0;
     text-decoration: none;
@@ -49,7 +50,6 @@
     opacity: 0.8;
     transition: all 0.2s ease;
     display: inline-block;
-    /* Required for transform */
 }
 
 .nav-link:hover {
@@ -63,7 +63,7 @@
 .navbar-right {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.7rem;
 }
 
 .social-link {
@@ -71,8 +71,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     background: #F5F5F0;
     color: #000000 !important;
     /* Always black */

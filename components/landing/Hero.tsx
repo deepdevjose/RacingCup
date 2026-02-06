@@ -45,11 +45,11 @@ function Hero({ event }: HeroProps) {
         <section className="hero" ref={containerRef}>
 
             <div className="hero-center">
-                {/* Main Logo (User's Car) - Replacing the Vroom! text/logo */}
+                {/* Main Logo (User's Car)*/}
                 <div className="hero-main-logo">
                     <img
                         ref={carRef}
-                        src="/logohero.png"
+                        src="/logotypes/logohero.png"
                         alt="Racing Cup Hero Logo"
                         className="hero-car-img"
                     />
@@ -58,8 +58,8 @@ function Hero({ event }: HeroProps) {
                 {/* Partners Logos - Below Main Logo */}
                 <div className="hero-partners">
                     <div className="hero-partners-logos">
-                        <img src="/tics.png" alt="TICS Logo" className="partner-logo-hero" />
-                        <img src="/itsoeg.png" alt="ITSOEH Logo" className="partner-logo-hero partner-logo-itsoeh" />
+                        <img src="/logotypes/tics.png" alt="TICS Logo" className="partner-logo-hero" />
+                        <img src="/logotypes/itsoeg.png" alt="ITSOEH Logo" className="partner-logo-hero partner-logo-itsoeh" />
                     </div>
                     <p className="hero-career-text">
                         Ingeniería en Tecnologías de la Información y Comunicaciones
@@ -84,7 +84,7 @@ function Hero({ event }: HeroProps) {
 
             {/* Bottom Right - Hand Pointing Down */}
             <div className="hero-hand-right">
-                <img src="/manita.png" alt="Scroll Down" className="hand-icon-img" />
+                <img src="/cursors/manita.png" alt="Scroll Down" className="hand-icon-img" />
             </div>
 
         </section>

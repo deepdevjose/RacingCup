@@ -10,6 +10,7 @@
     align-items: center;
     justify-content: center;
     background-color: #E32636;
+    /* Red background - essential for animation flow */
     padding: 6rem 2rem;
     color: #FFFFFF;
     position: relative;

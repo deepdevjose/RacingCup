@@ -4,16 +4,23 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import './VroomSection.css'
+import dynamic from 'next/dynamic'
+import './ThreeDSection.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function VroomSection() {
+// Dynamically import the 3D canvas component with SSR disabled
+const ThreeCanvas = dynamic(() => import('./ThreeCanvas'), {
+    ssr: false,
+    loading: () => null
+})
+
+export default function ThreeDSection() {
     const sectionRef = useRef<HTMLElement>(null)
     const textRef = useRef<HTMLDivElement>(null)
 
     useGSAP(() => {
-        // Parallax effect for VROOM text
+        // Parallax effect for RC text
         gsap.to(textRef.current, {
             y: 100, // Move down as we scroll down
             ease: "none",
@@ -49,21 +56,15 @@ export default function VroomSection() {
     }, { scope: sectionRef })
 
     return (
-        <section className="vroom-section" ref={sectionRef}>
-            {/* Background Pattern */}
-            <div className="vroom-pattern"></div>
-
+        <section className="threed-section" ref={sectionRef}>
             {/* Background Text */}
-            <div className="vroom-text-container" ref={textRef}>
-                <h1 className="vroom-title">RC!</h1>
+            <div className="threed-text-container" ref={textRef}>
+                <h1 className="threed-title">RC!</h1>
             </div>
 
-            {/* 3D Model Placeholder Container */}
-            <div className="vroom-3d-container">
-                {/* 3D Model will go here later */}
-                <div className="placeholder-content">
-                    {/* Empty or just a marker? Keeping it clean as requested */}
-                </div>
+            {/* 3D Model Container */}
+            <div className="threed-3d-container">
+                <ThreeCanvas />
             </div>
         </section>
     )

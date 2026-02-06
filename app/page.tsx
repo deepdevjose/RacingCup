@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import Hero from '@/components/landing/Hero'
 import Navbar from '@/components/common/Navbar'
 import Standings from '@/components/landing/Standings'
@@ -13,9 +14,13 @@ import CountdownSection from '@/components/landing/CountdownSection'
 import VideoSection from '@/components/landing/VideoSection'
 import NewsSection from '@/components/landing/NewsSection'
 import CarouselSection from '@/components/landing/CarouselSection'
-import VroomSection from '@/components/landing/VroomSection'
 import '@/components/landing/LandingPage.css'
 import { Event, Tab } from '@/types'
+
+// Dynamic import for 3D section (client-side only)
+const ThreeDSection = dynamic(() => import('@/components/landing/ThreeDSection'), {
+    ssr: false,
+})
 
 /**
  * LandingPage - Main public event page
@@ -49,9 +54,8 @@ export default function Home() {
             <VideoSection />
             <NewsSection />
             <CarouselSection />
-            <VroomSection />
+            <ThreeDSection />
 
-            {/* <section className="section section-secondary"> REMOVED </section> */}
 
             <Footer />
         </div>

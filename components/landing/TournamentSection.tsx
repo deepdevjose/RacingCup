@@ -11,11 +11,11 @@ import './TournamentSection.css'
 gsap.registerPlugin(ScrollTrigger)
 
 const PARTNERS = [
-    { name: 'Racing Cup', src: '/logo.png', width: 150, height: 150 },
-    { name: 'TICS', src: '/tics.png', width: 80, height: 80 },
-    { name: 'ITSOEH', src: '/itsoeg.png', width: 200, height: 80 },
-    { name: 'Educación', src: '/educacion.png', width: 200, height: 80 },
-    { name: 'Sparko', src: '/sparko.png', width: 180, height: 80 },
+    { name: 'Racing Cup', src: '/logotypes/logo.png', width: 150, height: 150 },
+    { name: 'TICS', src: '/logotypes/tics.png', width: 80, height: 80 },
+    { name: 'ITSOEH', src: '/logotypes/itsoeg.png', width: 200, height: 80 },
+    { name: 'Educación', src: '/logotypes/educacion.png', width: 200, height: 80 },
+    { name: 'Sparko', src: '/logotypes/sparko.png', width: 180, height: 80 },
 ]
 
 // Fire particle creation function
