@@ -4,6 +4,7 @@ import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import Hero from '@/components/landing/Hero'
 import Navbar from '@/components/common/Navbar'
+import ModelPreloader from '@/components/common/ModelPreloader'
 import Standings from '@/components/landing/Standings'
 import BracketViewer from '@/components/landing/BracketViewer'
 import TeamsList from '@/components/landing/TeamsList'
@@ -46,6 +47,7 @@ export default function Home() {
     return (
         <div className="landing-page">
             <ScrollManager />
+            <ModelPreloader />
             <Navbar />
 
             <Hero event={event} />
