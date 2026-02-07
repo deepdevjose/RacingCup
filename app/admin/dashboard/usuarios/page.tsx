@@ -129,7 +129,7 @@ export default function AdminUsuariosPage() {
             doc.addImage(logoRacing, 'PNG', (width / 2) - 15, bottomY, 30, 20, undefined, 'FAST')
             doc.addImage(logoSparko, 'PNG', width - 70, bottomY, 30, 20, undefined, 'FAST')
 
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error loading images", error)
         }
 
@@ -362,7 +362,7 @@ export default function AdminUsuariosPage() {
                                 <select
                                     className="admin-input"
                                     value={currentUser.role || 'Usuario'}
-                                    onChange={e => setCurrentUser({ ...currentUser, role: e.target.value as any })}
+                                    onChange={e => setCurrentUser({ ...currentUser, role: e.target.value as 'Usuario' | 'Administrador' })}
                                 >
                                     <option value="Usuario">Usuario</option>
                                     <option value="Administrador">Administrador</option>

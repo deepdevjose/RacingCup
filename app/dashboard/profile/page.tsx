@@ -20,8 +20,8 @@ export default function ProfilePage() {
     const [activeTab, setActiveTab] = React.useState('teams')
 
     // Mock Data (Empty for now to avoid false info)
-    const notifications = []
-    const invitations = []
+    const notifications: { id: string; title: string; time: string; icon: string }[] = []
+    const invitations: { id: string; teamName: string; inviter: string; role: string }[] = []
 
     // Temporary state for the modal form
     const [editForm, setEditForm] = React.useState(profile)
