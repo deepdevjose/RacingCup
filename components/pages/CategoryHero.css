@@ -37,7 +37,7 @@
 
 /* Title */
 .category-hero-title {
-    font-family: 'Racing Sans One', cursive;
+    font-family: 'Outfit', sans-serif;
     font-size: clamp(3rem, 10vw, 6rem);
     color: #fff;
     text-transform: uppercase;

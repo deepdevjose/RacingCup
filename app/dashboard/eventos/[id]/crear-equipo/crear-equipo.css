@@ -1,0 +1,168 @@
+/**
+ * Create Team Page Styles
+ */
+
+.crear-equipo-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.crear-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1.5rem;
+    background: rgba(227, 38, 54, 0.15);
+    border: 2px solid rgba(227, 38, 54, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #E32636;
+}
+
+.crear-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.5rem 0;
+}
+
+.crear-subtitle {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 2rem 0;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+
+.input-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.75rem;
+}
+
+.team-name-input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.5rem;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.team-name-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.team-name-input:focus {
+    outline: none;
+    border-color: rgba(227, 38, 54, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Icon Grid */
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.75rem;
+}
+
+.icon-option {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    color: #E32636;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.icon-option:hover {
+    background: rgba(227, 38, 54, 0.1);
+    border-color: rgba(227, 38, 54, 0.3);
+}
+
+.icon-option.selected {
+    background: rgba(227, 38, 54, 0.2);
+    border-width: 2px;
+}
+
+/* Color Grid */
+.color-grid {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.color-option {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+}
+
+.color-option.selected {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+/* Create Button */
+.btn-crear-equipo {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #E32636;
+    border: none;
+    border-radius: 0.5rem;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-crear-equipo:hover:not(:disabled) {
+    background: #c91f2d;
+    transform: scale(1.02);
+}
+
+.btn-crear-equipo:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .icon-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .color-option {
+        width: 40px;
+        height: 40px;
+    }
+}

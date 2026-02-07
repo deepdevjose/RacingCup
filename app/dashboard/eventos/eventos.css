@@ -1,0 +1,301 @@
+/**
+ * Eventos Page Styles
+ * Racing Cup Events/Categories Layout
+ */
+
+/* Hero Section with Background Image */
+.eventos-hero {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 3rem 2rem;
+    margin-bottom: 3rem;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0D0D1A 0%, #1a1a2e 100%);
+}
+
+.eventos-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.6;
+    z-index: 1;
+}
+
+.eventos-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+    z-index: 2;
+}
+
+.eventos-hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 600px;
+}
+
+.eventos-hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    line-height: 1.1;
+}
+
+.eventos-hero-subtitle {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1.5rem;
+}
+
+/* Categories Grid */
+.categorias-section {
+    margin-bottom: 4rem;
+}
+
+.section-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-title::before {
+    content: '';
+    width: 4px;
+    height: 1.5rem;
+    background: #E32636;
+    border-radius: 2px;
+}
+
+.categorias-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Category Card */
+.categoria-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(145deg, #0D0D1A, #151525);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+}
+
+.categoria-card:hover {
+    border-color: rgba(227, 38, 54, 0.3);
+    transform: translateX(5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Date Badge */
+.categoria-date-badge {
+    width: 70px;
+    height: 70px;
+    background: #E32636;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.categoria-date-day {
+    font-size: 1.75rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.categoria-date-month {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Category Info */
+.categoria-info {
+    flex-grow: 1;
+}
+
+.categoria-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(227, 38, 54, 0.15);
+    border: 1px solid rgba(227, 38, 54, 0.3);
+    border-radius: 2rem;
+    color: #E32636;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.categoria-status.cupo-limitado {
+    background: rgba(255, 193, 7, 0.15);
+    border-color: rgba(255, 193, 7, 0.4);
+    color: #FFC107;
+}
+
+.categoria-status.próximamente {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.categoria-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.categoria-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.5rem;
+}
+
+.categoria-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.categoria-desc {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+}
+
+/* Action Button */
+.categoria-action {
+    flex-shrink: 0;
+}
+
+.btn-ver-detalles {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.5rem;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-ver-detalles:hover {
+    background: #E32636;
+    border-color: #E32636;
+    transform: scale(1.05);
+}
+
+/* Page Header */
+.eventos-page-header {
+    text-align: center;
+    padding: 2rem 0 3rem;
+}
+
+.eventos-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    background: rgba(227, 38, 54, 0.15);
+    border: 1px solid rgba(227, 38, 54, 0.4);
+    border-radius: 2rem;
+    color: #E32636;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+}
+
+.eventos-main-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.eventos-main-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .eventos-hero {
+        min-height: 300px;
+        padding: 2rem 1.5rem;
+    }
+
+    .eventos-hero-title {
+        font-size: 2rem;
+    }
+
+    .categoria-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .categoria-date-badge {
+        margin: 0 auto;
+    }
+
+    .categoria-meta {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .categoria-action {
+        width: 100%;
+    }
+
+    .btn-ver-detalles {
+        width: 100%;
+        justify-content: center;
+    }
+}

@@ -1,0 +1,141 @@
+'use client'
+
+import React, { useRef } from 'react'
+import Link from 'next/link'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
+import './dashboard.css'
+
+export default function DashboardPage() {
+    const containerRef = useRef(null)
+    const [profile] = React.useState({
+        gamertag: '#JOSEPO23',
+        avatarId: 0
+    })
+
+    const userIcon = (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+    )
+
+    useGSAP(() => {
+        // Set initial state - elements are visible immediately
+        gsap.set('.dashboard-hero', { opacity: 1, y: 0 })
+        gsap.set('.nav-card', { opacity: 1, y: 0 })
+
+        // Animate from slightly offset position
+        gsap.from('.dashboard-hero', { y: 20, opacity: 0, duration: 0.8, ease: 'power3.out' })
+        gsap.from('.nav-card', {
+            y: 30,
+            opacity: 0,
+            stagger: 0.15,
+            duration: 0.7,
+            ease: 'back.out(1.2)',
+            delay: 0.3
+        })
+    }, { scope: containerRef })
+
+    return (
+        <div className="dashboard-layout">
+            {/* Navbar */}
+            <nav className="dashboard-nav">
+                <div className="container nav-content">
+                    <Link href="/dashboard" className="nav-logo">
+                        <img src="/logotypes/logo.png" alt="Racing Cup" style={{ height: '30px' }} />
+                        <span>Racing Cup TICs</span>
+                    </Link>
+
+                    <div className="nav-links">
+                        <Link href="/dashboard" className="nav-link active">Inicio</Link>
+                        <Link href="/dashboard/eventos" className="nav-link">Eventos</Link>
+                        <Link href="/dashboard/equipos" className="nav-link">Equipos</Link>
+                    </div>
+
+                    <Link href="/dashboard/profile" className="nav-user-pill" style={{ textDecoration: 'none' }}>
+                        {userIcon}
+                        <div className="pill-content">
+                            <span className="pill-gamertag">{profile.gamertag}</span>
+                            <span className="pill-subtitle">Ver mi perfil</span>
+                        </div>
+                    </Link>
+                </div>
+            </nav>
+
+            <main className="dashboard-main container" ref={containerRef}>
+                {/* Dashboard Home Hero */}
+                <div className="dashboard-hero">
+                    <div className="hero-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+                        Usuario Registrado
+                    </div>
+                    <h1 className="hero-title">
+                        Bienvenido, <span>{profile.gamertag.replace('#', '')}</span>
+                    </h1>
+                    <p className="hero-desc">
+                        Panel de control de Racing Cup. Gestiona tus equipos, inscríbete a torneos y revisa tus estadísticas en tiempo real.
+                    </p>
+                </div>
+
+                {/* Navigation Cards Grid */}
+                <div className="nav-grid">
+                    {/* Eventos Card */}
+                    <Link href="/dashboard/eventos" className="nav-card eventos">
+                        <div className="nav-card-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <h3 className="nav-card-title">Explorar Eventos</h3>
+                        <p className="nav-card-desc">
+                            Descubre los próximos torneos y competencias disponibles para tu categoría.
+                        </p>
+                        <span className="nav-card-link">
+                            Ver eventos
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </span>
+                    </Link>
+
+                    {/* Equipos Card */}
+                    <Link href="/dashboard/equipos" className="nav-card equipos">
+                        <div className="nav-card-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <h3 className="nav-card-title">Mis Equipos</h3>
+                        <p className="nav-card-desc">
+                            Gestiona los integrantes de tu equipo, visualiza invitaciones o únete a uno nuevo.
+                        </p>
+                        <span className="nav-card-link">
+                            Gestionar equipos
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </span>
+                    </Link>
+
+                    {/* Perfil Card */}
+                    <Link href="/dashboard/profile" className="nav-card profile">
+                        <div className="nav-card-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <h3 className="nav-card-title">Mi Perfil</h3>
+                        <p className="nav-card-desc">
+                            Actualiza tus datos personales, personaliza tu avatar y revisa tus estadísticas.
+                        </p>
+                        <span className="nav-card-link">
+                            Ir al perfil
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </span>
+                    </Link>
+                </div>
+            </main>
+        </div>
+    )
+}

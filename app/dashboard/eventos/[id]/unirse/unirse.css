@@ -1,0 +1,111 @@
+/**
+ * Join Team Page Styles
+ */
+
+.unirse-container {
+    max-width: 400px;
+    margin: 3rem auto;
+    text-align: center;
+}
+
+.unirse-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1.5rem;
+    background: rgba(227, 38, 54, 0.15);
+    border: 2px solid rgba(227, 38, 54, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #E32636;
+}
+
+.unirse-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.5rem 0;
+}
+
+.unirse-subtitle {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 2rem 0;
+}
+
+.unirse-form {
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.code-input {
+    flex: 1;
+    padding: 0.85rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.5rem;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    transition: all 0.2s ease;
+}
+
+.code-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 1px;
+}
+
+.code-input:focus {
+    outline: none;
+    border-color: rgba(227, 38, 54, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-buscar {
+    padding: 0.85rem 1.5rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.5rem;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-buscar:hover {
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.unirse-alt {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.link-crear {
+    color: #E32636;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link-crear:hover {
+    text-decoration: underline;
+}
