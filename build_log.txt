@@ -1,0 +1,36 @@
+
+> racing-cup@0.1.0 build
+> next build
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./app/admin/dashboard/usuarios/page.tsx:5:1
+Module not found: Can't resolve 'jspdf-autotable'
+  3 | import React, { useState } from 'react'
+  4 | import jsPDF from 'jspdf'
+> 5 | import autoTable from 'jspdf-autotable'
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { fontOutfitBoldVFS, fontOutfitRegularVFS, fontRacingSansOneVFS } from '../certificateFonts'
+  7 |
+  8 | interface User {
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/admin/dashboard/usuarios/page.tsx [Client Component Browser]
+    ./app/admin/dashboard/usuarios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/admin/dashboard/usuarios/page.tsx [Client Component SSR]
+    ./app/admin/dashboard/usuarios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./app/admin/dashboard/usuarios/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
