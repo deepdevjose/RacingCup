@@ -83,6 +83,11 @@ export default function NewsSection() {
     const [weather, setWeather] = useState<WeatherData | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
+    const [formattedDate, setFormattedDate] = useState('')
+
+    useEffect(() => {
+        setFormattedDate(new Date().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' }))
+    }, [])
 
     /**
      * Fetch weather data from Open-Meteo API with timeout and error handling
@@ -220,7 +225,7 @@ export default function NewsSection() {
 
                 {/* Info Bar with Weather */}
                 <div className="news-info-bar">
-                    <span className="info-item">Hoy es: {new Date().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+                    <span className="info-item">Hoy es: {formattedDate}</span>
                     <span className="info-separator">|</span>
                     <span className="info-item">
                         {loading ? '⏳ Cargando...' : error ? '🌡️ Clima no disponible' : weather ? (
