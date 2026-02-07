@@ -143,6 +143,58 @@ body {
   /* Custom default cursor */
 }
 
+/* ============================================
+   Mobile Performance Optimizations
+   ============================================ */
+@media (max-width: 768px) {
+
+  /* Force GPU acceleration on key animated elements */
+  section,
+  .hero,
+  .tournament-section,
+  .countdown-section,
+  .threed-section,
+  .carousel-section,
+  .video-section,
+  .news-section {
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* Disable heavy backdrop-filter on mobile */
+  .countdown-block,
+  .content-section-container {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* NOTE: Do NOT override animation-duration globally - it breaks GSAP */
+
+  /* Disable hover effects that cause repaints */
+  .carousel-section:hover .carousel-item img {
+    filter: brightness(0.8) contrast(1.1) !important;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+
+  /* Disable all hover animations on touch devices */
+  .partner-logo-hero:hover,
+  .hero-car-img:hover,
+  .carousel-item:hover img,
+  .dev-card:hover,
+  .partner-card:hover {
+    transform: none !important;
+  }
+
+  /* Simpler transitions */
+  .social-link:hover {
+    transform: scale(1.1) !important;
+  }
+}
+
 /* Custom pointer cursor for interactive elements */
 a,
 button,

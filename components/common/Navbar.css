@@ -242,6 +242,10 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+    .navbar {
+        padding: 28px 1rem 0.75rem;
+    }
+
     .navbar-toggle {
         display: flex;
     }
@@ -253,12 +257,11 @@
         right: 0;
         bottom: 0;
         background: rgba(10, 14, 23, 0.98);
-        /* Deep Navy dark bg */
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 3rem;
+        gap: 2.5rem;
         transform: translateY(-100%);
         transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         z-index: 100;
@@ -270,17 +273,67 @@
 
     .nav-link {
         font-size: 1.5rem;
-        /* Larger text on mobile */
     }
 
-    /* Social icons move to bottom of menu on mobile if desired, or stay in header */
     .navbar-social {
         z-index: 101;
-        /* Keep visible above menu if needed, or hide */
+    }
+
+    .navbar-brand {
+        font-size: 1.1rem;
+        padding-left: 0.5rem;
+    }
+
+    .announcement-bar {
+        font-size: 0.75rem;
+    }
+
+    .bar-content {
+        padding: 8px 1rem;
     }
 
     .bar-arrow {
         display: none;
+    }
+
+    .navbar-right {
+        gap: 0.5rem;
+    }
+
+    .social-link {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        padding: 26px 0.75rem 0.5rem;
+    }
+
+    .navbar-brand {
+        font-size: 1rem;
+    }
+
+    .announcement-bar {
+        font-size: 0.65rem;
+    }
+
+    .bar-content {
+        padding: 6px 0.75rem;
+    }
+
+    .navbar-menu {
+        gap: 2rem;
+    }
+
+    .nav-link {
+        font-size: 1.25rem;
+    }
+
+    .social-link {
+        width: 26px;
+        height: 26px;
     }
 }
 

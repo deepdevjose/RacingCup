@@ -53,3 +53,31 @@
     justify-content: center;
     align-items: center;
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .threed-section {
+        height: 70vh;
+        min-height: 400px;
+    }
+
+    .threed-title {
+        font-size: 40vw;
+        transform: rotate(-5deg);
+    }
+
+    .threed-text-container {
+        transform: translate(-50%, calc(-50% - 40px));
+    }
+}
+
+@media (max-width: 480px) {
+    .threed-section {
+        height: 60vh;
+        min-height: 350px;
+    }
+
+    .threed-title {
+        font-size: 45vw;
+    }
+}

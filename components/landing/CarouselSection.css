@@ -42,6 +42,7 @@
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
+    background-color: #121212; /* Placeholder color */
 }
 
 .carousel-item img {
@@ -100,4 +101,27 @@
     filter: brightness(1) !important;
     z-index: 2;
     transform: scale(1.02);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .carousel-section {
+        height: 350px;
+    }
+
+    .gallery-title-overlay h2 {
+        font-size: 4rem;
+        -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.3);
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-section {
+        height: 280px;
+    }
+
+    .gallery-title-overlay h2 {
+        font-size: 2.5rem;
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+    }
 }

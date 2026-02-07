@@ -1,0 +1,144 @@
+/**
+ * CategoryHero - Reusable hero styles for category pages
+ */
+
+.category-hero {
+    position: relative;
+    width: 100%;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #101020;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    padding: 6rem 2rem 4rem;
+}
+
+/* Dark overlay for background images */
+.category-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+            rgba(16, 16, 32, 0.9) 0%,
+            rgba(16, 16, 32, 0.7) 50%,
+            rgba(16, 16, 32, 0.95) 100%);
+    z-index: 1;
+}
+
+.category-hero-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    max-width: 900px;
+}
+
+/* Title */
+.category-hero-title {
+    font-family: 'Racing Sans One', cursive;
+    font-size: clamp(3rem, 10vw, 6rem);
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+    text-shadow:
+        4px 4px 0 var(--accent-color, #E32636),
+        8px 8px 0 rgba(0, 0, 0, 0.5);
+    line-height: 1.1;
+}
+
+/* Subtitle */
+.category-hero-subtitle {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 600;
+    color: var(--accent-color, #E32636);
+    margin: 1.5rem 0 0;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* Description */
+.category-hero-description {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.8);
+    margin: 1.5rem auto 0;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+/* Decorative lines */
+.category-hero-line {
+    width: 120px;
+    height: 4px;
+    background: var(--accent-color, #E32636);
+    margin: 0 auto;
+    border-radius: 2px;
+    box-shadow: 0 0 20px var(--accent-color, #E32636);
+}
+
+.top-line {
+    margin-bottom: 2rem;
+}
+
+.bottom-line {
+    margin-top: 2rem;
+}
+
+/* Scroll indicator */
+.category-hero-scroll {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.scroll-arrow {
+    font-size: 1.5rem;
+    animation: bounce 1.5s ease-in-out infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(8px);
+    }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .category-hero {
+        min-height: 60vh;
+        padding: 5rem 1.5rem 3rem;
+    }
+
+    .category-hero-line {
+        width: 80px;
+    }
+
+    .top-line {
+        margin-bottom: 1.5rem;
+    }
+
+    .bottom-line {
+        margin-top: 1.5rem;
+    }
+}

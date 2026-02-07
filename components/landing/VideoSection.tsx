@@ -29,30 +29,35 @@ export default function VideoSection() {
         })
 
         // Hide Navbar when entering Video Section, show when reaching description
-        ScrollTrigger.create({
-            trigger: videoSection,
-            start: "top 10%", // Hide slightly after entering
-            endTrigger: ".video-description",
-            end: "top 40%", // Match the background/text transition point
-            onEnter: () => gsap.to(".navbar", { autoAlpha: 0, duration: 0.3, overwrite: true }),
+        const videoDescription = document.querySelector(".video-description")
+        const navbar = document.querySelector(".navbar")
 
-            // When reaching description (leaving the 'hidden' zone): Show + Dark Mode
-            onLeave: () => {
-                gsap.to(".navbar", { autoAlpha: 1, duration: 0.3, overwrite: true })
-                document.querySelector(".navbar")?.classList.add("navbar-dark")
-            },
+        if (videoDescription && navbar) {
+            ScrollTrigger.create({
+                trigger: videoSection,
+                start: "top 10%", // Hide slightly after entering
+                endTrigger: ".video-description",
+                end: "top 40%", // Match the background/text transition point
+                onEnter: () => gsap.to(navbar, { autoAlpha: 0, duration: 0.3, overwrite: true }),
 
-            // When scrolling back up into video: Hide + Remove Dark Mode
-            onEnterBack: () => {
-                gsap.to(".navbar", { autoAlpha: 0, duration: 0.3, overwrite: true })
-                document.querySelector(".navbar")?.classList.remove("navbar-dark")
-            },
+                // When reaching description (leaving the 'hidden' zone): Show + Dark Mode
+                onLeave: () => {
+                    gsap.to(navbar, { autoAlpha: 1, duration: 0.3, overwrite: true })
+                    navbar.classList.add("navbar-dark")
+                },
 
-            // When scrolling all the way up out of video: Show (default)
-            onLeaveBack: () => {
-                gsap.to(".navbar", { autoAlpha: 1, duration: 0.3, overwrite: true })
-            },
-        })
+                // When scrolling back up into video: Hide + Remove Dark Mode
+                onEnterBack: () => {
+                    gsap.to(navbar, { autoAlpha: 0, duration: 0.3, overwrite: true })
+                    navbar.classList.remove("navbar-dark")
+                },
+
+                // When scrolling all the way up out of video: Show (default)
+                onLeaveBack: () => {
+                    gsap.to(navbar, { autoAlpha: 1, duration: 0.3, overwrite: true })
+                },
+            })
+        }
 
         // TEXTURE & TEXT COLOR TRANSITION
         // When description comes into view, fade in texture overlay and change text color

@@ -52,6 +52,8 @@ function Hero({ event }: HeroProps) {
                         src="/logotypes/logohero.png"
                         alt="Racing Cup Hero Logo"
                         className="hero-car-img"
+                        loading="eager"
+                        decoding="sync"
                     />
                 </div>
 

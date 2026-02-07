@@ -9,10 +9,20 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function SmoothScroll() {
     useEffect(() => {
-        // Initialize Lenis
+        // Disable smooth scroll on mobile for better performance
+        const isMobile = window.matchMedia('(max-width: 768px)').matches ||
+            'ontouchstart' in window ||
+            navigator.maxTouchPoints > 0
+
+        if (isMobile) {
+            // Use native scroll on mobile - it's more performant
+            return
+        }
+
+        // Initialize Lenis only on desktop
         const lenis = new Lenis({
             duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential easing
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             orientation: 'vertical',
             gestureOrientation: 'vertical',
             smoothWheel: true,

@@ -45,8 +45,14 @@ export default function TournamentSection() {
     const fireContainerRef = useRef<HTMLDivElement>(null)
     const isFireActive = useRef(false)
 
-    // Fire spawning effect when scrolling
+    // Fire spawning effect when scrolling (DISABLED ON MOBILE)
     useEffect(() => {
+        // Skip fire particles on mobile for performance
+        const isMobile = window.matchMedia('(max-width: 768px)').matches ||
+            'ontouchstart' in window
+
+        if (isMobile) return
+
         let intervalId: NodeJS.Timeout | null = null
 
         const handleScroll = () => {
@@ -71,7 +77,7 @@ export default function TournamentSection() {
             }
         }
 
-        window.addEventListener('scroll', handleScroll)
+        window.addEventListener('scroll', handleScroll, { passive: true })
         return () => {
             window.removeEventListener('scroll', handleScroll)
             if (intervalId) clearInterval(intervalId)

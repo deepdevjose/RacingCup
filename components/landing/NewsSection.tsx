@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
+import Link from 'next/link'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -21,10 +22,10 @@ interface WeatherData {
 }
 
 const NEWS_ITEMS: NewsItem[] = [
-    { id: 1, title: 'Nuevo modo Sumo RC!', icon: '🎮', link: '#' },
-    { id: 2, title: 'Nuevo modo RoboFut!', icon: '🎮', link: '#' },
-    { id: 3, title: 'Torneo en directo en esta web!', icon: '🏆', link: '#' },
-    { id: 4, title: 'Fotos de la pasada temporada!', icon: '🎥', link: '#' },
+    { id: 1, title: 'Racing Cars renovado!', icon: '🚗', link: '/racing-cars' },
+    { id: 2, title: 'Nuevo modo Sumo RC!', icon: '🎮', link: '/sumo-rc' },
+    { id: 3, title: 'Nuevo modo RoboFut!', icon: '⚽', link: '/robofut' },
+    { id: 4, title: 'Torneo en directo en esta web!', icon: '🏆', link: '#' },
 ]
 
 /**
@@ -160,46 +161,53 @@ export default function NewsSection() {
         })
 
         // Animate the texture overlay to fade in - synced with VideoSection description transition
-        gsap.to('.texture-overlay-news', {
-            opacity: 1,
-            scrollTrigger: {
-                trigger: '.video-description',
-                start: "top 70%",
-                end: "top 40%",
-                scrub: true
-            }
-        })
+        // Only create these animations if the video-description element exists
+        const videoDescription = document.querySelector('.video-description')
+        if (videoDescription) {
+            gsap.to('.texture-overlay-news', {
+                opacity: 1,
+                scrollTrigger: {
+                    trigger: videoDescription,
+                    start: "top 70%",
+                    end: "top 40%",
+                    scrub: true
+                }
+            })
 
-        // Animate text color from white to black - synced with background change
-        gsap.to('.news-container', {
-            color: '#000000',
-            scrollTrigger: {
-                trigger: '.video-description',
-                start: "top 70%",
-                end: "top 40%",
-                scrub: true
-            }
-        })
+            // Animate text color from white to black - synced with background change
+            gsap.to('.news-container', {
+                color: '#000000',
+                scrollTrigger: {
+                    trigger: videoDescription,
+                    start: "top 70%",
+                    end: "top 40%",
+                    scrub: true
+                }
+            })
+        }
 
-        ScrollTrigger.create({
-            trigger: sectionRef.current,
-            start: "top 80%",
-            end: "bottom top",
-            onEnter: () => {
-                gsap.to(".navbar", { autoAlpha: 1, duration: 0.3, overwrite: true })
-                document.querySelector(".navbar")?.classList.add("navbar-dark")
-            },
-            onLeave: () => {
-                document.querySelector(".navbar")?.classList.remove("navbar-dark")
-            },
-            onEnterBack: () => {
-                gsap.to(".navbar", { autoAlpha: 1, duration: 0.3, overwrite: true })
-                document.querySelector(".navbar")?.classList.add("navbar-dark")
-            },
-            onLeaveBack: () => {
-                document.querySelector(".navbar")?.classList.remove("navbar-dark")
-            }
-        })
+        const navbar = document.querySelector(".navbar")
+        if (navbar) {
+            ScrollTrigger.create({
+                trigger: sectionRef.current,
+                start: "top 80%",
+                end: "bottom top",
+                onEnter: () => {
+                    gsap.to(navbar, { autoAlpha: 1, duration: 0.3, overwrite: true })
+                    navbar.classList.add("navbar-dark")
+                },
+                onLeave: () => {
+                    navbar.classList.remove("navbar-dark")
+                },
+                onEnterBack: () => {
+                    gsap.to(navbar, { autoAlpha: 1, duration: 0.3, overwrite: true })
+                    navbar.classList.add("navbar-dark")
+                },
+                onLeaveBack: () => {
+                    navbar.classList.remove("navbar-dark")
+                }
+            })
+        }
 
     }, { scope: sectionRef })
 
@@ -236,9 +244,11 @@ export default function NewsSection() {
                                 <span className="news-text">{item.title}</span>
                             </div>
                             <div className="news-item-right">
-                                <div className="eye-icon">
-                                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                </div>
+                                <Link href={item.link} className="eye-icon-link">
+                                    <div className="eye-icon">
+                                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </div>
+                                </Link>
                             </div>
                         </div>
                     ))}

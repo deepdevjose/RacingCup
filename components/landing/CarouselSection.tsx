@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -29,13 +29,7 @@ export default function CarouselSection() {
     const sectionRef = useRef<HTMLElement>(null)
     const trackRef = useRef<HTMLDivElement>(null)
 
-    // Optimization: Preload images immediately on mount
-    useEffect(() => {
-        IMAGES.forEach((src) => {
-            const img = new Image()
-            img.src = src
-        })
-    }, [])
+
 
     useGSAP(() => {
         const track = trackRef.current
@@ -71,13 +65,13 @@ export default function CarouselSection() {
                     {/* Render Loop 1 */}
                     {IMAGES.map((src, i) => (
                         <div key={`img-1-${i}`} className="carousel-item">
-                            <img src={src} alt={`Racing Cup Gallery ${i}`} loading="eager" />
+                            <img src={src} alt={`Racing Cup Gallery ${i}`} loading="lazy" decoding="async" />
                         </div>
                     ))}
                     {/* Render Loop 2 (Duplicate for Seamless Infinite Scroll) */}
                     {IMAGES.map((src, i) => (
                         <div key={`img-2-${i}`} className="carousel-item">
-                            <img src={src} alt={`Racing Cup Gallery ${i}`} loading="eager" />
+                            <img src={src} alt={`Racing Cup Gallery ${i}`} loading="lazy" decoding="async" />
                         </div>
                     ))}
                 </div>

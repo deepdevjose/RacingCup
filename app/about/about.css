@@ -1,0 +1,209 @@
+/**
+ * About Page Styles
+ */
+
+/* Partners Section */
+.about-partners-section {
+    padding: 5rem 2rem;
+    background: linear-gradient(180deg, #0D0D1A 0%, #1B1B3A 100%);
+}
+
+.about-partners-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.about-partners-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+    margin: 0 0 3rem;
+}
+
+.partners-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.partner-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+}
+
+.partner-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.partner-card-img {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+}
+
+.partner-card:hover .partner-card-img {
+    opacity: 1;
+}
+
+.partner-card-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .about-partners-section {
+        padding: 3rem 1.5rem;
+    }
+
+    .partners-grid {
+        gap: 1rem;
+    }
+
+    .partner-card {
+        padding: 1rem 1.5rem;
+    }
+
+    .partner-card-img {
+        height: 45px;
+    }
+}
+
+/* Developers Section */
+.about-devs-section {
+    padding: 5rem 2rem;
+    background: #0D0D1A;
+}
+
+.about-devs-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.about-devs-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+    margin: 0 0 0.5rem;
+}
+
+.about-devs-subtitle {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 3rem;
+}
+
+.devs-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.dev-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    background: rgba(27, 27, 58, 0.6);
+    border: 3px solid #2A2A5A;
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.dev-card:hover {
+    background: rgba(27, 27, 58, 0.9);
+    transform: translateY(-8px);
+    border-color: #E32636;
+    box-shadow: 0 10px 30px rgba(227, 38, 54, 0.2);
+}
+
+.dev-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #E32636;
+    box-shadow: 0 0 20px rgba(227, 38, 54, 0.3);
+}
+
+.dev-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dev-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+.dev-role {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #E32636;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.dev-github {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.dev-card:hover .dev-github {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .about-devs-section {
+        padding: 3rem 1.5rem;
+    }
+
+    .devs-grid {
+        gap: 1.5rem;
+    }
+
+    .dev-card {
+        padding: 1.5rem;
+        min-width: 160px;
+    }
+
+    .dev-avatar {
+        width: 60px;
+        height: 60px;
+    }
+}
