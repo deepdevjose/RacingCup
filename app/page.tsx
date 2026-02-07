@@ -10,17 +10,17 @@ import BracketViewer from '@/components/landing/BracketViewer'
 import TeamsList from '@/components/landing/TeamsList'
 import Footer from '@/components/common/Footer'
 import ScrollManager from '@/components/common/ScrollManager'
-import TournamentSection from '@/components/landing/TournamentSection'
-import CountdownSection from '@/components/landing/CountdownSection'
-import VideoSection from '@/components/landing/VideoSection'
-import NewsSection from '@/components/landing/NewsSection'
-import CarouselSection from '@/components/landing/CarouselSection'
+// Dynamic imports for heavy sections to avoid "Unused CSS preload" warnings
 import '@/components/landing/LandingPage.css'
 import { Event, Tab } from '@/types'
 
-// Dynamic import for 3D section (client-side only)
+const CountdownSection = dynamic(() => import('@/components/landing/CountdownSection'))
+const TournamentSection = dynamic(() => import('@/components/landing/TournamentSection'))
+const VideoSection = dynamic(() => import('@/components/landing/VideoSection'))
+const NewsSection = dynamic(() => import('@/components/landing/NewsSection'))
+const CarouselSection = dynamic(() => import('@/components/landing/CarouselSection'))
 const ThreeDSection = dynamic(() => import('@/components/landing/ThreeDSection'), {
-    ssr: false,
+    ssr: false, // 3D canvas is client-only
 })
 
 /**
