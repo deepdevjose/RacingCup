@@ -13,6 +13,8 @@ interface ContentSectionProps {
     children: React.ReactNode
     variant?: 'dark' | 'light' | 'primary' | 'accent'
     id?: string
+    backgroundColor?: string
+    accentColor?: string
 }
 
 /**
@@ -22,7 +24,9 @@ export default function ContentSection({
     title,
     children,
     variant = 'dark',
-    id
+    id,
+    backgroundColor,
+    accentColor
 }: ContentSectionProps) {
     const sectionRef = useRef<HTMLElement>(null)
 
@@ -60,6 +64,10 @@ export default function ContentSection({
             className={`content-section content-section--${variant}`}
             ref={sectionRef}
             id={id}
+            style={{
+                backgroundColor: backgroundColor,
+                '--color-primary': accentColor
+            } as React.CSSProperties}
         >
             <div className="content-section-container">
                 <h2 className="content-section-title">{title}</h2>

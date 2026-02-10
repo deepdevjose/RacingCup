@@ -46,10 +46,14 @@ export default function CrearEquipoPage({ params }: { params: Promise<{ id: stri
     const [teamName, setTeamName] = useState('')
     const [selectedIcon, setSelectedIcon] = useState('robot')
     const [selectedColor, setSelectedColor] = useState('red')
+    const [selectedLevel, setSelectedLevel] = useState<'Media Superior' | 'Superior'>('Media Superior')
 
     const handleCrearEquipo = () => {
         if (teamName.trim()) {
-            alert(`Equipo "${teamName}" creado con icono: ${selectedIcon} y color: ${selectedColor}`)
+            alert(`Equipo "${teamName}" creado con:
+            - Nivel: ${selectedLevel}
+            - Icono: ${selectedIcon}
+            - Color: ${selectedColor}`)
             // In real app, this would create the team
         }
     }
@@ -169,6 +173,54 @@ export default function CrearEquipoPage({ params }: { params: Promise<{ id: stri
                                     )}
                                 </button>
                             ))}
+                        </div>
+                    </div>
+
+                    {/* Level Selector */}
+                    <div className="form-group">
+                        <label className="input-label">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                            </svg>
+                            Nivel Educativo
+                        </label>
+                        <div className="level-grid">
+                            <button
+                                className={`level-option ${selectedLevel === 'Media Superior' ? 'selected' : ''}`}
+                                onClick={() => setSelectedLevel('Media Superior')}
+                            >
+                                <div className="level-icon">🎓</div>
+                                <div className="level-info">
+                                    <span className="level-title">Media Superior</span>
+                                    <span className="level-desc">Bachillerato / Preparatoria</span>
+                                </div>
+                                {selectedLevel === 'Media Superior' && (
+                                    <div className="level-check">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </div>
+                                )}
+                            </button>
+
+                            <button
+                                className={`level-option ${selectedLevel === 'Superior' ? 'selected' : ''}`}
+                                onClick={() => setSelectedLevel('Superior')}
+                            >
+                                <div className="level-icon">🏛️</div>
+                                <div className="level-info">
+                                    <span className="level-title">Superior</span>
+                                    <span className="level-desc">Universidad / Tecnológico</span>
+                                </div>
+                                {selectedLevel === 'Superior' && (
+                                    <div className="level-check">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </div>
+                                )}
+                            </button>
                         </div>
                     </div>
 

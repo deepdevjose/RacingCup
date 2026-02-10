@@ -5,6 +5,10 @@
 .content-section {
     padding: 5rem 2rem;
     position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .content-section-container {
@@ -14,7 +18,7 @@
 
 /* Variants */
 .content-section--dark {
-    background-color: #0D0D1A;
+    background-color: #101020;
     color: #fff;
 }
 

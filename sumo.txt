@@ -1,0 +1,193 @@
+REGLAMENTO OFICIAL: MINI SUMO
+El Instituto Tecnológico Superior de Oriente del Estado de Hidalgo (ITSOEH), a
+través de la Ingeniería en Tecnologías de la Información y Comunicaciones (TICs),
+se complace en convocar a la primera edición de la categoría Minisumo.
+Objetivo: Fomentar y evaluar el ingenio, la destreza en el desarrollo
+hardware/software, y la habilidad de conducción de los participantes.
+
+Fecha del Evento: 13 de marzo de 2026.
+
+1. Generalidades de Inscripción
+Concepto
+
+Detalle
+
+Fecha Límite de Inscripción
+
+13 de marzo de 2026
+
+Costo
+
+$100.00 MXN
+
+Integrantes por Equipo
+
+Máximo 5 personas. Se permite la
+inclusión de un docente como parte del
+equipo.
+
+La inscripción se lleva a cabo a través de la página web desarrollada por los
+estudiantes de TICS: https://racing-cup.vercel.app/
+Si necesita asistencia con el proceso de registro, puede consultar los pasos
+detallados en el siguiente enlace: https://racing-cup.vercel.app/ayuda o comunicarse
+al número de contacto: 773 1331 133.
+
+2. Especificaciones Técnicas (Hardware)
+Para asegurar una competencia justa y la seguridad de todos los asistentes, los
+prototipos deben apegarse estrictamente a las siguientes especificaciones:
+
+Criterio
+
+Especificación
+
+Restricciones Clave
+
+Dimensiones Máximas
+
+Largo máximo 10 cm
+Ancho máximo 10 cm
+Altura máxima 15 cm
+
+El área total no debe
+exceder 10 cm x 15 cm
+(ancho/alto). No se
+establecen dimensiones
+mínimas.
+
+Peso máximo: 500 gr
+Suministro de Energía
+
+Voltaje máximo permitido: Por motivos de seguridad,
+12V.
+se prohíbe estrictamente
+el uso de arreglos de
+baterías que superen este
+límite.
+
+Sistema de Control
+
+Se permite el uso de
+Sistemas Asistidos.
+
+Prohibido: Sistemas
+100% autónomos.
+Permitido: Sensores
+ultrasónicos o de
+proximidad deteccion de
+lineas
+
+Comunicación
+
+Protocolo libre (Bluetooth,
+Wi-Fi, Radiofrecuencia).
+
+Es responsabilidad del
+equipo prever y gestionar
+la posible saturación de
+banda durante el evento.
+
+Chasis y montaje de
+componentes
+
+Libre
+
+Navaja Permitida
+
+3. Dinámica de la Competencia
+La competencia se divide en dos fases:
+3.1. Fase de Clasificación (Sistema de Matches)
+La clasificación se basará en enfrentamientos directos de 2 equipos por ronda.
+Puntuación
+
+Criterio
+
+Puntos
+
+Victoria
+
+Ganar 2 de 3
+enfrentamientos en el
+
+1 punto
+
+match.
+KO (Knock Out)
+
+Sacar al prototipo rival del
+Dojo.
+
+1 punto
+Se utilizará como criterio
+de desempate
+
+Derrota
+
+Perder el enfrentamiento.
+
+0 puntos
+
+Criterio de Avance: Los equipos con la mayor puntuación en la tabla general
+avanzarán a la Fase de Eliminación Directa.
+Regla de Desempate: En caso de empate en victorias se usan los puntos KO
+obtenidos durante sus respectivos matches de clasificación.
+
+3.2. Fase Final (Eliminatoria Directa - Top 16)
+Se generará una llave de enfrentamientos basada en la posición de la tabla de
+clasificación:
+
+Regla: A partir de esta fase, la eliminación es sencilla. El equipo que cruce la meta
+primero avanza; el otro es automáticamente eliminado.
+
+4. ÁREA DE COMPETENCIA
+a) La pista es una tabla de conglomerado, MDF o madera en forma circular, y de 12
+mm de altura.
+
+b) La superficie tendrá un fondo negro mate acabados lisos, en el cual estará
+trazado un círculo en color blanco.
+c) La frontera tiene un diámetro de 77 cm (exterior), con un ancho de 2cm ±0.5cm.
+
+4.2. Durante la competencia
+Duración:
+Cada combate se compone de un máximo de tres rounds, con una duración máxima
+de 1 minuto por round. Por lo tanto, la duración total de un combate no excederá los
+3 minutos.
+Inicio del Primer Round
+El primer round de cada enfrentamiento comenzará con los competidores colocados
+de espaldas.
+Inicio del Segundo y Tercer Round
+El segundo y tercer round se regirán por el estilo europeo. Los competidores se
+ubicarán en la orilla del dohyo, el cual estará dividido en partes proporcionales para
+cada uno, con una parte del robot tocando el borde del área de combate.
+
+Definición del Ganador de la Ronda:
+
+El equipo que logre ganar dos rounds será declarado el vencedor de la ronda.
+●​ Desempate: En caso de que ambos competidores hayan ganado un round
+cada uno, se llevará a cabo un tercer round para determinar el desempate.
+
+5. Autoridad y Juez
+El jurado y la autoridad en pista estarán compuestos exclusivamente por alumnos y
+docentes de TICs que no formen parte de ningún equipo participante.
+Decisión Inapelable: La decisión del jurado con respecto a faltas, salidas de zona
+de manejo o comportamiento antideportivo es inapelable y final.
+
+5. Premios y Reconocimientos
+Se otorgarán premios y reconocimientos a los participantes destacados en cada
+nivel educativo (Media Superior y Superior).
+
+Nivel Media Superior:
+●​ Primer Lugar: Recibirá un premio económico de $1,500 MXN y un Diploma
+de Reconocimiento.
+●​ Segundo Lugar: Será acreedor a $1,000 MXN y un Diploma de
+Reconocimiento.
+●​ Tercer Lugar: Obtendrá un Diploma de Reconocimiento junto con un
+Obsequio Especial.
+
+Nivel Superior:
+●​ Primer Lugar: Será premiado con $1,000 MXN y un Diploma de
+Reconocimiento.
+●​ Segundo Lugar: Recibirá $500 MXN y un Diploma de Reconocimiento.
+●​ Tercer Lugar: Se le entregará un Diploma de Reconocimiento y un Obsequio
+Especial.
+
+

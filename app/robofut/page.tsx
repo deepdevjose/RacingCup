@@ -16,12 +16,14 @@ export default function RoboFutPage() {
 
             <CategoryHero
                 title="RoboFut"
+                titleImage="/logotypes/robofut.png"
                 subtitle="Fútbol Robótico"
                 description="Robots autónomos compitiendo en el deporte más popular del mundo. Programación + estrategia = victoria."
-                accentColor="#00C853"
+                accentColor="#FFFFFF"
+                backgroundColor="#2E7D32"
             />
 
-            <ContentSection title="¿Qué es RoboFut?" variant="dark">
+            <ContentSection title="¿Qué es RoboFut?" variant="dark" backgroundColor="#2E7D32" accentColor="#EA80FC">
                 <p>
                     <strong>RoboFut</strong> lleva el fútbol al siguiente nivel. Equipos de robots
                     autónomos se enfrentan en una cancha miniatura, utilizando sensores y algoritmos

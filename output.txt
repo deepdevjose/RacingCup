@@ -1,0 +1,194 @@
+REGLAMENTO OFICIAL: 4to. Racing
+Cup TIC’s 2026
+El Instituto Tecnológico Superior de Oriente del Estado de Hidalgo (ITSOEH), a
+través de la Ingeniería en Tecnologías de la Información y Comunicaciones (TICs),
+se complace en convocar a la cuarta edición del evento Racing Cup 2026.
+Objetivo: Fomentar y evaluar el ingenio, la destreza en el desarrollo
+hardware/software, y la habilidad de conducción de los participantes.
+
+Fecha del Evento: 13 de marzo de 2026.
+
+1. Generalidades de Inscripción
+Concepto
+
+Detalle
+
+Fecha Límite de Inscripción
+
+13 de marzo de 2026
+
+Costo
+
+$100.00 MXN
+
+Integrantes por Equipo
+
+Máximo 5 personas. Se permite la
+inclusión de un docente como parte del
+equipo.
+
+La inscripción se lleva a cabo a través de la página web desarrollada por los
+estudiantes de TICS: https://racing-cup.vercel.app/
+Si necesita asistencia con el proceso de registro, puede consultar los pasos
+detallados en el siguiente enlace: https://racing-cup.vercel.app/ayuda o comunicarse
+al número de contacto: 773 1331 133.
+
+2. Especificaciones Técnicas (Hardware)
+Para asegurar una competencia justa y la seguridad de todos los asistentes, los
+prototipos deben apegarse estrictamente a las siguientes especificaciones:
+
+Criterio
+
+Especificación
+
+Restricciones Clave
+
+Dimensiones Máximas
+
+30 cm de largo.
+
+El área total no debe
+exceder 20 cm x 20 cm
+(ancho/alto). No se
+establecen dimensiones
+mínimas.
+
+Suministro de Energía
+
+Voltaje máximo permitido: Por motivos de seguridad,
+12V.
+se prohíbe estrictamente
+el uso de arreglos de
+baterías que superen este
+límite.
+
+Sistema de Control
+
+Se permite el uso de
+Sistemas Asistidos.
+
+Prohibido: Sistemas
+100% autónomos.
+Permitido: Uso de
+cámaras (FPV) y/o
+sensores ultrasónicos o
+de proximidad para
+asistencia en la
+conducción y prevención
+de colisiones.
+
+Comunicación
+
+Protocolo libre (Bluetooth,
+Wi-Fi, Radiofrecuencia).
+
+Es responsabilidad del
+equipo prever y gestionar
+la posible saturación de
+banda durante el evento.
+
+3. Dinámica de la Competencia
+La competencia se divide en dos fases:
+3.1. Fase de Clasificación (Sistema de Matches)
+La clasificación se basará en enfrentamientos directos de 2 equipos por ronda.
+Puntuación por Match
+
+Criterio
+
+Puntos
+
+Victoria
+
+El prototipo cruza la meta
+primero.
+
+3 puntos
+
+Empate / No Finalizado
+
+Ambos equipos no logran
+terminar el circuito o
+llegan simultáneamente.
+
+1 punto (para cada
+equipo)
+
+Derrota
+
+El prototipo pierde el
+enfrentamiento.
+
+0 puntos
+
+Tiempo
+
+Tiempo total del recorrido
+en formato ​
+mm:ss
+
+Se usará como el mejor
+tiempo en caso de
+empate
+
+Criterio de Avance: Los equipos con la mayor puntuación en la tabla general
+avanzarán a la Fase de Eliminación Directa.
+Regla de Desempate: En caso de empate en puntos se considerará el menor
+tiempo registrado para completar el circuito durante sus respectivos matches de
+clasificación.
+
+3.2. Fase Final (Eliminatoria Directa - Top 16)
+Se generará una llave de enfrentamientos basada en la posición de la tabla de
+clasificación:
+
+Regla: A partir de esta fase, la eliminación es sencilla. El equipo que cruce la meta
+primero avanza; el otro es automáticamente eliminado.
+
+4. ÁREA DE COMPETENCIA
+4.1. El Circuito
+La pista es un circuito cerrado de 15 metros, la forma y secciones se relevaran el dia
+del evento
+La pista incluirá los siguientes elementos:
+●​ Una sección de terreno irregular (con piedras y obstáculos).
+●​ Al menos una rampa de desafío.
+
+4.2. Incidentes de Carrera
+Match No Finalizado (Clasificación): Si después de 3 minutos de carrera en un
+match de clasificación, ninguno de los prototipos supera los obstáculos o llega a la
+meta, el match se declara empate (1 punto para cada equipo).
+Tiempo Técnico: Cada equipo dispone de 30s único por carrera para realizar
+ajustes o reparaciones rápidas de emergencia. El equipo rival deberá mantener su
+posición hasta que el tiempo se agote o el equipo reanude la marcha.
+
+4.3. Intervención en Pista
+
+Prohibición: Los participantes tienen estrictamente prohibido entrar al circuito
+durante la carrera.
+Staff: Solo el personal del Staff puede tocar un prototipo volcado o que haya salido
+de la pista.
+
+5. Autoridad y Juez
+El jurado y la autoridad en pista estarán compuestos exclusivamente por alumnos y
+docentes de TICs que no formen parte de ningún equipo participante.
+Decisión Inapelable: La decisión del jurado con respecto a faltas, salidas de zona
+de manejo o comportamiento antideportivo es inapelable y final.
+
+5. Premios y Reconocimientos
+Se otorgarán premios y reconocimientos a los participantes destacados en cada
+nivel educativo (Media Superior y Superior).
+
+Nivel Media Superior:
+●​ Primer Lugar: Recibirá un premio económico de $1,500 MXN y un Diploma
+de Reconocimiento.
+●​ Segundo Lugar: Será acreedor a $1,000 MXN y un Diploma de
+Reconocimiento.
+●​ Tercer Lugar: Obtendrá un Diploma de Reconocimiento junto con un
+Obsequio Especial.
+
+Nivel Superior:
+●​ Primer Lugar: Será premiado con $1,000 MXN y un Diploma de
+Reconocimiento.
+●​ Segundo Lugar: Recibirá $500 MXN y un Diploma de Reconocimiento.
+●​ Tercer Lugar: Se le entregará un Diploma de Reconocimiento y un Obsequio
+Especial.
+
+

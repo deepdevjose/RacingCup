@@ -369,11 +369,27 @@
 }
 
 /* Dark Mode Navbar (for Light Sections) */
-.navbar.navbar-dark .navbar-brand,
-.navbar.navbar-dark .nav-link {
+.navbar.navbar-dark-mode .navbar-brand,
+.navbar.navbar-dark-mode .nav-link {
     color: #000000 !important;
+    text-shadow: none;
 }
 
-.navbar.navbar-dark .navbar-toggle .bar {
+.navbar.navbar-dark-mode .nav-link:hover {
+    color: #E32636 !important;
+}
+
+.navbar.navbar-dark-mode .navbar-toggle .bar {
     background-color: #000000 !important;
+}
+
+/* Adjust social links if needed - making them pop against light bg */
+.navbar.navbar-dark-mode .social-link {
+    background-color: #000000;
+    color: #FFFFFF !important;
+}
+
+.navbar.navbar-dark-mode .social-link svg {
+    color: #FFFFFF !important;
+    fill: #FFFFFF !important;
 }

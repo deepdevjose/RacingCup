@@ -10,7 +10,9 @@ interface CategoryHeroProps {
     subtitle?: string
     description?: string
     accentColor?: string
+    backgroundColor?: string
     backgroundImage?: string
+    titleImage?: string
 }
 
 /**
@@ -22,15 +24,17 @@ export default function CategoryHero({
     subtitle,
     description,
     accentColor = '#E32636',
-    backgroundImage
+    backgroundColor,
+    backgroundImage,
+    titleImage
 }: CategoryHeroProps) {
     const containerRef = useRef<HTMLDivElement>(null)
 
     useGSAP(() => {
         const tl = gsap.timeline()
 
-        // Title entrance - scale up with bounce
-        tl.from('.category-hero-title', {
+        // Title/Logo entrance - scale up with bounce
+        tl.from('.category-hero-title, .category-hero-logo', {
             scale: 0.5,
             opacity: 0,
             y: 50,
@@ -58,14 +62,6 @@ export default function CategoryHero({
             }, '-=0.3')
         }
 
-        // Decorative lines
-        tl.from('.category-hero-line', {
-            scaleX: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-            stagger: 0.2
-        }, '-=0.4')
-
     }, { scope: containerRef })
 
     return (
@@ -74,13 +70,20 @@ export default function CategoryHero({
             ref={containerRef}
             style={{
                 '--accent-color': accentColor,
+                backgroundColor: backgroundColor || '#101020',
                 backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined
             } as React.CSSProperties}
         >
             <div className="category-hero-content">
-                <div className="category-hero-line top-line"></div>
-
-                <h1 className="category-hero-title">{title}</h1>
+                {titleImage ? (
+                    <img
+                        src={titleImage}
+                        alt={title}
+                        className="category-hero-logo"
+                    />
+                ) : (
+                    <h1 className="category-hero-title">{title}</h1>
+                )}
 
                 {subtitle && (
                     <p className="category-hero-subtitle">{subtitle}</p>
@@ -89,14 +92,11 @@ export default function CategoryHero({
                 {description && (
                     <p className="category-hero-description">{description}</p>
                 )}
-
-                <div className="category-hero-line bottom-line"></div>
             </div>
 
-            {/* Scroll indicator */}
-            <div className="category-hero-scroll">
-                <span>Scroll</span>
-                <div className="scroll-arrow">↓</div>
+            {/* Scroll indicator (Manita) */}
+            <div className="category-hero-hand">
+                <img src="/cursors/manita.png" alt="Scroll Down" className="hand-icon-img" />
             </div>
         </div>
     )
