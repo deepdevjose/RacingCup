@@ -157,6 +157,33 @@
     margin-bottom: 0.5rem;
 }
 
+.categoria-status.registro-abierto {
+    background: rgba(16, 185, 129, 0.15);
+    /* emerald-500 */
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #10B981;
+}
+
+.categoria-status.en-curso {
+    background: rgba(59, 130, 246, 0.15);
+    /* blue-500 */
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #3B82F6;
+}
+
+.categoria-status.cerrado {
+    background: rgba(245, 158, 11, 0.15);
+    /* amber-500 */
+    border-color: rgba(245, 158, 11, 0.3);
+    color: #F59E0B;
+}
+
+.categoria-status.finalizado {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.4);
+}
+
 .categoria-status.cupo-limitado {
     background: rgba(255, 193, 7, 0.15);
     border-color: rgba(255, 193, 7, 0.4);

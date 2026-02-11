@@ -1,66 +1,142 @@
 'use client'
 
-import React, { useState, use } from 'react'
+import React, { useState, useEffect, useRef, use } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 import '../../../dashboard.css'
 import '../../eventos.css'
 import '../evento-detail.css'
 import './crear-equipo.css'
 
-// Available team icons
-const teamIcons = [
-    { id: 'robot', path: 'M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73A2 2 0 0 1 12 2z' },
-    { id: 'cpu', path: 'M18 4h-2V2h-2v2h-4V2H8v2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM9 18H6v-3h3v3zm0-5H6v-3h3v3zm0-5H6V6h3v2zm5 10h-3v-3h3v3zm0-5h-3v-3h3v3zm0-5h-3V6h3v2zm4 10h-3v-3h3v3zm0-5h-3v-3h3v3zm0-5h-3V6h3v2z' },
-    { id: 'bolt', path: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z' },
-    { id: 'eye-off', path: 'M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22' },
-    { id: 'target', path: 'M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z' },
-    { id: 'shield', path: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
-    { id: 'flame', path: 'M12 22c4-2 8-6 8-12 0-2-2-4-4-4s-4 2-4 4c0-4-4-8-8-8 0 8 4 14 8 20z' },
-    { id: 'star', path: 'M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z' },
-    { id: 'crosshair', path: 'M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM22 12h-4M6 12H2M12 6V2M12 22v-4' },
-    { id: 'settings', path: 'M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z' },
-    { id: 'image', path: 'M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3 3.5-4.5 4.5 6H5l3.5-4.5z' },
-    { id: 'anchor', path: 'M12 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM12 8v14M5 12H2a10 10 0 0 0 20 0h-3' },
-    { id: 'rocket', path: 'M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09zM12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z' },
-    { id: 'hand', path: 'M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v0M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15' },
-    { id: 'compass', path: 'M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z' },
-    { id: 'radio', path: 'M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0 M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14' },
-    { id: 'cog', path: 'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41' },
-    { id: 'circle', path: 'M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z' },
-    { id: 'eye', path: 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z' },
-    { id: 'monitor', path: 'M20 3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM8 21h8M12 17v4' }
-]
+import { useAuth } from '@/lib/auth-context'
+import {
+    getEventById,
+    createTeam,
+    getUserTeamInEvent,
+    TEAM_ICONS,
+    TEAM_COLORS,
+    type Event,
+    type TeamCategoryEntry
+} from '@/lib/firebase'
+import { TeamIcon } from '@/components/tournament/TeamIcon'
 
-// Available team colors
-const teamColors = [
-    { id: 'red', hex: '#E32636' },
-    { id: 'blue', hex: '#3B82F6' },
-    { id: 'green', hex: '#10B981' },
-    { id: 'yellow', hex: '#F59E0B' },
-    { id: 'purple', hex: '#8B5CF6' },
-    { id: 'cyan', hex: '#06B6D4' }
+// Profile icons fallback helper (matching Navbar)
+const profileIcons = [
+    <svg key="user" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>,
+    <svg key="smile" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
 ]
+const getIconIdx = (iconName: string | undefined) => iconName === 'smile' ? 1 : 0
 
 export default function CrearEquipoPage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = use(params)
-    const [teamName, setTeamName] = useState('')
-    const [selectedIcon, setSelectedIcon] = useState('robot')
-    const [selectedColor, setSelectedColor] = useState('red')
-    const [selectedLevel, setSelectedLevel] = useState<'Media Superior' | 'Superior'>('Media Superior')
+    const eventId = resolvedParams.id
+    const router = useRouter()
+    const { profile, user, loading: authLoading } = useAuth()
+    const containerRef = useRef<HTMLDivElement>(null)
 
-    const handleCrearEquipo = () => {
-        if (teamName.trim()) {
-            alert(`Equipo "${teamName}" creado con:
-            - Nivel: ${selectedLevel}
-            - Icono: ${selectedIcon}
-            - Color: ${selectedColor}`)
-            // In real app, this would create the team
+    const [event, setEvent] = useState<Event | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [creating, setCreating] = useState(false)
+    const [error, setError] = useState("")
+
+    const [teamName, setTeamName] = useState("")
+    const [selectedIcon, setSelectedIcon] = useState<typeof TEAM_ICONS[number]>("robot")
+    const [selectedColor, setSelectedColor] = useState<string>(TEAM_COLORS[0].value)
+    const [categories, setCategories] = useState<TeamCategoryEntry[]>([])
+
+    useEffect(() => {
+        async function loadData() {
+            try {
+                const eventData = await getEventById(eventId)
+                if (!eventData) {
+                    setError("Evento no encontrado")
+                    return
+                }
+                setEvent(eventData)
+
+                // Check for existing team
+                if (user) {
+                    const existingTeam = await getUserTeamInEvent(user.uid, eventId)
+                    if (existingTeam) {
+                        router.push(`/dashboard/eventos/${eventId}`) // Or to team detail
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading data:", err)
+                setError("Error al cargar la información")
+            } finally {
+                setLoading(false)
+            }
         }
+        if (!authLoading) {
+            loadData()
+        }
+    }, [eventId, user, authLoading, router])
+
+    useGSAP(() => {
+        if (!loading && event) {
+            gsap.from('.crear-equipo-container', {
+                y: 30,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power3.out'
+            })
+        }
+    }, { dependencies: [loading, event], scope: containerRef })
+
+    const handleCreate = async () => {
+        if (!user || !teamName.trim()) return
+
+        setCreating(true)
+        setError("")
+
+        try {
+            if (categories.length === 0) {
+                throw new Error("Selecciona al menos una categoría")
+            }
+
+            const invalidCategory = categories.find(c => !c.prototypeName.trim())
+            if (invalidCategory) {
+                throw new Error(`Asigna un nombre al robot para ${invalidCategory.category}`)
+            }
+
+            const teamId = await createTeam(
+                eventId,
+                teamName.trim(),
+                user.uid,
+                selectedIcon,
+                selectedColor,
+                categories
+            )
+            router.push(`/dashboard/eventos/${eventId}`)
+        } catch (err: any) {
+            setError(err.message || "Error al crear el equipo")
+            setCreating(false)
+        }
+    }
+
+    if (loading || authLoading) {
+        return (
+            <div className="dashboard-layout" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+                <div className="loading-spinner" style={{ width: '40px', height: '40px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: '#E32636', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            </div>
+        )
+    }
+
+    if (!event) {
+        return (
+            <div className="dashboard-layout" style={{ padding: '4rem', textAlign: 'center' }}>
+                <h1 style={{ color: '#fff', marginBottom: '1rem' }}>{error || "Evento no encontrado"}</h1>
+                <Link href="/dashboard/eventos" className="btn-primary" style={{ textDecoration: 'none' }}>Volver a eventos</Link>
+            </div>
+        )
     }
 
     return (
         <div className="dashboard-layout">
-            {/* Navbar */}
             <nav className="dashboard-nav">
                 <div className="container nav-content">
                     <Link href="/dashboard" className="nav-logo">
@@ -72,102 +148,85 @@ export default function CrearEquipoPage({ params }: { params: Promise<{ id: stri
                         <Link href="/dashboard/eventos" className="nav-link active">Eventos</Link>
                         <Link href="/dashboard/equipos" className="nav-link">Equipos</Link>
                     </div>
-                    <Link href="/dashboard/profile" className="nav-user-pill" style={{ textDecoration: 'none' }}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        <div className="pill-content">
-                            <span className="pill-gamertag">#JOSEPO23</span>
-                            <span className="pill-subtitle">Ver mi perfil</span>
-                        </div>
-                    </Link>
+                    {profile && (
+                        <Link href="/dashboard/profile" className="nav-user-pill" style={{ textDecoration: 'none' }}>
+                            <div style={{ color: profile.playerColor || 'inherit', display: 'flex' }}>
+                                {profileIcons[getIconIdx(profile.playerIcon || 'user')]}
+                            </div>
+                            <div className="pill-content">
+                                <span className="pill-gamertag">{profile.gamertag}</span>
+                                <span className="pill-subtitle">Ver mi perfil</span>
+                            </div>
+                        </Link>
+                    )}
                 </div>
             </nav>
 
-            <main className="dashboard-main container">
-                {/* Back Link */}
-                <Link href={`/dashboard/eventos/${resolvedParams.id}`} className="back-link">
+            <main className="dashboard-main container" ref={containerRef}>
+                <Link href={`/dashboard/eventos/${eventId}`} className="back-link">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                     Volver al evento
                 </Link>
 
-                {/* Create Team Form */}
                 <div className="crear-equipo-container">
-                    {/* Team Icon */}
-                    <div className="crear-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
+                    <div className="crear-icon" style={{ backgroundColor: selectedColor + '20', borderColor: selectedColor + '40' }}>
+                        <TeamIcon icon={selectedIcon} color={selectedColor} size={32} />
                     </div>
 
                     <h1 className="crear-title">Crear equipo</h1>
-                    <p className="crear-subtitle">
-                        Crea tu equipo para participar en Racing Cup TIcs 2026
-                    </p>
+                    <p className="crear-subtitle">Completa los datos para inscribirte en {event.name}</p>
 
-                    {/* Team Name Input */}
+                    {error && (
+                        <div className="error-alert" style={{ marginBottom: '1.5rem', padding: '1rem', background: 'rgba(227, 38, 54, 0.1)', border: '1px solid #E32636', borderRadius: '0.5rem', color: '#E32636', fontSize: '0.9rem' }}>
+                            {error}
+                        </div>
+                    )}
+
                     <div className="form-group">
                         <label className="input-label">Nombre del equipo</label>
                         <input
                             type="text"
                             className="team-name-input"
-                            placeholder="Nombre de tu equipo"
+                            placeholder="Ej: Alpha Team"
                             value={teamName}
                             onChange={(e) => setTeamName(e.target.value)}
+                            maxLength={30}
                         />
                     </div>
 
-                    {/* Icon Selector */}
                     <div className="form-group">
-                        <label className="input-label">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="9" cy="9" r="2"></circle>
-                                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
-                            </svg>
-                            Icono del equipo
-                        </label>
+                        <label className="input-label">Icono del equipo</label>
                         <div className="icon-grid">
-                            {teamIcons.map((icon) => (
+                            {TEAM_ICONS.map((icon) => (
                                 <button
-                                    key={icon.id}
-                                    className={`icon-option ${selectedIcon === icon.id ? 'selected' : ''}`}
-                                    onClick={() => setSelectedIcon(icon.id)}
-                                    style={{ borderColor: selectedIcon === icon.id ? teamColors.find(c => c.id === selectedColor)?.hex : undefined }}
+                                    key={icon}
+                                    type="button"
+                                    className={`icon-option ${selectedIcon === icon ? 'selected' : ''}`}
+                                    onClick={() => setSelectedIcon(icon)}
+                                    style={{ borderColor: selectedIcon === icon ? selectedColor : undefined }}
                                 >
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                        <path d={icon.path}></path>
-                                    </svg>
+                                    <TeamIcon icon={icon} color={selectedIcon === icon ? selectedColor : 'rgba(255,255,255,0.4)'} size={24} />
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    {/* Color Selector */}
                     <div className="form-group">
-                        <label className="input-label">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 2a10 10 0 0 0 0 20"></path>
-                            </svg>
-                            Color del equipo
-                        </label>
+                        <label className="input-label">Color del equipo</label>
                         <div className="color-grid">
-                            {teamColors.map((color) => (
+                            {TEAM_COLORS.map((color) => (
                                 <button
-                                    key={color.id}
-                                    className={`color-option ${selectedColor === color.id ? 'selected' : ''}`}
-                                    style={{ backgroundColor: color.hex }}
-                                    onClick={() => setSelectedColor(color.id)}
+                                    key={color.value}
+                                    type="button"
+                                    className={`color-option ${selectedColor === color.value ? 'selected' : ''}`}
+                                    style={{ backgroundColor: color.value }}
+                                    onClick={() => setSelectedColor(color.value)}
+                                    title={color.name}
                                 >
-                                    {selectedColor === color.id && (
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3">
+                                    {selectedColor === color.value && (
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3">
                                             <polyline points="20 6 9 17 4 12"></polyline>
                                         </svg>
                                     )}
@@ -176,61 +235,67 @@ export default function CrearEquipoPage({ params }: { params: Promise<{ id: stri
                         </div>
                     </div>
 
-                    {/* Level Selector */}
                     <div className="form-group">
-                        <label className="input-label">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                            </svg>
-                            Nivel Educativo
-                        </label>
-                        <div className="level-grid">
-                            <button
-                                className={`level-option ${selectedLevel === 'Media Superior' ? 'selected' : ''}`}
-                                onClick={() => setSelectedLevel('Media Superior')}
-                            >
-                                <div className="level-icon">🎓</div>
-                                <div className="level-info">
-                                    <span className="level-title">Media Superior</span>
-                                    <span className="level-desc">Bachillerato / Preparatoria</span>
-                                </div>
-                                {selectedLevel === 'Media Superior' && (
-                                    <div className="level-check">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                    </div>
-                                )}
-                            </button>
+                        <label className="input-label">Categorías y Prototipos</label>
+                        <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginBottom: '1rem' }}>
+                            Selecciona las categorías y asigna un nombre a tu prototipo.
+                        </p>
 
-                            <button
-                                className={`level-option ${selectedLevel === 'Superior' ? 'selected' : ''}`}
-                                onClick={() => setSelectedLevel('Superior')}
-                            >
-                                <div className="level-icon">🏛️</div>
-                                <div className="level-info">
-                                    <span className="level-title">Superior</span>
-                                    <span className="level-desc">Universidad / Tecnológico</span>
-                                </div>
-                                {selectedLevel === 'Superior' && (
-                                    <div className="level-check">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
+                        <div className="categories-list">
+                            {event.categories.map((category) => {
+                                const isSelected = categories.some(c => c.category === category)
+                                const currentEntry = categories.find(c => c.category === category)
+
+                                return (
+                                    <div key={category} className={`category-selection-card ${isSelected ? 'active' : ''}`}>
+                                        <div className="category-check-row">
+                                            <label className="custom-checkbox">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={isSelected}
+                                                    onChange={(e) => {
+                                                        if (e.target.checked) {
+                                                            setCategories([...categories, { category, prototypeName: "" }])
+                                                        } else {
+                                                            setCategories(categories.filter(c => c.category !== category))
+                                                        }
+                                                    }}
+                                                />
+                                                <span className="checkmark"></span>
+                                                <span className="category-name">{category}</span>
+                                            </label>
+                                        </div>
+
+                                        {isSelected && (
+                                            <div className="prototype-input-wrapper">
+                                                <input
+                                                    type="text"
+                                                    className="prototype-name-input"
+                                                    placeholder={`Nombre del robot para ${category}`}
+                                                    value={currentEntry?.prototypeName || ""}
+                                                    onChange={(e) => {
+                                                        const updated = categories.map(c =>
+                                                            c.category === category
+                                                                ? { ...c, prototypeName: e.target.value }
+                                                                : c
+                                                        )
+                                                        setCategories(updated)
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                            </button>
+                                )
+                            })}
                         </div>
                     </div>
 
-                    {/* Create Button */}
                     <button
                         className="btn-crear-equipo"
-                        onClick={handleCrearEquipo}
-                        disabled={!teamName.trim()}
+                        onClick={handleCreate}
+                        disabled={!teamName.trim() || creating || categories.length === 0}
                     >
-                        Crear equipo
+                        {creating ? "Creando..." : "Crear equipo"}
                     </button>
                 </div>
             </main>

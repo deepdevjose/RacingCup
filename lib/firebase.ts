@@ -78,10 +78,11 @@ export interface UserProfile {
   gamertag: string
   school: string
   isTeacher: boolean
-  educationLevel?: 'media_superior' | 'superior'
+  educationLevel?: string
   admin?: boolean
   isOrganizer?: boolean
   playerIcon?: typeof PLAYER_ICONS[number]
+  playerColor?: string
   createdAt: Date
 }
 
@@ -334,7 +335,8 @@ export async function canUserEditProfile(userId: string): Promise<{ canEdit: boo
 }
 
 export async function isGamertagAvailable(gamertag: string, excludeUserId?: string): Promise<boolean> {
-  const q = query(profilesCollection, where("gamertag", "==", gamertag))
+  const normalized = gamertag.trim().toUpperCase()
+  const q = query(profilesCollection, where("gamertag", "==", normalized))
   const snapshot = await getDocs(q)
   if (snapshot.empty) return true
   if (excludeUserId && snapshot.docs.length === 1 && snapshot.docs[0].id === excludeUserId) return true
@@ -382,10 +384,13 @@ export async function createEvent(event: Omit<Event, "id" | "createdAt" | "winne
 
 export async function getAllEvents(): Promise<Event[]> {
   const snapshot = await getDocs(eventsCollection)
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...convertTimestamps(doc.data()),
-  })) as Event[]
+  return snapshot.docs.map((doc) => {
+    const data = convertTimestamps(doc.data())
+    return {
+      ...data,
+      id: doc.id,
+    }
+  }) as Event[]
 }
 
 export async function getActiveEvents(): Promise<Event[]> {

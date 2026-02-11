@@ -62,7 +62,7 @@ export default function DashboardPage() {
             {/* Navbar */}
             <nav className="dashboard-nav">
                 <div className="container nav-content">
-                    <Link href="/dashboard" className="nav-logo">
+                    <Link href="../" className="nav-logo">
                         <img src="/logotypes/logo.png" alt="Racing Cup" style={{ height: '30px' }} />
                         <span>Racing Cup TICs</span>
                     </Link>

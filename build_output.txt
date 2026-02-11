@@ -1,0 +1,60 @@
+
+> racing-cup@0.1.0 build
+> next build
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 2 errors:
+./app/dashboard/equipos/page.tsx:20:1
+Export Footer doesn't exist in target module
+  18 | } from '@/lib/firebase'
+  19 | import { TeamIcon } from '@/components/tournament/TeamIcon'
+> 20 | import { Footer } from '@/components/common/Footer'
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  21 |
+  22 | interface TeamWithDetails extends Team {
+  23 |     members: TeamMember[]
+
+The export Footer was not found in module [project]/components/common/Footer.tsx [app-client] (ecmascript).
+Did you mean to import default?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/dashboard/equipos/page.tsx [Client Component Browser]
+    ./app/dashboard/equipos/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/dashboard/equipos/page.tsx [Client Component SSR]
+    ./app/dashboard/equipos/page.tsx [Server Component]
+
+
+./app/dashboard/equipos/page.tsx:20:1
+Export Footer doesn't exist in target module
+  18 | } from '@/lib/firebase'
+  19 | import { TeamIcon } from '@/components/tournament/TeamIcon'
+> 20 | import { Footer } from '@/components/common/Footer'
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  21 |
+  22 | interface TeamWithDetails extends Team {
+  23 |     members: TeamMember[]
+
+The export Footer was not found in module [project]/components/common/Footer.tsx [app-ssr] (ecmascript).
+Did you mean to import default?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./app/dashboard/equipos/page.tsx [Client Component Browser]
+    ./app/dashboard/equipos/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/dashboard/equipos/page.tsx [Client Component SSR]
+    ./app/dashboard/equipos/page.tsx [Server Component]
+
+
+    at <unknown> (./app/dashboard/equipos/page.tsx:20:1)
+    at <unknown> (./app/dashboard/equipos/page.tsx:20:1)

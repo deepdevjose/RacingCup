@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import '../login/login.css'
-import { registerUser, createProfile } from '@/lib/firebase'
+import { registerUser, createProfile, isGamertagAvailable } from '@/lib/firebase'
+import { useEffect } from 'react'
 
 /**
  * Login/Signup Page
@@ -26,8 +27,9 @@ export default function SignupPage() {
         gamerTag: '',
         institution: '',
         isTeacher: false,
-        educationLevel: 'superior' as 'media_superior' | 'superior'
+        educationLevel: 'superior'
     })
+    const [gamertagStatus, setGamertagStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle')
 
     const formRef = useRef<HTMLDivElement>(null)
     const brandRef = useRef<HTMLDivElement>(null)
@@ -68,11 +70,25 @@ export default function SignupPage() {
 
     }, { scope: formRef })
 
+    useEffect(() => {
+        const checkAvailability = async () => {
+            if (formData.gamerTag.length === 8) {
+                setGamertagStatus('checking')
+                const available = await isGamertagAvailable(formData.gamerTag)
+                setGamertagStatus(available ? 'available' : 'taken')
+            } else {
+                setGamertagStatus('idle')
+            }
+        }
+        checkAvailability()
+    }, [formData.gamerTag])
+
     const handleNextStep = async (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
 
         if (step === 1) {
+            // ... (keep step 1 logic)
             if (formData.password !== formData.confirmPassword) {
                 setError("Las contraseñas no coinciden")
                 return
@@ -96,6 +112,18 @@ export default function SignupPage() {
                 }
             })
         } else if (step === 2) {
+            if (formData.gamerTag.length !== 8) {
+                setError("El Gamertag debe tener exactamente 8 caracteres")
+                return
+            }
+            if (gamertagStatus === 'taken') {
+                setError("Este Gamertag ya está en uso")
+                return
+            }
+            if (gamertagStatus === 'checking') {
+                setError("Validando disponibilidad del Gamertag...")
+                return
+            }
             setLoading(true)
             try {
                 // 1. Register user
@@ -108,7 +136,7 @@ export default function SignupPage() {
                     displayName: formData.fullName,
                     gamertag: formData.gamerTag,
                     school: formData.institution,
-                    isTeacher: formData.isTeacher,
+                    isTeacher: Boolean(formData.isTeacher),
                     educationLevel: formData.educationLevel
                 })
 
@@ -156,6 +184,16 @@ export default function SignupPage() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { id, value, type } = e.target as HTMLInputElement
         const checked = (e.target as HTMLInputElement).checked
+
+        // Special handling for gamerTag: 8 alphanumeric characters, force uppercase
+        if (id === 'gamerTag') {
+            const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 8).toUpperCase()
+            setFormData(prev => ({
+                ...prev,
+                gamerTag: alphanumericValue
+            }))
+            return
+        }
 
         setFormData(prev => ({
             ...prev,
@@ -277,15 +315,35 @@ export default function SignupPage() {
                                         </div>
 
                                         <div className="form-group">
-                                            <label htmlFor="gamerTag">Gamer Tag / Alias</label>
-                                            <input
-                                                type="text"
-                                                id="gamerTag"
-                                                value={formData.gamerTag}
-                                                onChange={handleChange}
-                                                placeholder="Como te verán los demás"
-                                                required
-                                            />
+                                            <label htmlFor="gamerTag">Gamertag (8 caracteres alfanuméricos)</label>
+                                            <div style={{ position: 'relative' }}>
+                                                <input
+                                                    type="text"
+                                                    id="gamerTag"
+                                                    value={formData.gamerTag}
+                                                    onChange={handleChange}
+                                                    placeholder="Ej: PLAYER01"
+                                                    maxLength={8}
+                                                    required
+                                                    style={{
+                                                        textTransform: 'uppercase',
+                                                        borderColor: gamertagStatus === 'available' ? '#10B981' : gamertagStatus === 'taken' ? '#EF4444' : 'rgba(255,255,255,0.1)'
+                                                    }}
+                                                />
+                                                {gamertagStatus === 'checking' && (
+                                                    <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}>
+                                                        <div className="loading-spinner" style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.1)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                                                    </div>
+                                                )}
+                                                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+                                                <small style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem' }}>
+                                                    {formData.gamerTag.length}/8 caracteres
+                                                </small>
+                                                {gamertagStatus === 'available' && <small style={{ color: '#10B981', fontSize: '0.75rem' }}>Disponible</small>}
+                                                {gamertagStatus === 'taken' && <small style={{ color: '#EF4444', fontSize: '0.75rem' }}>No disponible</small>}
+                                            </div>
                                         </div>
 
                                         <div className="form-group">

@@ -18,7 +18,7 @@ export default function Footer() {
                 {/* Credits */}
                 <div className="footer-credits">
                     <p>Racing Cup </p>
-                    <p>Website design & code by <a href="https://github.com/deepdevjose">Deep Dev Jose</a> and <a href="https://github.com/lalo">Lalo</a>.</p>
+                    <p>Website design & code by <a href="https://github.com/deepdevjose">Deep Dev Jose</a> and <a href="https://github.com/EDUARDOVAZQUE">Measly543</a>.</p>
                 </div>
 
                 <div className="footer-divider"></div>

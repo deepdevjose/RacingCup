@@ -543,6 +543,155 @@
     color: rgba(255, 255, 255, 0.6);
 }
 
+/* --- Event Cards --- */
+.event-card-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2.2rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 280px;
+}
+
+.event-card-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-8px);
+    border-color: rgba(227, 38, 54, 0.4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(227, 38, 54, 0.1);
+}
+
+.event-card-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0;
+    padding-right: 90px;
+    line-height: 1.25;
+    font-family: 'Outfit', sans-serif;
+}
+
+.event-card-desc {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.6;
+    margin: 1.2rem 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+.event-categories-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 1rem 0;
+}
+
+.category-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: rgba(227, 38, 54, 0.1);
+    color: #E32636;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(227, 38, 54, 0.2);
+    letter-spacing: 0.5px;
+}
+
+.event-card-item.past {
+    filter: grayscale(0.8) contrast(0.8);
+    opacity: 0.5;
+}
+
+.event-card-item.past:hover {
+    filter: grayscale(0.4) contrast(0.9);
+    opacity: 0.8;
+}
+
+.event-date-badge {
+    width: 55px;
+    height: 55px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.event-date-day {
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.event-date-month {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.event-status-badge {
+    position: absolute;
+    top: 2.2rem;
+    right: 2.2rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 30px;
+    letter-spacing: 1px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 120px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 32px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.event-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2.5rem;
+}
+
+.event-list-grid.featured {
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+}
+
+@media (max-width: 992px) {
+    .event-list-grid.featured {
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+
+    .event-list-grid.featured,
+    .event-list-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .event-card-item {
+        padding: 1.5rem;
+    }
+
+    .event-status-badge {
+        top: 1.5rem;
+        right: 1.5rem;
+    }
+}
+
 .avatar-option:hover {
     background: rgba(255, 255, 255, 0.08);
     color: #fff;
@@ -854,4 +1003,36 @@
 
 .nav-card:hover .nav-card-link svg {
     transform: translateX(5px);
+}
+
+/* Added for real profile logic integration */
+.tab-count {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-new {
+    background: #E32636 !important;
+    color: #fff !important;
+}
+
+.badge-docente {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.notif-subtitle {
+    display: block;
+    margin-top: 4px;
+    color: rgba(255, 255, 255, 0.6);
 }
