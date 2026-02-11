@@ -30,6 +30,8 @@ import {
     type Notification,
     PLAYER_ICONS,
     TEAM_COLORS,
+    getMatchesByEvent, // Added import
+    type Match, // Added type
 } from '@/lib/firebase'
 
 // types for details
@@ -57,6 +59,10 @@ export default function ProfilePage() {
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [processingInvite, setProcessingInvite] = useState<string | null>(null)
     const [canEdit, setCanEdit] = useState<{ canEdit: boolean; reason?: string }>({ canEdit: true })
+
+    // Matches
+    const [matches, setMatches] = useState<Match[]>([])
+    const [filterMyMatches, setFilterMyMatches] = useState(true)
 
     // Tab State
     const [activeTab, setActiveTab] = React.useState('teams')
@@ -127,6 +133,25 @@ export default function ProfilePage() {
                 const userNotifications = await getUserNotifications(user.uid)
                 setNotifications(userNotifications)
 
+                // Matches
+                // 1. Get unique event IDs from my teams
+                const myEventIds = Array.from(new Set(teamsWithDetails.map(t => t.eventId)))
+
+                // 2. Fetch matches for all these events
+                const allMatches = await Promise.all(
+                    myEventIds.map(eventId => getMatchesByEvent(eventId))
+                )
+
+                // 3. Flatten and sort by date/matchNumber
+                const flatMatches = allMatches.flat().sort((a, b) => {
+                    // Sort by status (InProgress -> Pending -> Completed) or number
+                    if (a.status === 'in_progress' && b.status !== 'in_progress') return -1
+                    if (a.status !== 'in_progress' && b.status === 'in_progress') return 1
+                    return a.matchNumber - b.matchNumber
+                })
+
+                setMatches(flatMatches)
+
                 // Edit Status
                 const editStatus = await canUserEditProfile(user.uid)
                 setCanEdit(editStatus)
@@ -178,7 +203,7 @@ export default function ProfilePage() {
     useGSAP(() => {
         if (loading || !user || !profile) return
         const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
-        tl.from('.profile-header-card', { y: 20, opacity: 0, duration: 0.6 })
+        tl.from('.profile-header-card', { y: 20, opacity: 0.5, duration: 0.2 })
             .from('.info-card', { y: 20, opacity: 0, stagger: 0.1, duration: 0.5 }, '-=0.3')
             .from('.dashboard-tabs', { y: 10, opacity: 0, duration: 0.4 }, '-=0.2')
             .from('.content-area-block', { y: 10, opacity: 0, duration: 0.5 }, '-=0.2')
@@ -348,17 +373,22 @@ export default function ProfilePage() {
                     <div className="list-container">
                         {myTeams.map(team => (
                             <div key={team.id} className="invitation-item" style={{ marginBottom: '1rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <span style={{ fontSize: '0.7rem', background: team.isConfirmed ? 'rgba(16,185,129,0.2)' : 'rgba(245,158,11,0.2)', color: team.isConfirmed ? '#10B981' : '#F59E0B', padding: '1px 1px', borderRadius: '4px' }}>
+                                        {team.isConfirmed ? 'Confirmado' : 'Pendiente'}
+                                    </span>
                                     <div className="notif-icon-box" style={{ background: team.color + '20', color: team.color }}>
+
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+
                                     </div>
+
                                     <div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+
                                             <p className="notif-title">{team.name}</p>
                                             {team.isLeader && <span style={{ fontSize: '0.7rem', background: 'rgba(212,175,55,0.2)', color: '#D4AF37', padding: '1px 6px', borderRadius: '4px' }}>Líder</span>}
-                                            <span style={{ fontSize: '0.7rem', background: team.isConfirmed ? 'rgba(16,185,129,0.2)' : 'rgba(245,158,11,0.2)', color: team.isConfirmed ? '#10B981' : '#F59E0B', padding: '1px 6px', borderRadius: '4px' }}>
-                                                {team.isConfirmed ? 'Confirmado' : 'Pendiente'}
-                                            </span>
+
                                         </div>
                                         <p className="notif-time">{team.event?.name || "Evento"} • {team.memberCount} miembros</p>
                                     </div>
@@ -449,6 +479,132 @@ export default function ProfilePage() {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                )
+            case 'matches':
+                const myTeamIds = myTeams.map(t => t.id)
+                // Filter logic
+                const displayedMatches = filterMyMatches
+                    ? matches.filter(m => (m.teamAId && myTeamIds.includes(m.teamAId)) || (m.teamBId && myTeamIds.includes(m.teamBId)))
+                    : matches
+
+                if (displayedMatches.length === 0) {
+                    return (
+                        <div className="empty-state">
+                            <div className="empty-icon">
+                                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                            </div>
+                            <h3 className="empty-title">No hay partidos para mostrar</h3>
+                            <p className="empty-subtitle">
+                                {filterMyMatches ? "Tus equipos no tienen partidos programados en este momento." : "No hay partidos programados en tus eventos."}
+                            </p>
+                            <div className="filter-toggle-container" style={{ marginTop: '1rem' }}>
+
+                            </div>
+                        </div>
+                    )
+                }
+
+                return (
+                    <div className="matches-list-container">
+                        <div className="list-header" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+                            <label className="filter-toggle" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', userSelect: 'none', background: 'rgba(0,0,0,0.3)', padding: '6px 12px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={filterMyMatches}
+                                    onChange={(e) => setFilterMyMatches(e.target.checked)}
+                                    style={{ width: '16px', height: '16px', accentColor: '#E32636' }}
+                                />
+                                <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.8)' }}>Solo mis equipos</span>
+                            </label>
+                        </div>
+
+                        <div className="list-container">
+                            {displayedMatches.map(match => {
+                                // Find team names from myTeams or need another way? 
+                                // Actually, matches have IDs. We might strictly need team names.
+                                // Since we only fetched myTeams, we don't have ALL team names.
+                                // We might need to fetch team details or just show IDs if names missing?
+                                // Better: The User wants to see matches. 
+                                // In `getMatchesByEvent` we just get match data.
+                                // Challenge: We don't have opponent names if they aren't in `myTeams`.
+                                // Fix: `getMatchesByEvent` is raw match data.
+                                // We might need to fetch public teams or render a placeholder.
+                                // For now, let's assume we can survive without names or fetch them?
+                                // Actually, `myTeams` has names.
+                                // Opponents? We strictly don't know them.
+                                // Quick fix: In `loadData`, also fetch `getAllTeams` or `getTeamsByEvent`?
+                                // That's heavy.
+                                // Let's just show "Equipo [ID]" if unknown or check if `myTeams` covers it.
+
+                                const teamA = myTeams.find(t => t.id === match.teamAId)
+                                const teamB = myTeams.find(t => t.id === match.teamBId)
+                                // If not found in myTeams, we don't have the name easily.
+                                // User request implies seeing matches.
+                                // Let's show "Equipo Rival" if name missing?
+
+                                // Actually, we can assume the user cares about THEIR team.
+                                // If `teamA` is mine, `teamB` is Rival.
+
+                                const isTeamAMine = !!teamA
+                                const isTeamBMine = !!teamB
+
+                                let teamAName = teamA?.name || (match.teamAId ? "Equipo Rival" : "TBD")
+                                let teamBName = teamB?.name || (match.teamBId ? "Equipo Rival" : "TBD")
+
+                                if (match.winnerId) {
+                                    // Mark winner?
+                                }
+
+                                return (
+                                    <div key={match.id} className="match-card-item" style={{
+                                        background: 'rgba(255,255,255,0.03)',
+                                        border: '1px solid rgba(255,255,255,0.05)',
+                                        borderRadius: '12px',
+                                        padding: '1rem',
+                                        marginBottom: '1rem',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '0.5rem'
+                                    }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>
+                                            <span>Ronda {match.round} • Partido {match.matchNumber}</span>
+                                            <span style={{
+                                                color: match.status === 'in_progress' ? '#fbbf24' : match.status === 'completed' ? '#10b981' : 'rgba(255,255,255,0.5)',
+                                                fontWeight: 'bold'
+                                            }}>
+                                                {match.status === 'in_progress' ? 'En Curso' : match.status === 'completed' ? 'Finalizado' : 'Pendiente'}
+                                            </span>
+                                        </div>
+
+                                        <div className="match-versus" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem' }}>
+                                            {/* Team A */}
+                                            <div style={{ flex: 1, textAlign: 'right', opacity: match.winnerId && match.winnerId !== match.teamAId ? 0.5 : 1 }}>
+                                                <div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: isTeamAMine ? '#E32636' : '#fff' }}>{teamAName}</div>
+                                                {match.status !== 'pending' && <div style={{ fontSize: '1.5rem', fontFamily: "'Racing Sans One', cursive" }}>{match.scoreA || 0}</div>}
+                                            </div>
+
+                                            <div style={{ padding: '0 1rem', fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>VS</div>
+
+                                            {/* Team B */}
+                                            <div style={{ flex: 1, textAlign: 'left', opacity: match.winnerId && match.winnerId !== match.teamBId ? 0.5 : 1 }}>
+                                                <div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: isTeamBMine ? '#E32636' : '#fff' }}>{teamBName}</div>
+                                                {match.status !== 'pending' && <div style={{ fontSize: '1.5rem', fontFamily: "'Racing Sans One', cursive" }}>{match.scoreB || 0}</div>}
+                                            </div>
+                                        </div>
+
+                                        {match.winnerId && (
+                                            <div style={{ textAlign: 'center', fontSize: '0.8rem', color: '#10b981', marginTop: '0.5rem' }}>
+                                                Ganador: {match.winnerId === match.teamAId ? teamAName : teamBName}
+                                            </div>
+                                        )}
+                                    </div>
+                                )
+                            })}
+                        </div>
                     </div>
                 )
             default:
@@ -593,6 +749,20 @@ export default function ProfilePage() {
                             <line x1="20" y1="8" x2="20" y2="14"></line>
                         </svg>
                         Invitaciones {invites.length > 0 && <span className="tab-count badge-new">{invites.length}</span>}
+                    </button>
+                    <button
+                        className={`tab-item ${activeTab === 'matches' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('matches')}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <path d="M8 13h2"></path>
+                            <path d="M8 17h2"></path>
+                            <path d="M14 13h2"></path>
+                            <path d="M14 17h2"></path>
+                        </svg>
+                        Partidos
                     </button>
                 </div>
 

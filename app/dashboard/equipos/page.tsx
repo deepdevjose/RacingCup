@@ -232,51 +232,57 @@ export default function TeamsPage() {
 
                 <div className="teams-grid-premium">
                     {filteredTeams.map((team) => (
-                        <div key={team.id} className="team-card-premium">
-                            <div className="team-card-header">
-                                <div className="team-icon-circle" style={{ backgroundColor: team.color + '20', borderColor: team.color + '40' }}>
-                                    <TeamIcon icon={team.icon} color={team.color} size={24} />
+                        <Link
+                            key={team.id}
+                            href={`/dashboard/equipos/${team.id}`}
+                            style={{ textDecoration: 'none', color: 'inherit' }}
+                        >
+                            <div className="team-card-premium">
+                                <div className="team-card-header">
+                                    <div className="team-icon-circle" style={{ backgroundColor: team.color + '20', borderColor: team.color + '40' }}>
+                                        <TeamIcon icon={team.icon} color={team.color} size={24} />
+                                    </div>
+                                    <div className="team-main-info">
+                                        <h3 className="team-name">{team.name}</h3>
+                                        <span className="team-event-tag">{team.event?.name || 'Evento'}</span>
+                                    </div>
+                                    <div className={`team-status-pill ${team.isConfirmed ? 'is-confirmed' : 'is-pending'}`}>
+                                        {team.isConfirmed ? 'Confirmado' : 'Pendiente'}
+                                    </div>
                                 </div>
-                                <div className="team-main-info">
-                                    <h3 className="team-name">{team.name}</h3>
-                                    <span className="team-event-tag">{team.event?.name || 'Evento'}</span>
-                                </div>
-                                <div className={`team-status-pill ${team.isConfirmed ? 'is-confirmed' : 'is-pending'}`}>
-                                    {team.isConfirmed ? 'Confirmado' : 'Pendiente'}
-                                </div>
-                            </div>
 
-                            <div className="team-card-body">
-                                <div className="detail-item">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="9" cy="7" r="4"></circle>
-                                    </svg>
-                                    <span>{team.members.length} Integrante{team.members.length !== 1 ? 's' : ''}</span>
-                                </div>
-                                {team.seed && (
-                                    <div className="detail-item seed">
+                                <div className="team-card-body">
+                                    <div className="detail-item">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="9" cy="7" r="4"></circle>
                                         </svg>
-                                        <span>Seed: #{team.seed}</span>
+                                        <span>{team.members.length} Integrante{team.members.length !== 1 ? 's' : ''}</span>
+                                    </div>
+                                    {team.seed && (
+                                        <div className="detail-item seed">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                            </svg>
+                                            <span>Seed: #{team.seed}</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {team.categories && team.categories.length > 0 && (
+                                    <div className="team-card-footer">
+                                        <div className="categories-badges">
+                                            {team.categories.map((c, idx) => (
+                                                <div key={idx} className="category-badge">
+                                                    <span className="p-name">{c.prototypeName}</span>
+                                                    <span className="c-name">{c.category}</span>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
                             </div>
-
-                            {team.categories && team.categories.length > 0 && (
-                                <div className="team-card-footer">
-                                    <div className="categories-badges">
-                                        {team.categories.map((c, idx) => (
-                                            <div key={idx} className="category-badge">
-                                                <span className="p-name">{c.prototypeName}</span>
-                                                <span className="c-name">{c.category}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        </Link>
                     ))}
 
                     {filteredTeams.length === 0 && (

@@ -133,7 +133,6 @@
 .nav-user-pill:hover {
     background: rgba(27, 27, 58, 0.8);
     border-color: rgba(227, 38, 54, 0.5);
-    box-shadow: 0 0 15px rgba(227, 38, 54, 0.2);
     transform: translateY(-1px);
 }
 
@@ -174,21 +173,22 @@
 }
 
 .profile-header-card {
-    background: #0D0D1A;
-    /* Slightly lighter than pure black */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    /* Important: visible border */
-    border-radius: 1rem;
+    background: linear-gradient(135deg,
+            #E32636 0%,
+            #1B1B3A 50%,
+            #0D0D1A 100%);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
     overflow: hidden;
     margin-bottom: 2rem;
 }
 
+
 .profile-banner {
     height: 120px;
-    background: linear-gradient(90deg, #1f2937, #111827);
-    /* Dark gradient placeholder */
-    /* If replicating exact vibe: use a subtle red/green gradient or image */
-    background: linear-gradient(90deg, #3f090f, #0f172a);
+    background: transparent;
+    position: relative;
+    z-index: 5;
 }
 
 .profile-info-row {
@@ -196,7 +196,6 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    /* Align buttons with bottom of text */
 }
 
 .profile-identity {
@@ -204,17 +203,14 @@
     align-items: center;
     gap: 1.5rem;
     margin-top: -3.5rem;
-    /* Pull up to overlap banner */
 }
 
 .profile-avatar {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    background: #000;
-    /* Fallback */
-    border: 4px solid #0D0D1A;
-    /* Matches bg to create 'cutout' look */
+    background: rgba(0, 0, 0, 0.8);
+    border: 3px solid rgba(255, 255, 255, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -222,14 +218,12 @@
 }
 
 .profile-avatar svg {
-    width: 40px;
-    height: 40px;
-    stroke: #ccc;
+    width: 50px;
+    height: 50px;
 }
 
 .profile-texts {
     padding-top: 2rem;
-    /* Spacing since we pulled it up */
 }
 
 .profile-name-row {
@@ -240,8 +234,12 @@
 }
 
 .profile-name {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-family: 'Racing Sans One', cursive;
+    font-size: 2.5rem;
+    font-weight: 400;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .profile-role-badge {
@@ -258,8 +256,8 @@
 }
 
 .profile-gamertag {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
 }
 
 .profile-actions {
@@ -267,23 +265,40 @@
     gap: 0.8rem;
 }
 
+
 .btn-icon-text {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 0.5rem;
-    background: transparent;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
     color: #fff;
+    font-family: 'Racing Sans One', cursive;
     font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
+}
+
+.btn-icon-text svg {
+    width: 18px;
+    height: 18px;
 }
 
 .btn-icon-text:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(227, 38, 54, 0.2);
+    border-color: rgba(227, 38, 54, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn-icon-text:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
 }
 
 /* --- Info Grid --- */
@@ -295,143 +310,291 @@
 }
 
 .info-card {
-    background: #0D0D1A;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(145deg,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 255, 255, 0.02));
+    border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 1rem;
     padding: 1.5rem;
     display: flex;
     align-items: center;
     gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(227, 38, 54, 0.4);
 }
 
 .info-icon {
-    color: rgba(255, 255, 255, 0.4);
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    background: rgba(227, 38, 54, 0.15);
+    border-radius: 0.75rem;
+    color: #E32636;
+    flex-shrink: 0;
 }
 
 .info-label {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Racing Sans One', cursive;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.6);
     margin-bottom: 0.2rem;
 }
 
 .info-value {
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
+    color: #fff;
 }
 
 /* --- Navigation Tabs --- */
 .dashboard-tabs {
-    background: #0D0D1A;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 2rem;
-    /* Pill shape container */
-    padding: 0.3rem;
+    background: linear-gradient(145deg, #0D0D1A, #151525);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    padding: 0.5rem;
     display: inline-flex;
     margin-bottom: 2rem;
-    position: relative;
-    /* Centering logic if needed, or full width */
     width: 60%;
     margin-left: auto;
     margin-right: auto;
     justify-content: space-between;
-    /* Distribute tabs */
+    gap: 0.5rem;
 }
 
-/* Alternatively if the reference is full width bar */
 .tabs-bar {
     display: flex;
     justify-content: center;
-    gap: 2rem;
-    background: #0D0D1A;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 1rem;
-    padding: 0.8rem 1rem;
+    gap: 1rem;
+    background: linear-gradient(145deg, #0D0D1A, #151525);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    padding: 0.5rem;
     margin-bottom: 2rem;
 }
 
 .tab-item {
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: 600;
-    font-size: 0.95rem;
-    padding: 0.5rem 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Racing Sans One', cursive;
+    font-weight: 400;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1rem 1.5rem;
+    border-radius: 0.75rem;
     cursor: pointer;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    transition: color 0.2s;
-    position: relative;
 }
 
-.tab-item:hover {
+.tab-item:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.05);
     color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-2px);
 }
 
 .tab-item.active {
+    background: linear-gradient(135deg,
+            rgba(227, 38, 54, 0.2),
+            rgba(227, 38, 54, 0.1));
+    border: 2px solid rgba(227, 38, 54, 0.4);
     color: #fff;
 }
 
 /* --- Content Area (Empty State) --- */
 .content-area-block {
-    background: #0D0D1A;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 1rem;
+    background: linear-gradient(145deg, #0D0D1A, #151525);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
     min-height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 2rem;
 }
 
 .empty-state {
     text-align: center;
+    padding: 3rem 1rem;
 }
 
 .empty-icon {
-    font-size: 3rem;
-    color: rgba(255, 255, 255, 0.2);
-    margin-bottom: 1rem;
+    width: 100px;
+    height: 100px;
+    background: rgba(227, 38, 54, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.empty-icon svg {
+    width: 50px;
+    height: 50px;
+    color: #E32636;
 }
 
 .empty-title {
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-family: 'Racing Sans One', cursive;
+    font-size: 1.5rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     margin-bottom: 0.5rem;
 }
 
 .empty-subtitle {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1rem;
     margin-bottom: 2rem;
-    max-width: 300px;
+    max-width: 400px;
     margin-left: auto;
     margin-right: auto;
+    line-height: 1.6;
 }
 
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
-    .info-grid {
-        grid-template-columns: 1fr;
+
+    /* Profile Header */
+    .profile-header-card {
+        border-radius: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-banner {
+        height: 80px;
     }
 
     .profile-info-row {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 1.5rem;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .profile-identity {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin-top: -3rem;
+        gap: 0.75rem;
+    }
+
+    /* Keep avatar same size, only reduce text */
+    .profile-texts {
+        padding-top: 0;
+        width: 100%;
+    }
+
+    .profile-name {
+        font-size: 1.25rem;
+        word-break: break-word;
+        line-height: 1.2;
+    }
+
+    .profile-gamertag {
+        font-size: 0.85rem;
     }
 
     .profile-actions {
         width: 100%;
+        flex-direction: column;
     }
 
     .btn-icon-text {
-        flex: 1;
+        width: 100%;
         justify-content: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    /* Info Grid */
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .info-card {
+        padding: 1rem;
+    }
+
+    .info-icon {
+        width: 32px;
+        height: 32px;
+        padding: 8px;
+    }
+
+    .info-label {
+        font-size: 0.75rem;
+    }
+
+    .info-value {
+        font-size: 0.95rem;
+        word-break: break-word;
+    }
+
+    /* Tabs */
+    .dashboard-tabs {
+        width: 100%;
+        padding: 0.4rem;
+        gap: 0.3rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .tabs-bar {
+        width: 100%;
+        padding: 0.4rem;
+        gap: 0.5rem;
         overflow-x: auto;
         justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .tab-item {
+        font-size: 0.75rem;
+        padding: 0.65rem 0.85rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Content Area */
+    .content-area-block {
+        padding: 1rem;
+        min-height: 300px;
+        border-radius: 1rem;
+    }
+
+    .empty-state {
+        padding: 2rem 1rem;
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+    }
+
+    .empty-icon svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .empty-title {
+        font-size: 1.2rem;
+    }
+
+    .empty-subtitle {
+        font-size: 0.9rem;
+        max-width: 100%;
     }
 }
 
@@ -561,7 +724,6 @@
     background: rgba(255, 255, 255, 0.06);
     transform: translateY(-8px);
     border-color: rgba(227, 38, 54, 0.4);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(227, 38, 54, 0.1);
 }
 
 .event-card-title {
@@ -624,7 +786,6 @@
     justify-content: center;
     color: #fff;
     flex-shrink: 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .event-date-day {
@@ -805,12 +966,41 @@
 
 /* --- Dashboard Home Hero --- Racing Comic Style --- */
 .dashboard-hero {
-    text-align: center;
-    padding: 5rem 1rem 4rem;
-    position: relative;
+    background: linear-gradient(135deg,
+            #E32636 0%,
+            #1B1B3A 50%,
+            #0D0D1A 100%);
+    border-radius: 1.5rem;
+    padding: 3rem;
     margin-bottom: 3rem;
-    /* Subtle radial glow like landing page */
-    background: radial-gradient(ellipse at center top, rgba(99, 102, 241, 0.08) 0%, transparent 50%);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+}
+
+.dashboard-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.15), transparent);
+    border-radius: 50%;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-20px) scale(1.05);
+    }
 }
 
 .hero-badge {
@@ -818,171 +1008,256 @@
     align-items: center;
     gap: 0.6rem;
     padding: 0.6rem 1.5rem;
-    background: rgba(227, 38, 54, 0.15);
-    border: 2px solid rgba(227, 38, 54, 0.5);
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 2rem;
-    color: #E32636;
-    font-size: 0.9rem;
+    color: #fff;
+    font-size: 0.85rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 15px rgba(227, 38, 54, 0.2);
-    animation: pulse-badge 2s ease-in-out infinite;
-}
-
-@keyframes pulse-badge {
-
-    0%,
-    100% {
-        box-shadow: 0 4px 15px rgba(227, 38, 54, 0.2);
-    }
-
-    50% {
-        box-shadow: 0 4px 25px rgba(227, 38, 54, 0.4);
-    }
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1;
 }
 
 .hero-title {
+    font-family: 'Racing Sans One', cursive;
     font-size: 3.5rem;
-    font-weight: 800;
+    font-weight: 400;
     line-height: 1.1;
     margin-bottom: 1rem;
-    font-family: 'Outfit', sans-serif;
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
 }
 
 .hero-title span {
-    color: #E32636;
+    color: #FFD700;
 }
 
 .hero-desc {
-    font-size: 1.25rem;
-    color: rgba(255, 255, 255, 0.75);
-    max-width: 650px;
-    margin: 0 auto 2rem;
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 600px;
+    margin-bottom: 0;
     line-height: 1.6;
     font-weight: 400;
+    position: relative;
+    z-index: 1;
 }
 
-/* --- Navigation Cards --- */
+.hero-icon-large {
+    position: absolute;
+    right: 3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 120px;
+    height: 120px;
+    opacity: 0.15;
+    z-index: 0;
+}
+
+/* --- Navigation Cards --- Asymmetric Grid --- */
 .nav-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2rem;
+    grid-template-columns: 1.5fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 1.5rem;
     margin-bottom: 4rem;
+}
+
+@media (max-width: 1024px) {
+    .nav-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
 }
 
 .nav-card {
     background: linear-gradient(145deg, #0D0D1A, #151525);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 1rem;
-    padding: 2.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
     text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
+/* Eventos - Card grande (2 filas) */
+.nav-card.eventos {
+    grid-row: span 2;
+    padding: 3rem;
+    background: linear-gradient(145deg,
+            rgba(227, 38, 54, 0.15),
+            rgba(227, 38, 54, 0.05));
+    border: 2px solid rgba(227, 38, 54, 0.3);
+}
+
+/* Equipos - Card mediano */
+.nav-card.equipos {
+    background: linear-gradient(145deg,
+            rgba(59, 130, 246, 0.15),
+            rgba(59, 130, 246, 0.05));
+    border: 2px solid rgba(59, 130, 246, 0.3);
+}
+
+/* Perfil - Card mediano */
+.nav-card.profile {
+    background: linear-gradient(145deg,
+            rgba(16, 185, 129, 0.15),
+            rgba(16, 185, 129, 0.05));
+    border: 2px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Efecto de brillo en hover */
 .nav-card::before {
     content: '';
     position: absolute;
     top: 0;
-    left: 0;
+    left: -100%;
     width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, #E32636, transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.nav-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent);
+    transition: left 0.5s ease;
 }
 
 .nav-card:hover::before {
-    opacity: 1;
+    left: 100%;
+}
+
+.nav-card:hover {
+    transform: translateY(-8px);
 }
 
 .nav-card-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 1rem;
+    width: 80px;
+    height: 80px;
+    border-radius: 1.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 0.5rem;
-    transition: transform 0.3s ease;
+    margin-bottom: 1rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.nav-card-icon svg {
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s ease;
 }
 
 .nav-card:hover .nav-card-icon {
-    transform: scale(1.1) rotate(5deg);
+    transform: scale(1.15) rotate(5deg);
+}
+
+.nav-card:hover .nav-card-icon svg {
+    transform: scale(1.2);
 }
 
 /* Eventos Style */
 .nav-card.eventos .nav-card-icon {
-    background: rgba(227, 38, 54, 0.15);
+    background: rgba(227, 38, 54, 0.2);
     color: #E32636;
-    border: 2px solid rgba(227, 38, 54, 0.3);
+    border: 2px solid rgba(227, 38, 54, 0.4);
 }
 
 .nav-card.eventos:hover {
-    border-color: rgba(227, 38, 54, 0.5);
-    box-shadow: 0 15px 40px rgba(227, 38, 54, 0.2), 0 0 60px rgba(227, 38, 54, 0.1);
+    border-color: rgba(227, 38, 54, 0.6);
+}
+
+.nav-card.eventos:hover .nav-card-icon {
+    box-shadow: 0 0 30px rgba(227, 38, 54, 0.6);
 }
 
 /* Equipos Style */
 .nav-card.equipos .nav-card-icon {
-    background: rgba(59, 130, 246, 0.15);
+    background: rgba(59, 130, 246, 0.2);
     color: #3B82F6;
-    border: 2px solid rgba(59, 130, 246, 0.3);
+    border: 2px solid rgba(59, 130, 246, 0.4);
 }
 
 .nav-card.equipos:hover {
-    border-color: rgba(59, 130, 246, 0.5);
-    box-shadow: 0 15px 40px rgba(59, 130, 246, 0.2), 0 0 60px rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.6);
+}
+
+.nav-card.equipos:hover .nav-card-icon {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
 }
 
 /* Profile Style */
 .nav-card.profile .nav-card-icon {
-    background: rgba(16, 185, 129, 0.15);
+    background: rgba(16, 185, 129, 0.2);
     color: #10B981;
-    border: 2px solid rgba(16, 185, 129, 0.3);
+    border: 2px solid rgba(16, 185, 129, 0.4);
 }
 
 .nav-card.profile:hover {
-    border-color: rgba(16, 185, 129, 0.5);
-    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.2), 0 0 60px rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.6);
+}
+
+.nav-card.profile:hover .nav-card-icon {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
 }
 
 .nav-card-title {
-    font-size: 1.5rem;
-    font-weight: 800;
+    font-family: 'Racing Sans One', cursive;
+    font-size: 1.75rem;
+    font-weight: 400;
     color: #fff;
     margin: 0;
-    font-family: 'Outfit', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Card grande tiene título más grande */
+.nav-card.eventos .nav-card-title {
+    font-size: 2rem;
 }
 
 .nav-card-desc {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.8);
     font-size: 1rem;
-    line-height: 1.6;
+    line-height: 1.7;
     flex-grow: 1;
+    margin-bottom: 0.5rem;
+}
+
+.nav-card.eventos .nav-card-desc {
+    font-size: 1.1rem;
+    line-height: 1.8;
 }
 
 .nav-card-link {
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-    display: flex;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2rem;
+    transition: all 0.3s ease;
+    align-self: flex-start;
     margin-top: auto;
+}
+
+.nav-card-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
 }
 
 .nav-card.eventos .nav-card-link {
@@ -1035,4 +1310,257 @@
     display: block;
     margin-top: 4px;
     color: rgba(255, 255, 255, 0.6);
+}
+
+/* Entrance Animations */
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dashboard-hero {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.nav-card.eventos {
+    animation: slideInFromLeft 0.6s ease-out 0.2s both;
+}
+
+.nav-card.equipos {
+    animation: slideInFromRight 0.6s ease-out 0.3s both;
+}
+
+.nav-card.profile {
+    animation: slideInFromRight 0.6s ease-out 0.4s both;
+}
+
+/* Responsive adjustments for hero */
+@media (max-width: 768px) {
+    .dashboard-hero {
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-desc {
+        font-size: 1rem;
+    }
+
+    .hero-icon-large {
+        display: none;
+    }
+
+    .nav-card-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .nav-card-icon svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .nav-card.eventos .nav-card-title {
+        font-size: 1.5rem;
+    }
+
+    .nav-card-title {
+        font-size: 1.25rem;
+    }
+}
+
+/* --- Entrance Animations for Profile Page --- */
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* CSS animations removed to prevent conflict with GSAP animations in profile page */
+/* GSAP handles all animations for .profile-header-card, .info-card, .dashboard-tabs, .content-area-block */
+
+
+/* Enhanced team/notification cards */
+.invitation-item,
+.notification-item {
+    background: linear-gradient(145deg,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 255, 255, 0.02));
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.invitation-item:hover {
+    transform: translateX(5px);
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+.notification-item:hover {
+    transform: translateX(5px);
+    border-color: rgba(227, 38, 54, 0.4);
+}
+
+.notif-icon-box {
+    width: 50px;
+    height: 50px;
+    border-radius: 1rem;
+}
+
+.notif-title {
+    font-family: 'Racing Sans One', cursive;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Empty state improvements */
+.empty-icon {
+    width: 100px;
+    height: 100px;
+    background: rgba(227, 38, 54, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.empty-icon svg {
+    width: 50px;
+    height: 50px;
+    color: #E32636;
+}
+
+.empty-title {
+    font-family: 'Racing Sans One', cursive;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Modal improvements */
+.modal-container {
+    background: linear-gradient(145deg, #0D0D1A, #151525);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1.5rem;
+}
+
+.modal-title {
+    font-family: 'Racing Sans One', cursive;
+    font-size: 1.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.form-label {
+    font-family: 'Racing Sans One', cursive;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.form-input {
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    padding: 0.875rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    border-color: rgba(227, 38, 54, 0.5);
+    outline: none;
+}
+
+/* Responsive mobile for profile */
+@media (max-width: 768px) {
+    .profile-header-card::before {
+        display: none;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+    }
+
+    .profile-avatar svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .profile-name {
+        font-size: 1.75rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .tab-item {
+        font-size: 0.85rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .dashboard-tabs {
+        width: 100%;
+    }
 }

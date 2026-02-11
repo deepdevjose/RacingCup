@@ -133,18 +133,15 @@ export default function EventosPage() {
             <main className="dashboard-main container" ref={containerRef}>
                 {/* Hero Section */}
                 <div className="eventos-hero">
-                    <img
-                        src="/logotypes/logohero.png"
-                        alt="Racing Cup"
-                        className="eventos-hero-bg"
-                        onError={(e) => { e.currentTarget.style.display = 'none' }}
-                    />
+
                     <div className="eventos-hero-overlay"></div>
                     <div className="eventos-hero-content">
                         <h1 className="eventos-hero-title">Racing Cup TICs 2026</h1>
+
                         <p className="eventos-hero-subtitle">
                             Explora las categorías disponibles y registra a tu equipo en la competencia.
                         </p>
+
                     </div>
                 </div>
 

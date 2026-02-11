@@ -23,14 +23,15 @@
 .evento-hero-banner {
     position: relative;
     width: 100%;
-    height: 200px;
+    min-height: 200px;
     background:
         radial-gradient(ellipse at 80% 20%, rgba(227, 38, 54, 0.25) 0%, transparent 50%),
         radial-gradient(ellipse at 20% 80%, rgba(227, 38, 54, 0.15) 0%, transparent 40%),
         linear-gradient(135deg, #1a0808 0%, #0D0D1A 50%, #0a0a15 100%);
     border-radius: 1rem;
     overflow: hidden;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 3rem 2rem 2rem;
 }
 
 /* Racing lines pattern */
@@ -41,9 +42,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image:
-        linear-gradient(90deg, transparent 0%, transparent 50%, rgba(227, 38, 54, 0.03) 50%, rgba(227, 38, 54, 0.03) 100%);
-    background-size: 20px 100%;
     opacity: 0.5;
 }
 
@@ -97,26 +95,32 @@
     justify-content: center;
     color: #E32636;
     box-shadow: 0 5px 20px rgba(227, 38, 54, 0.3);
+    z-index: 10;
 }
 
-/* Title Section */
-.evento-title-section {
-    padding: 1rem 0 2rem;
+/* Hero Content Layout */
+.evento-hero-content {
+    position: relative;
+    z-index: 2;
 }
 
-.evento-title {
-    font-family: 'Outfit', sans-serif;
-    font-size: 2.25rem;
-    font-weight: 800;
-    color: #fff;
-    margin: 0 0 0.75rem 0;
+.evento-hero-main {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: start;
+}
+
+.evento-info-wrapper {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 1rem;
 }
 
+/* Title Section */
 .evento-status-badge {
+    display: inline-block;
+    width: fit-content;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -143,10 +147,55 @@
     color: rgba(255, 255, 255, 0.7);
 }
 
+/* Category Filter Dropdown */
+.category-filter-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 0.35rem 2rem 0.35rem 0.75rem;
+    border-radius: 0.35rem;
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.category-filter-select:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.category-filter-select:focus {
+    border-color: #E32636;
+    box-shadow: 0 0 0 2px rgba(227, 38, 54, 0.2);
+}
+
+.category-filter-select option {
+    background-color: #0D0D1A;
+    color: #fff;
+}
+
+.evento-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+    line-height: 1.2;
+}
+
 .evento-description {
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 1rem;
+    margin: 0;
     line-height: 1.6;
 }
 
@@ -163,6 +212,63 @@
     gap: 0.5rem;
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.6);
+}
+
+/* Stats Grid */
+.evento-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    min-width: 200px;
+}
+
+.evento-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.evento-stat-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
 }
 
 /* Participate Section */
@@ -356,22 +462,26 @@
     display: flex;
     align-items: stretch;
     justify-content: center;
-    gap: 1rem;
+    gap: 0.5rem;
     padding: 2rem 0;
-    overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
 }
 
 .bracket-side {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
+    flex: 1;
 }
 
 .bracket-left {
     flex-direction: row;
+    justify-content: flex-end;
 }
 
 .bracket-right {
     flex-direction: row;
+    justify-content: flex-start;
 }
 
 .bracket-round {
@@ -379,12 +489,13 @@
     flex-direction: column;
     justify-content: space-around;
     gap: 1rem;
-    min-width: 140px;
+    flex: 1;
+    min-width: 0;
 }
 
 .round-label {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -406,6 +517,7 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 0.5rem;
     overflow: hidden;
+    min-width: 0;
 }
 
 .match:hover {
@@ -414,13 +526,16 @@
 
 .team {
     padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 500;
     color: #fff;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     transition: background 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .team.team-1 {
@@ -442,8 +557,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 180px;
-    padding: 1rem;
+    flex: 0 0 auto;
+    min-width: 140px;
+    padding: 1rem 0.5rem;
 }
 
 .final-trophy {
@@ -728,12 +844,74 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-    .evento-title {
-        font-size: 1.75rem;
-        flex-direction: column;
-        align-items: flex-start;
+
+    /* Hero responsive */
+    .evento-hero-banner {
+        min-height: auto;
+        padding: 2rem 1.5rem 1.5rem;
     }
 
+    .evento-hero-icon {
+        width: 50px;
+        height: 50px;
+        left: 1.5rem;
+        bottom: -15px;
+    }
+
+    .evento-hero-main {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .evento-info-wrapper {
+        gap: 0.75rem;
+    }
+
+    .evento-title {
+        font-size: 1.75rem;
+    }
+
+    .evento-description {
+        font-size: 0.95rem;
+    }
+
+    .evento-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .evento-stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    .evento-stat-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .stat-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .stat-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .stat-value {
+        font-size: 1.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.7rem;
+    }
+
+    /* Participate section */
     .participate-section {
         flex-direction: column;
         align-items: flex-start;
@@ -750,6 +928,7 @@
         justify-content: center;
     }
 
+    /* Tabs */
     .evento-tabs {
         flex-wrap: wrap;
     }
@@ -758,5 +937,55 @@
         flex: 1;
         min-width: 100px;
         text-align: center;
+    }
+
+    /* Bracket responsive adjustments */
+    .bracket-container {
+        padding: 1rem 0;
+        gap: 0.25rem;
+    }
+
+    .bracket-side {
+        gap: 0.25rem;
+    }
+
+    .bracket-round {
+        gap: 0.5rem;
+    }
+
+    .round-label {
+        font-size: 0.6rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .team {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.65rem;
+        gap: 0.25rem;
+    }
+
+    .bracket-final {
+        min-width: 100px;
+        padding: 0.5rem 0.25rem;
+    }
+
+    .final-trophy {
+        width: 50px;
+        height: 50px;
+    }
+
+    .final-match .team {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.7rem;
+    }
+
+    .vs-badge {
+        font-size: 0.6rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .champion-slot {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
     }
 }

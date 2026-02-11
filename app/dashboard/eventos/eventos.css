@@ -3,11 +3,11 @@
  * Racing Cup Events/Categories Layout
  */
 
-/* Hero Section with Background Image */
+/* Hero Section with Vibrant Gradient */
 .eventos-hero {
     position: relative;
     width: 100%;
-    min-height: 400px;
+    min-height: 200px;
     display: flex;
     align-items: flex-end;
     justify-content: flex-start;
@@ -15,30 +15,15 @@
     margin-bottom: 3rem;
     border-radius: 1.5rem;
     overflow: hidden;
-    background: linear-gradient(135deg, #0D0D1A 0%, #1a1a2e 100%);
+    background: linear-gradient(135deg,
+            #E32636 0%,
+            #1B1B3A 50%,
+            #0D0D1A 100%);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background-image: url('/logotypes/logohero.png');
 }
 
-.eventos-hero-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    opacity: 0.6;
-    z-index: 1;
-}
-
-.eventos-hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
-    z-index: 2;
-}
+/* Removed background image for cleaner look */
 
 .eventos-hero-content {
     position: relative;
@@ -47,12 +32,15 @@
 }
 
 .eventos-hero-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Racing Sans One', cursive;
     font-size: 3rem;
-    font-weight: 900;
+    font-weight: 400;
     color: #fff;
     margin-bottom: 0.5rem;
     line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
 .eventos-hero-subtitle {
@@ -68,78 +56,85 @@
 }
 
 .section-title {
-    font-family: 'Outfit', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-family: 'Racing Sans One', cursive;
+    font-size: 1.75rem;
+    font-weight: 400;
     color: #fff;
     margin-bottom: 2rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .section-title::before {
     content: '';
-    width: 4px;
-    height: 1.5rem;
-    background: #E32636;
-    border-radius: 2px;
+    width: 5px;
+    height: 2rem;
+    background: linear-gradient(180deg, #E32636, #c91f2d);
+    border-radius: 3px;
+    box-shadow: 0 0 10px rgba(227, 38, 54, 0.5);
 }
 
 .categorias-list {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;
 }
 
-/* Category Card */
+/* Category Card - Vertical Layout */
 .categoria-card {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.5rem;
-    background: linear-gradient(145deg, #0D0D1A, #151525);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    background: linear-gradient(145deg,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 255, 255, 0.02));
+    border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 1rem;
     transition: all 0.3s ease;
+    overflow: hidden;
 }
 
 .categoria-card:hover {
-    border-color: rgba(227, 38, 54, 0.3);
-    transform: translateX(5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-color: rgba(227, 38, 54, 0.4);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(227, 38, 54, 0.2);
 }
 
-/* Date Badge */
+/* Date Badge - Top of Card */
 .categoria-date-badge {
-    width: 70px;
-    height: 70px;
-    background: #E32636;
-    border-radius: 1rem;
+    width: 100%;
+    height: auto;
+    background: linear-gradient(135deg, #E32636, #c91f2d);
+    padding: 1rem;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
     color: #fff;
-    flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(227, 38, 54, 0.3);
 }
 
 .categoria-date-day {
+    font-family: 'Racing Sans One', cursive;
     font-size: 1.75rem;
-    font-weight: 900;
+    font-weight: 400;
     line-height: 1;
 }
 
 .categoria-date-month {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-/* Category Info */
+/* Category Info - Card Body */
 .categoria-info {
+    padding: 1.25rem;
     flex-grow: 1;
 }
 
@@ -197,11 +192,13 @@
 }
 
 .categoria-title {
-    font-family: 'Outfit', sans-serif;
-    font-size: 1.35rem;
-    font-weight: 800;
+    font-family: 'Racing Sans One', cursive;
+    font-size: 1.5rem;
+    font-weight: 400;
     color: #fff;
     margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 .categoria-meta {
@@ -225,34 +222,38 @@
     line-height: 1.5;
 }
 
-/* Action Button */
+/* Action Button - Card Footer */
 .categoria-action {
-    flex-shrink: 0;
+    padding: 0 1.25rem 1.25rem;
 }
 
 .btn-ver-detalles {
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    background: transparent;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 0.5rem;
+    width: 100%;
+    padding: 0.875rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.75rem;
     color: #fff;
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-family: 'Racing Sans One', cursive;
+    font-size: 0.85rem;
+    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.05em;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
 }
 
 .btn-ver-detalles:hover {
-    background: #E32636;
-    border-color: #E32636;
-    transform: scale(1.05);
+    background: rgba(227, 38, 54, 0.2);
+    border-color: rgba(227, 38, 54, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(227, 38, 54, 0.3);
 }
 
 /* Page Header */
@@ -267,7 +268,7 @@
     gap: 0.5rem;
     padding: 0.5rem 1.25rem;
     background: rgba(227, 38, 54, 0.15);
-    border: 1px solid rgba(227, 38, 54, 0.4);
+    border: 2px solid rgba(227, 38, 54, 0.4);
     border-radius: 2rem;
     color: #E32636;
     font-size: 0.85rem;
@@ -278,11 +279,14 @@
 }
 
 .eventos-main-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Racing Sans One', cursive;
     font-size: 3rem;
-    font-weight: 900;
+    font-weight: 400;
     color: #fff;
     margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
 .eventos-main-subtitle {
@@ -294,29 +298,119 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+
+    /* Hero Section */
     .eventos-hero {
-        min-height: 300px;
-        padding: 2rem 1.5rem;
+        min-height: 250px;
+        padding: 1.5rem 1rem;
+        margin-bottom: 2rem;
+        border-radius: 1rem;
     }
 
     .eventos-hero-title {
-        font-size: 2rem;
+        font-size: 1.75rem;
+        line-height: 1.2;
     }
 
+    .eventos-hero-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Page Header */
+    .eventos-page-header {
+        padding: 1.5rem 0 2rem;
+    }
+
+    .eventos-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 1rem;
+    }
+
+    .eventos-main-title {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+
+    .eventos-main-subtitle {
+        font-size: 0.95rem;
+        padding: 0 1rem;
+    }
+
+    /* Section Title */
+    .section-title {
+        font-size: 1.35rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title::before {
+        width: 4px;
+        height: 1.5rem;
+    }
+
+    .categorias-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .categorias-list {
+        gap: 1rem;
+    }
+
+    /* Category Card */
     .categoria-card {
         grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+    }
+
+    .categoria-card:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Date Badge */
+    .categoria-date-badge {
+        width: 65px;
+        height: 65px;
+        margin: 0 auto;
+    }
+
+    .categoria-date-day {
+        font-size: 1.65rem;
+    }
+
+    .categoria-date-month {
+        font-size: 0.7rem;
+    }
+
+    /* Category Info */
+    .categoria-info {
         text-align: center;
     }
 
-    .categoria-date-badge {
-        margin: 0 auto;
+    .categoria-status {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.6rem;
+    }
+
+    .categoria-title {
+        font-size: 1.15rem;
+        word-break: break-word;
     }
 
     .categoria-meta {
         justify-content: center;
         flex-wrap: wrap;
+        gap: 0.75rem;
+        font-size: 0.8rem;
     }
 
+    .categoria-desc {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    /* Action Button */
     .categoria-action {
         width: 100%;
     }
@@ -324,5 +418,7 @@
     .btn-ver-detalles {
         width: 100%;
         justify-content: center;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.8rem;
     }
 }
