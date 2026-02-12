@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useAuth } from '@/lib/auth-context'
 import './Navbar.css'
 
 /**
@@ -18,6 +19,7 @@ function Navbar() {
     const bannerRef = useRef<HTMLDivElement>(null)
     const loginBtnRef = useRef<HTMLAnchorElement>(null) // Ref for login button
     const router = useRouter()
+    const { user } = useAuth()
 
     useGSAP(() => {
         const banner = bannerRef.current
@@ -134,11 +136,11 @@ function Navbar() {
 
                     {/* Login Icon */}
                     <Link
-                        href="/login"
+                        href={user ? "/dashboard" : "/login"}
                         className="social-link login-btn"
-                        aria-label="Iniciar Sesión"
+                        aria-label={user ? "Mi Dashboard" : "Iniciar Sesión"}
                         ref={loginBtnRef}
-                        onClick={(e) => handlePopClick(e, "/login", false)}
+                        onClick={(e) => handlePopClick(e, user ? "/dashboard" : "/login", false)}
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>

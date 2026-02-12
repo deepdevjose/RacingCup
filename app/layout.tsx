@@ -21,6 +21,8 @@ export const viewport = {
 
 import SmoothScroll from '../components/common/SmoothScroll'
 
+import { AuthProvider } from '../lib/auth-context'
+
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html lang="es" suppressHydrationWarning>
@@ -33,8 +35,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 />
             </head>
             <body>
-                <SmoothScroll />
-                {children}
+                <AuthProvider>
+                    <SmoothScroll />
+                    {children}
+                </AuthProvider>
             </body>
         </html>
     )

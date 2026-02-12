@@ -6,18 +6,22 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import './dashboard.css'
 
+import { useAuth } from '@/lib/auth-context'
+
 export default function DashboardPage() {
+    const { profile, loading } = useAuth()
     const containerRef = useRef(null)
-    const [profile] = React.useState({
-        gamertag: '#JOSEPO23',
-        avatarId: 0
-    })
+
+    // Use profile color or fallback to primary red
+    const iconColor = profile?.playerColor || '#E32636'
 
     const userIcon = (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
     )
 
     useGSAP(() => {
+        if (loading || !profile) return
+
         // Set initial state - elements are visible immediately
         gsap.set('.dashboard-hero', { opacity: 1, y: 0 })
         gsap.set('.nav-card', { opacity: 1, y: 0 })
@@ -32,14 +36,36 @@ export default function DashboardPage() {
             ease: 'back.out(1.2)',
             delay: 0.3
         })
-    }, { scope: containerRef })
+    }, { scope: containerRef, dependencies: [loading, profile] })
+
+    if (loading) {
+        return (
+            <div className="dashboard-layout" style={{ display: 'flex', alignItems: 'center', justifyItems: 'center', minHeight: '100vh', padding: '20px' }}>
+                <div className="container" style={{ textAlign: 'center' }}>
+                    <div className="loading-spinner" style={{
+                        width: '40px',
+                        height: '40px',
+                        border: '3px solid rgba(255,255,255,0.1)',
+                        borderTopColor: '#E32636',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite',
+                        margin: '0 auto 20px'
+                    }}></div>
+                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                    <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>Cargando panel...</p>
+                </div>
+            </div>
+        )
+    }
+
+    const gamertag = profile?.gamertag || 'Usuario'
 
     return (
         <div className="dashboard-layout">
             {/* Navbar */}
             <nav className="dashboard-nav">
                 <div className="container nav-content">
-                    <Link href="/dashboard" className="nav-logo">
+                    <Link href="../" className="nav-logo">
                         <img src="/logotypes/logo.png" alt="Racing Cup" style={{ height: '30px' }} />
                         <span>Racing Cup TICs</span>
                     </Link>
@@ -53,7 +79,7 @@ export default function DashboardPage() {
                     <Link href="/dashboard/profile" className="nav-user-pill" style={{ textDecoration: 'none' }}>
                         {userIcon}
                         <div className="pill-content">
-                            <span className="pill-gamertag">{profile.gamertag}</span>
+                            <span className="pill-gamertag">{gamertag}</span>
                             <span className="pill-subtitle">Ver mi perfil</span>
                         </div>
                     </Link>
@@ -64,15 +90,27 @@ export default function DashboardPage() {
                 {/* Dashboard Home Hero */}
                 <div className="dashboard-hero">
                     <div className="hero-badge">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
-                        Usuario Registrado
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+                        {profile?.isTeacher ? 'Docente' : 'Competidor'} Registrado
                     </div>
                     <h1 className="hero-title">
-                        Bienvenido, <span>{profile.gamertag.replace('#', '')}</span>
+                        Bienvenido, <span>{gamertag.replace('#', '')}</span>
                     </h1>
                     <p className="hero-desc">
                         Panel de control de Racing Cup. Gestiona tus equipos, inscríbete a torneos y revisa tus estadísticas en tiempo real.
                     </p>
+
+                    {/* Decorative icon */}
+                    <div className="hero-icon-large">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                            <path d="M4 22h16"></path>
+                            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                        </svg>
+                    </div>
                 </div>
 
                 {/* Navigation Cards Grid */}

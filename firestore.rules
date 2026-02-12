@@ -1,0 +1,108 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ==================== HELPER FUNCTIONS ====================
+    
+    // Check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Check if user is admin (has isAdmin: true in their profile)
+    function isAdmin() {
+      return isSignedIn() && 
+             exists(/databases/$(database)/documents/profiles/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.isAdmin == true;
+    }
+    
+    // Check if user is the owner of the resource
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // ==================== COLLECTIONS ====================
+    
+    // Events: visible to all, admin-only write
+    match /events/{eventId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Matches: visible to all, admin-only write
+    match /matches/{matchId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Team Members: visible to all, admin-only write
+    match /team_members/{memberId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Teams: visible to all, admin-only write
+    match /teams/{teamId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Tournament Stats: visible to all, admin-only write
+    match /tournament_stats/{statId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Profiles: PUBLIC READ (for gamertag validation), only owner can edit
+    match /profiles/{userId} {
+      // ANYONE can read profiles (even without authentication)
+      // This allows gamertag validation to work
+      allow read: if true;
+      
+      // Users can create their own profile
+      allow create: if isSignedIn() && isOwner(userId);
+      
+      // ONLY the profile owner can update their own profile
+      allow update: if isSignedIn() && isOwner(userId);
+      
+      // Only admins can delete profiles
+      allow delete: if isAdmin();
+    }
+    
+    // ==================== ADDITIONAL COLLECTIONS ====================
+    
+    // Invites: users can read their own invites, admins can manage all
+    match /team_invites/{inviteId} {
+      allow read: if isSignedIn() && 
+                     (resource.data.invitedUserId == request.auth.uid || 
+                      resource.data.inviterUserId == request.auth.uid ||
+                      isAdmin());
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && 
+                       (resource.data.invitedUserId == request.auth.uid || 
+                        isAdmin());
+      allow delete: if isSignedIn() && 
+                       (resource.data.inviterUserId == request.auth.uid || 
+                        isAdmin());
+    }
+    
+    // Notifications: users can read their own, system/admin creates
+    match /notifications/{notifId} {
+      allow read: if isSignedIn() && 
+                     (resource.data.target == 'all' ||
+                      (resource.data.target == 'user' && resource.data.targetId == request.auth.uid) ||
+                      resource.data.target == 'team' ||
+                      resource.data.target == 'event' ||
+                      isAdmin());
+      allow create: if isAdmin();
+      // Allow users to mark as read (update readBy)
+      allow update: if isSignedIn() && 
+                       (resource.data.target == 'all' ||
+                       (resource.data.target == 'user' && resource.data.targetId == request.auth.uid) ||
+                       resource.data.target == 'team' ||
+                       resource.data.target == 'event' ||
+                       isAdmin());
+      allow delete: if isAdmin();
+    }
+  }
+}

@@ -2,15 +2,23 @@
 
 import { useState, useRef } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import './login.css'
+import { loginUser } from '@/lib/firebase'
 
 /**
  * Login/Signup Page
  * Split layout with branding and form
  */
 export default function LoginPage() {
+    const router = useRouter()
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
+
     const formRef = useRef<HTMLDivElement>(null)
     const brandRef = useRef<HTMLDivElement>(null)
 
@@ -49,6 +57,33 @@ export default function LoginPage() {
         }, '-=0.5')
 
     }, { scope: formRef })
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setError('')
+        setLoading(true)
+
+        try {
+            const user = await loginUser(email, password)
+            if (!user.emailVerified) {
+                setError("Por favor verifica tu correo electrónico antes de iniciar sesión.")
+                setLoading(false)
+                return
+            }
+            router.push("/dashboard")
+        } catch (err: any) {
+            console.error(err)
+            const errorMessage = err.message || ""
+            if (errorMessage.includes("invalid-credential") || errorMessage.includes("wrong-password")) {
+                setError("Correo o contraseña incorrectos")
+            } else if (errorMessage.includes("user-not-found")) {
+                setError("No existe una cuenta con este correo")
+            } else {
+                setError("Error al iniciar sesión. Intenta de nuevo.")
+            }
+            setLoading(false)
+        }
+    }
 
     return (
         <div className="login-page" ref={formRef}>
@@ -93,19 +128,26 @@ export default function LoginPage() {
                 <div className="login-form-side">
                     <div className="login-form-wrapper">
                         <h2 className="form-title">Iniciar Sesión</h2>
+                        {error && (
+                            <div className="error-message" style={{ color: '#ff4d4d', marginBottom: '1rem', fontSize: '0.9rem', textAlign: 'center' }}>
+                                {error}
+                            </div>
+                        )}
                         <p className="form-subtitle">
                             ¿No tienes cuenta?
                             <Link href="/signup">Regístrate aquí</Link>
                         </p>
 
                         {/* Form */}
-                        <form className="login-form" onSubmit={(e) => e.preventDefault()}>
+                        <form className="login-form" onSubmit={handleSubmit}>
                             <div className="form-group">
                                 <label htmlFor="email">Correo Electrónico</label>
                                 <input
                                     type="email"
                                     id="email"
                                     placeholder="tu@correo.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     required
                                 />
                             </div>
@@ -116,13 +158,15 @@ export default function LoginPage() {
                                     type="password"
                                     id="password"
                                     placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     required
                                 />
                             </div>
 
-                            <Link href="/dashboard" className="btn btn-primary login-submit" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
-                                Entrar
-                            </Link>
+                            <button type="submit" className="btn btn-primary login-submit" disabled={loading}>
+                                {loading ? "Entrando..." : "Entrar"}
+                            </button>
 
                             <a href="#" className="forgot-password">
                                 ¿Olvidaste tu contraseña?

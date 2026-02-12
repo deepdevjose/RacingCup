@@ -2,24 +2,34 @@
 
 import { useState, useRef } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import '../login/login.css'
+import { registerUser, createProfile, isGamertagAvailable } from '@/lib/firebase'
+import { useEffect } from 'react'
 
 /**
  * Login/Signup Page
  * Split layout with branding and form
  */
 export default function SignupPage() {
+    const router = useRouter()
     const [step, setStep] = useState(1)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
         confirmPassword: '',
         fullName: '',
         gamerTag: '',
-        institution: ''
+        institution: '',
+        isTeacher: false,
+        educationLevel: 'Superior'
     })
+    const [gamertagStatus, setGamertagStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle')
 
     const formRef = useRef<HTMLDivElement>(null)
     const brandRef = useRef<HTMLDivElement>(null)
@@ -60,13 +70,34 @@ export default function SignupPage() {
 
     }, { scope: formRef })
 
-    const handleNextStep = (e: React.FormEvent) => {
+    useEffect(() => {
+        const checkAvailability = async () => {
+            if (formData.gamerTag.length === 8) {
+                setGamertagStatus('checking')
+                const available = await isGamertagAvailable(formData.gamerTag)
+                setGamertagStatus(available ? 'available' : 'taken')
+            } else {
+                setGamertagStatus('idle')
+            }
+        }
+        checkAvailability()
+    }, [formData.gamerTag])
+
+    const handleNextStep = async (e: React.FormEvent) => {
         e.preventDefault()
+        setError('')
+
         if (step === 1) {
+            // ... (keep step 1 logic)
             if (formData.password !== formData.confirmPassword) {
-                alert("Las contraseñas no coinciden")
+                setError("Las contraseñas no coinciden")
                 return
             }
+            if (formData.password.length < 6) {
+                setError("La contraseña debe tener al menos 6 caracteres")
+                return
+            }
+
             // Animate transition
             gsap.to('.step-1', {
                 x: -50,
@@ -81,22 +112,57 @@ export default function SignupPage() {
                 }
             })
         } else if (step === 2) {
-            // Submit logic here (mock)
-            console.log("Form Submitted", formData)
+            if (formData.gamerTag.length !== 8) {
+                setError("El Gamertag debe tener exactamente 8 caracteres")
+                return
+            }
+            if (gamertagStatus === 'taken') {
+                setError("Este Gamertag ya está en uso")
+                return
+            }
+            if (gamertagStatus === 'checking') {
+                setError("Validando disponibilidad del Gamertag...")
+                return
+            }
+            setLoading(true)
+            try {
+                // 1. Register user
+                const user = await registerUser(formData.email, formData.password)
 
-            // Animate transition to Step 3
-            gsap.to('.step-2', {
-                x: -50,
-                opacity: 0,
-                duration: 0.3,
-                onComplete: () => {
-                    setStep(3)
-                    gsap.fromTo('.step-3',
-                        { scale: 0.8, opacity: 0 },
-                        { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.7)" }
-                    )
+                // 2. Create profile
+                await createProfile({
+                    userId: user.uid,
+                    email: formData.email,
+                    displayName: formData.fullName,
+                    gamertag: formData.gamerTag,
+                    school: formData.institution,
+                    isTeacher: Boolean(formData.isTeacher),
+                    educationLevel: formData.educationLevel
+                })
+
+                // Animate transition to Step 3
+                gsap.to('.step-2', {
+                    x: -50,
+                    opacity: 0,
+                    duration: 0.3,
+                    onComplete: () => {
+                        setStep(3)
+                        gsap.fromTo('.step-3',
+                            { scale: 0.8, opacity: 0 },
+                            { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.7)" }
+                        )
+                    }
+                })
+            } catch (err: any) {
+                console.error(err)
+                if (err.code === 'auth/email-already-in-use') {
+                    setError("Este correo ya está registrado")
+                } else {
+                    setError("Error al crear la cuenta. Intenta de nuevo.")
                 }
-            })
+            } finally {
+                setLoading(false)
+            }
         }
     }
 
@@ -115,17 +181,28 @@ export default function SignupPage() {
         })
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { id, value, type, checked } = e.target
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { id, value, type } = e.target as HTMLInputElement
+        const checked = (e.target as HTMLInputElement).checked
+
+        // Special handling for gamerTag: 8 alphanumeric characters, force uppercase
+        if (id === 'gamerTag') {
+            const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 8).toUpperCase()
+            setFormData(prev => ({
+                ...prev,
+                gamerTag: alphanumericValue
+            }))
+            return
+        }
+
         setFormData(prev => ({
             ...prev,
-            [id]: type === 'checkbox' ? checked : value
+            [id || e.target.name]: type === 'checkbox' ? checked : value
         }))
     }
 
     return (
         <div className="login-page" ref={formRef}>
-            {/* Back Button */}
             <Link href="/" className="login-back-btn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -134,7 +211,6 @@ export default function SignupPage() {
             </Link>
 
             <div className="login-split">
-                {/* Left: Branding */}
                 <div className="login-brand" ref={brandRef}>
                     <div className="login-brand-content">
                         <Link href="/" className="login-brand-logo">
@@ -162,10 +238,14 @@ export default function SignupPage() {
                     </div>
                 </div>
 
-                {/* Right: Form */}
                 <div className="login-form-side">
                     <div className="login-form-wrapper">
                         <h2 className="form-title">Crear Cuenta</h2>
+                        {error && (
+                            <div className="error-message" style={{ color: '#ff4d4d', marginBottom: '1rem', fontSize: '0.9rem', textAlign: 'center' }}>
+                                {error}
+                            </div>
+                        )}
                         <p className="form-subtitle">
                             {step < 3 ? `Paso ${step} de 2` : 'Registro Completado'}
                             {step === 1 && (
@@ -235,15 +315,35 @@ export default function SignupPage() {
                                         </div>
 
                                         <div className="form-group">
-                                            <label htmlFor="gamerTag">Gamer Tag / Alias</label>
-                                            <input
-                                                type="text"
-                                                id="gamerTag"
-                                                value={formData.gamerTag}
-                                                onChange={handleChange}
-                                                placeholder="Como te verán los demás"
-                                                required
-                                            />
+                                            <label htmlFor="gamerTag">Gamertag (8 caracteres alfanuméricos)</label>
+                                            <div style={{ position: 'relative' }}>
+                                                <input
+                                                    type="text"
+                                                    id="gamerTag"
+                                                    value={formData.gamerTag}
+                                                    onChange={handleChange}
+                                                    placeholder="Ej: PLAYER01"
+                                                    maxLength={8}
+                                                    required
+                                                    style={{
+                                                        textTransform: 'uppercase',
+                                                        borderColor: gamertagStatus === 'available' ? '#10B981' : gamertagStatus === 'taken' ? '#EF4444' : 'rgba(255,255,255,0.1)'
+                                                    }}
+                                                />
+                                                {gamertagStatus === 'checking' && (
+                                                    <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}>
+                                                        <div className="loading-spinner" style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.1)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                                                    </div>
+                                                )}
+                                                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+                                                <small style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem' }}>
+                                                    {formData.gamerTag.length}/8 caracteres
+                                                </small>
+                                                {gamertagStatus === 'available' && <small style={{ color: '#10B981', fontSize: '0.75rem' }}>Disponible</small>}
+                                                {gamertagStatus === 'taken' && <small style={{ color: '#EF4444', fontSize: '0.75rem' }}>No disponible</small>}
+                                            </div>
                                         </div>
 
                                         <div className="form-group">
@@ -258,23 +358,48 @@ export default function SignupPage() {
                                             />
                                         </div>
 
-                                        <div className="flex gap-4">
+                                        <div className="form-group">
+                                            <label htmlFor="educationLevel">Nivel Educativo</label>
+                                            <select
+                                                id="educationLevel"
+                                                value={formData.educationLevel}
+                                                onChange={handleChange as any}
+                                                className="form-select"
+                                                style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', outline: 'none' }}
+                                            >
+                                                <option value="Media Superior" style={{ background: '#1a1a1a' }}>Media Superior</option>
+                                                <option value="Superior" style={{ background: '#1a1a1a' }}>Superior</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+                                            <input
+                                                type="checkbox"
+                                                id="isTeacher"
+                                                checked={formData.isTeacher}
+                                                onChange={handleChange}
+                                                style={{ width: '20px', height: '20px', cursor: 'pointer' }}
+                                            />
+                                            <label htmlFor="isTeacher" style={{ cursor: 'pointer', marginBottom: 0 }}>¿Eres docente?</label>
+                                        </div>
+
+                                        <div className="flex gap-4" style={{ marginTop: '20px' }}>
                                             <button
                                                 type="button"
                                                 className="btn login-submit outline"
                                                 onClick={handleBack}
-                                                style={{ background: 'transparent', border: '2px solid #E32636', color: '#fff' }}
+                                                style={{ background: 'transparent', border: '2px solid #E32636', color: '#fff', flex: 1 }}
                                             >
                                                 Atrás
                                             </button>
-                                            <button type="submit" className="btn btn-primary login-submit">
-                                                Finalizar
+                                            <button type="submit" className="btn btn-primary login-submit" disabled={loading} style={{ flex: 2 }}>
+                                                {loading ? "Creando..." : "Finalizar"}
                                             </button>
                                         </div>
                                     </div>
                                 )}
                                 {step === 3 && (
-                                    <div className="step-3 verification-container">
+                                    <div className="step-3 verification-container" style={{ textAlign: 'center' }}>
                                         <div className="verification-icon">
                                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>

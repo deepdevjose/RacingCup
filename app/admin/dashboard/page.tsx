@@ -1,8 +1,53 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { getAllEvents, getAllTeams, getAllProfiles } from '@/lib/firebase'
 
 export default function AdminDashboardPage() {
+    const [stats, setStats] = useState({
+        activeEvents: 0,
+        totalTeams: 0,
+        confirmedTeams: 0,
+        totalUsers: 0,
+        teacherCount: 0,
+        pendingTeams: 0
+    })
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const [events, teams, profiles] = await Promise.all([
+                    getAllEvents(),
+                    getAllTeams(),
+                    getAllProfiles()
+                ])
+
+                const activeEvents = events.filter(e => e.status === 'registro_abierto' || e.status === 'en_curso').length
+                const confirmedTeams = teams.filter(t => t.isConfirmed).length
+                const pendingTeams = teams.filter(t => !t.isConfirmed).length
+                const teacherCount = profiles.filter(p => p.isTeacher).length
+
+                setStats({
+                    activeEvents,
+                    totalTeams: teams.length,
+                    confirmedTeams,
+                    totalUsers: profiles.length,
+                    teacherCount,
+                    pendingTeams
+                })
+            } catch (error) {
+                console.error("Error fetching admin stats:", error)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchStats()
+    }, [])
+
+
     return (
         <div>
             <header className="admin-header">
@@ -10,9 +55,9 @@ export default function AdminDashboardPage() {
                     <h1 className="admin-title">Visión General</h1>
                     <p style={{ color: '#94a3b8', marginTop: '0.25rem' }}>Bienvenido al panel de control de Racing Cup</p>
                 </div>
-                <button className="btn-admin-login" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
-                    + Nuevo Evento
-                </button>
+                <Link href="/admin/dashboard/eventos" className="btn-admin-login" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', textDecoration: 'none' }}>
+                    + Gestionar Eventos
+                </Link>
             </header>
 
             {/* Stats Grid */}
@@ -20,7 +65,7 @@ export default function AdminDashboardPage() {
                 <div className="admin-stat-card">
                     <div className="stat-header">
                         <div>
-                            <div className="stat-value">12</div>
+                            <div className="stat-value">{loading ? '-' : stats.activeEvents}</div>
                             <div className="stat-label">Eventos Activos</div>
                         </div>
                         <div className="stat-icon">
@@ -31,7 +76,7 @@ export default function AdminDashboardPage() {
                 <div className="admin-stat-card">
                     <div className="stat-header">
                         <div>
-                            <div className="stat-value">48</div>
+                            <div className="stat-value">{loading ? '-' : stats.totalTeams}</div>
                             <div className="stat-label">Equipos Registrados</div>
                         </div>
                         <div className="stat-icon">
@@ -42,7 +87,18 @@ export default function AdminDashboardPage() {
                 <div className="admin-stat-card">
                     <div className="stat-header">
                         <div>
-                            <div className="stat-value">156</div>
+                            <div className="stat-value">{loading ? '-' : stats.confirmedTeams}</div>
+                            <div className="stat-label">Equipos Confirmados</div>
+                        </div>
+                        <div className="stat-icon" style={{ color: '#10B981', background: 'rgba(16, 185, 129, 0.1)' }}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        </div>
+                    </div>
+                </div>
+                <div className="admin-stat-card">
+                    <div className="stat-header">
+                        <div>
+                            <div className="stat-value">{loading ? '-' : stats.totalUsers}</div>
                             <div className="stat-label">Usuarios Totales</div>
                         </div>
                         <div className="stat-icon">
@@ -53,8 +109,19 @@ export default function AdminDashboardPage() {
                 <div className="admin-stat-card">
                     <div className="stat-header">
                         <div>
-                            <div className="stat-value">5</div>
-                            <div className="stat-label">Pendientes Aprobación</div>
+                            <div className="stat-value">{loading ? '-' : stats.teacherCount}</div>
+                            <div className="stat-label">Profesores</div>
+                        </div>
+                        <div className="stat-icon" style={{ color: '#3B82F6', background: 'rgba(59, 130, 246, 0.1)' }}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                        </div>
+                    </div>
+                </div>
+                <div className="admin-stat-card">
+                    <div className="stat-header">
+                        <div>
+                            <div className="stat-value">{loading ? '-' : stats.pendingTeams}</div>
+                            <div className="stat-label">Equipos Pendientes</div>
                         </div>
                         <div className="stat-icon" style={{ color: '#F59E0B', background: 'rgba(245, 158, 11, 0.1)' }}>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -63,44 +130,22 @@ export default function AdminDashboardPage() {
                 </div>
             </div>
 
-            {/* Recent Activity / Quick Actions */}
+            {/* Recent Activity / Quick Actions - Simplified placeholder for now */}
             <div className="admin-table-container">
                 <div className="admin-table-header">
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Actividad Reciente</h3>
-                    <button className="action-btn" style={{ fontSize: '0.85rem' }}>Ver todo</button>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Enlaces Rápidos</h3>
                 </div>
-                <table className="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Usuario/Equipo</th>
-                            <th>Acción</th>
-                            <th>Fecha</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {[1, 2, 3, 4].map((i) => (
-                            <tr key={i}>
-                                <td>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#334155' }}></div>
-                                        <div>
-                                            <div style={{ fontWeight: 500 }}>Equipo Alpha {i}</div>
-                                            <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Registrado por @usuario{i}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Registro en <strong>Carrera RC</strong></td>
-                                <td>Hace {i * 10} min</td>
-                                <td>
-                                    <span className={`status-badge ${i === 1 ? 'warning' : 'success'}`}>
-                                        {i === 1 ? 'Pendiente' : 'Confirmado'}
-                                    </span>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <div style={{ padding: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    <Link href="/admin/dashboard/equipos" className="btn-admin-login" style={{ width: 'auto', background: 'transparent', border: '1px solid #334155' }}>
+                        Ver Equipos
+                    </Link>
+                    <Link href="/admin/dashboard/usuarios" className="btn-admin-login" style={{ width: 'auto', background: 'transparent', border: '1px solid #334155' }}>
+                        Ver Usuarios
+                    </Link>
+                    <Link href="/admin/test-teams" className="btn-admin-login" style={{ width: 'auto', background: 'transparent', border: '1px solid #10B981' }}>
+                        🧪 Generar Equipos de Prueba
+                    </Link>
+                </div>
             </div>
         </div>
     )
