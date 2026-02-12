@@ -137,11 +137,9 @@ export default function EventosPage() {
                     <div className="eventos-hero-overlay"></div>
                     <div className="eventos-hero-content">
                         <h1 className="eventos-hero-title">Racing Cup TICs 2026</h1>
-
                         <p className="eventos-hero-subtitle">
                             Explora las categorías disponibles y registra a tu equipo en la competencia.
                         </p>
-
                     </div>
                 </div>
 

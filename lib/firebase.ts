@@ -26,13 +26,13 @@ import {
 } from "firebase/firestore"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDh99IVYNqsie8ex_ko9CQUJlzl2vnyDfQ",
-  authDomain: "racing-cup-dbd5a.firebaseapp.com",
-  projectId: "racing-cup-dbd5a",
-  storageBucket: "racing-cup-dbd5a.firebasestorage.app",
-  messagingSenderId: "273529090223",
-  appId: "1:273529090223:web:d8dfef90a763641a9a245a",
-  measurementId: "G-PWF78H8925"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 }
 
 // Initialize Firebase
@@ -132,6 +132,7 @@ export interface Team {
   inviteCode: string
   seed?: number
   isConfirmed: boolean
+  educationLevel?: string
   categories?: TeamCategoryEntry[]
   createdAt: Date
 }
@@ -170,6 +171,7 @@ export interface Match {
   winnerId?: string
   nextMatchId?: string // Link to subsequent match in bracket
   stage?: "group" | "bracket" // "group" = qualifiers, "bracket" = elimination
+  educationLevel?: string // "Media Superior" or "Superior" when separated
   status: MatchStatus
   createdAt: Date
 }
@@ -412,6 +414,7 @@ export async function getEventById(id: string): Promise<Event | null> {
   } as Event
 }
 
+
 export async function updateEvent(id: string, updates: Partial<Event>): Promise<void> {
   const docRef = doc(db, "events", id)
   const updateData = { ...updates }
@@ -469,6 +472,9 @@ export async function createTeam(
     throw new Error("Ya tienes un equipo en este evento")
   }
 
+  // Get leader's profile to inherit education level
+  const leaderProfile = await getProfile(leaderUserId)
+
   const inviteCode = generateInviteCode()
   const docRef = await addDoc(teamsCollection, {
     eventId,
@@ -479,6 +485,7 @@ export async function createTeam(
     inviteCode,
     categories,
     isConfirmed: false,
+    educationLevel: leaderProfile?.educationLevel || undefined,
     createdAt: Timestamp.now(),
   })
 

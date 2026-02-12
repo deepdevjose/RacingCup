@@ -73,6 +73,7 @@ export default function ProfilePage() {
         displayName: '',
         gamertag: '',
         school: '',
+        educationLevel: '',
         playerIcon: 'user' as typeof PLAYER_ICONS[number],
         playerColor: '#E32636'
     })
@@ -97,7 +98,11 @@ export default function ProfilePage() {
             setLoadingData(true)
             try {
                 // Pending Invites
+                console.log('[Profile] Fetching pending invites...')
                 const pendingInvites = await getUserPendingInvites(user.uid)
+                console.log('[Profile] ✅ Pending invites fetched:', pendingInvites.length)
+
+                console.log('[Profile] Fetching invite details...')
                 const invitesWithDetails = await Promise.all(
                     pendingInvites.map(async (invite) => {
                         const team = invite.teamId ? await getTeamById(invite.teamId) : null
@@ -111,10 +116,15 @@ export default function ProfilePage() {
                         }
                     })
                 )
+                console.log('[Profile] ✅ Invite details fetched')
                 setInvites(invitesWithDetails)
 
                 // Teams
+                console.log('[Profile] Fetching user teams...')
                 const allMyTeams = await getUserTeams(user.uid)
+                console.log('[Profile] ✅ User teams fetched:', allMyTeams.length)
+
+                console.log('[Profile] Fetching team details...')
                 const teamsWithDetails = await Promise.all(
                     allMyTeams.map(async (team) => {
                         const event = team.eventId ? await getEventById(team.eventId) : null
@@ -127,20 +137,26 @@ export default function ProfilePage() {
                         }
                     })
                 )
+                console.log('[Profile] ✅ Team details fetched')
                 setMyTeams(teamsWithDetails)
 
                 // Notifications
+                console.log('[Profile] Fetching notifications...')
                 const userNotifications = await getUserNotifications(user.uid)
+                console.log('[Profile] ✅ Notifications fetched:', userNotifications.length)
                 setNotifications(userNotifications)
 
                 // Matches
+                console.log('[Profile] Fetching matches...')
                 // 1. Get unique event IDs from my teams
                 const myEventIds = Array.from(new Set(teamsWithDetails.map(t => t.eventId)))
+                console.log('[Profile] Event IDs:', myEventIds)
 
                 // 2. Fetch matches for all these events
                 const allMatches = await Promise.all(
                     myEventIds.map(eventId => getMatchesByEvent(eventId))
                 )
+                console.log('[Profile] ✅ Matches fetched')
 
                 // 3. Flatten and sort by date/matchNumber
                 const flatMatches = allMatches.flat().sort((a, b) => {
@@ -153,11 +169,20 @@ export default function ProfilePage() {
                 setMatches(flatMatches)
 
                 // Edit Status
+                console.log('[Profile] Checking edit status...')
                 const editStatus = await canUserEditProfile(user.uid)
+                console.log('[Profile] ✅ Edit status checked:', editStatus)
                 setCanEdit(editStatus)
 
+                console.log('[Profile] ✅ All data loaded successfully')
+
             } catch (err) {
-                console.error("Error loading profile data:", err)
+                console.error('[Profile] ❌ Error loading profile data:', err)
+                console.error('[Profile] Error details:', {
+                    name: (err as Error).name,
+                    message: (err as Error).message,
+                    stack: (err as Error).stack
+                })
             } finally {
                 setLoadingData(false)
             }
@@ -175,6 +200,7 @@ export default function ProfilePage() {
                 displayName: profile.displayName || '',
                 gamertag: profile.gamertag || '',
                 school: profile.school || '',
+                educationLevel: profile.educationLevel || '',
                 playerIcon: profile.playerIcon || 'user',
                 playerColor: profile.playerColor || '#E32636'
             })
@@ -236,6 +262,7 @@ export default function ProfilePage() {
                 displayName: editForm.displayName,
                 gamertag: editForm.gamertag,
                 school: editForm.school,
+                educationLevel: editForm.educationLevel,
                 playerIcon: editForm.playerIcon,
                 playerColor: editForm.playerColor,
             })
@@ -715,6 +742,16 @@ export default function ProfilePage() {
                             <p className="info-value">{profile.gamertag}</p>
                         </div>
                     </div>
+                    <div className="info-card">
+                        <svg className="info-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                        </svg>
+                        <div>
+                            <p className="info-label">Nivel Educativo</p>
+                            <p className="info-value">{profile.educationLevel || 'No especificado'}</p>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Tabs */}
@@ -783,6 +820,17 @@ export default function ProfilePage() {
                                 <p className="modal-desc">Actualiza tu información personal</p>
                             </div>
                             <button className="close-btn" onClick={() => setIsEditModalOpen(false)}>×</button>
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">Nombre completo</label>
+                            <input
+                                type="text"
+                                className="form-input"
+                                value={editForm.displayName}
+                                onChange={(e) => setEditForm({ ...editForm, displayName: e.target.value })}
+                                placeholder="Ingresa tu nombre completo"
+                            />
                         </div>
 
                         <div className="form-group">

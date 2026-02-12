@@ -27,7 +27,7 @@ export default function SignupPage() {
         gamerTag: '',
         institution: '',
         isTeacher: false,
-        educationLevel: 'superior'
+        educationLevel: 'Superior'
     })
     const [gamertagStatus, setGamertagStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle')
 
@@ -367,8 +367,8 @@ export default function SignupPage() {
                                                 className="form-select"
                                                 style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', outline: 'none' }}
                                             >
-                                                <option value="media_superior" style={{ background: '#1a1a1a' }}>Media Superior</option>
-                                                <option value="superior" style={{ background: '#1a1a1a' }}>Superior</option>
+                                                <option value="Media Superior" style={{ background: '#1a1a1a' }}>Media Superior</option>
+                                                <option value="Superior" style={{ background: '#1a1a1a' }}>Superior</option>
                                             </select>
                                         </div>
 
