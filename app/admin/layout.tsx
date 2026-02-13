@@ -20,7 +20,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }
 
         // If user is not admin, redirect to home
-        if (!profile.isAdmin) {
+        if (!profile.admin) {
             console.warn('Unauthorized access attempt to admin area')
             router.push('/')
             return
@@ -56,7 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     // Don't render admin content if not authorized
-    if (!user || !profile || !profile.isAdmin) {
+    if (!user || !profile || !profile.admin) {
         return null
     }
 
