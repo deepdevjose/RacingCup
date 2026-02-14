@@ -15,6 +15,7 @@ interface ContentSectionProps {
     id?: string
     backgroundColor?: string
     accentColor?: string
+    customMaxWidth?: string
 }
 
 /**
@@ -26,7 +27,8 @@ export default function ContentSection({
     variant = 'dark',
     id,
     backgroundColor,
-    accentColor
+    accentColor,
+    customMaxWidth
 }: ContentSectionProps) {
     const sectionRef = useRef<HTMLElement>(null)
 
@@ -69,7 +71,7 @@ export default function ContentSection({
                 '--color-primary': accentColor
             } as React.CSSProperties}
         >
-            <div className="content-section-container">
+            <div className="content-section-container" style={{ maxWidth: customMaxWidth }}>
                 <h2 className="content-section-title">{title}</h2>
                 <div className="content-section-body">
                     {children}

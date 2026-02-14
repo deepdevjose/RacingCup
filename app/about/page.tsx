@@ -23,8 +23,7 @@ const PARTNERS = [
 
 const DEVELOPERS = [
     { name: 'José Developer', role: 'Lead Developer', github: 'deepdevjose' },
-    { name: 'Tu Nombre', role: 'Frontend', github: 'github' },
-    { name: 'Otro Dev', role: 'Backend', github: 'github' },
+    { name: 'Measly543', role: 'Backend', github: 'EDUARDOVAZQUE' },
 ]
 
 /**

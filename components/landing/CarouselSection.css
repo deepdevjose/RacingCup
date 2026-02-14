@@ -33,6 +33,17 @@
     gap: 0;
     width: max-content;
     height: 100%;
+    animation: marquee 60s linear infinite;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 .carousel-item {
@@ -42,7 +53,8 @@
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
-    background-color: #121212; /* Placeholder color */
+    background-color: #121212;
+    /* Placeholder color */
 }
 
 .carousel-item img {

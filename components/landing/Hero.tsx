@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import Image from 'next/image'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import './Hero.css'
@@ -47,21 +48,22 @@ function Hero({ event }: HeroProps) {
             <div className="hero-center">
                 {/* Main Logo (User's Car)*/}
                 <div className="hero-main-logo">
-                    <img
+                    <Image
                         ref={carRef}
                         src="/logotypes/logohero.png"
                         alt="Racing Cup Hero Logo"
                         className="hero-car-img"
-                        loading="eager"
-                        decoding="sync"
+                        width={830}
+                        height={500}
+                        priority
                     />
                 </div>
 
                 {/* Partners Logos - Below Main Logo */}
                 <div className="hero-partners">
                     <div className="hero-partners-logos">
-                        <img src="/logotypes/tics.png" alt="TICS Logo" className="partner-logo-hero" />
-                        <img src="/logotypes/itsoeg.png" alt="ITSOEH Logo" className="partner-logo-hero partner-logo-itsoeh" />
+                        <Image src="/logotypes/tics.png" alt="TICS Logo" className="partner-logo-hero" width={120} height={64} />
+                        <Image src="/logotypes/itsoeg.png" alt="ITSOEH Logo" className="partner-logo-hero partner-logo-itsoeh" width={180} height={48} />
                     </div>
                     <p className="hero-career-text">
                         Ingeniería en Tecnologías de la Información y Comunicaciones
@@ -86,7 +88,7 @@ function Hero({ event }: HeroProps) {
 
             {/* Bottom Right - Hand Pointing Down */}
             <div className="hero-hand-right">
-                <img src="/cursors/manita.png" alt="Scroll Down" className="hand-icon-img" />
+                <Image src="/cursors/manita.png" alt="Scroll Down" className="hand-icon-img" width={54} height={54} />
             </div>
 
         </section>

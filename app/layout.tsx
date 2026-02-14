@@ -1,5 +1,28 @@
 import { ReactNode } from 'react'
 import './globals.css'
+import { Outfit, Racing_Sans_One, UnifrakturMaguntia } from 'next/font/google'
+import SmoothScroll from '../components/common/SmoothScroll'
+import { AuthProvider } from '../lib/auth-context'
+
+const outfit = Outfit({
+    subsets: ['latin'],
+    display: 'swap',
+    variable: '--font-outfit',
+})
+
+const racingSansOne = Racing_Sans_One({
+    weight: '400',
+    subsets: ['latin'],
+    display: 'swap',
+    variable: '--font-racing',
+})
+
+const unifraktur = UnifrakturMaguntia({
+    weight: '400',
+    subsets: ['latin'],
+    display: 'swap',
+    variable: '--font-unifraktur',
+})
 
 export const metadata = {
     title: 'Racing Cup',
@@ -19,23 +42,12 @@ export const viewport = {
     initialScale: 0.8,
 }
 
-import SmoothScroll from '../components/common/SmoothScroll'
-
-import { AuthProvider } from '../lib/auth-context'
-
 export const dynamic = 'force-dynamic'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
-        <html lang="es" suppressHydrationWarning>
-            <head>
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link
-                    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Pirata+One&family=Racing+Sans+One&family=UnifrakturMaguntia&display=swap"
-                    rel="stylesheet"
-                />
-            </head>
+        <html lang="es" suppressHydrationWarning className={`${outfit.variable} ${racingSansOne.variable} ${unifraktur.variable}`}>
+            <head />
             <body>
                 <AuthProvider>
                     <SmoothScroll />

@@ -233,7 +233,8 @@ export default function EquipoDetailPage() {
         setInviteSuccess(false)
 
         try {
-            const profile = await getProfileByGamertag(inviteGamertag.toUpperCase())
+            const searchGamertag = inviteGamertag.replace('#', '').trim()
+            const profile = await getProfileByGamertag(searchGamertag)
             if (!profile) {
                 setInviteError('Usuario no encontrado')
                 setInviting(false)

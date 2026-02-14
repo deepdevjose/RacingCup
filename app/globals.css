@@ -46,9 +46,9 @@
   --color-glow-gold: rgba(255, 215, 0, 0.5);
 
   /* Typography */
-  --font-display: 'Racing Sans One', cursive;
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Outfit', sans-serif;
+  --font-display: var(--font-racing), cursive;
+  --font-heading: var(--font-outfit), sans-serif;
+  --font-body: var(--font-outfit), sans-serif;
 
   /* Font Sizes */
   --text-xs: 0.75rem;

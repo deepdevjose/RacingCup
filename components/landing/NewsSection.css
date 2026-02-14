@@ -3,7 +3,6 @@
  * Replicating "Vroom! News"
  */
 /* UnifrakturMaguntia font for gothic title */
-@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
 
 .news-section {
     position: relative;
@@ -58,7 +57,7 @@
 
 /* Main Gothic Title */
 .news-title {
-    font-family: 'UnifrakturMaguntia', cursive;
+    font-family: var(--font-unifraktur), cursive;
     /* Gothic Style */
     font-size: 8rem;
     margin: 0;

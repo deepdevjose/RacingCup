@@ -191,13 +191,13 @@ export default function TournamentSection() {
                         </div>
                         <div className="tournament-description">
                             <p>
-                                El 4to. Racing Cup TIC's es el torneo oficial de robótica y vehículos RC de la carrera de Ingeniería en Tecnologías de la Información y Comunicaciones del Instituto Tecnológico Superior del Occidente del Estado de Hidalgo. Un evento que combina la emoción de las carreras todoterreno con la intensidad estratégica de las batallas Zumo.
+                                El 4to. Racing Cup TIC's es el torneo oficial de robótica y vehículos RC de la carrera de Ingeniería en Tecnologías de la Información y Comunicaciones del Instituto Tecnológico Superior del Occidente del Estado de Hidalgo. Un evento que combina la emoción de las carreras todoterreno con la intensidad estratégica de las batallas Sumo.
                             </p>
                             <p>
                                 En la categoría <strong>Racing Cars</strong>, los competidores deberán dominar velocidad, control y toma de decisiones en pistas con obstáculos reales. No se trata solo de acelerar: cada curva exige precisión, cada salto requiere cálculo y cada segundo cuenta.
                             </p>
                             <p>
-                                En <strong>Zumo RC</strong>, la estrategia es la clave. Dos robots, un dojo y un solo objetivo: sacar al oponente del área de combate. Programación, sensores y diseño mecánico se enfrentan en batallas cortas pero intensas donde cada movimiento puede definir la victoria.
+                                En <strong>Sumo RC</strong>, la estrategia es la clave. Dos robots, un dojo y un solo objetivo: sacar al oponente del área de combate. Programación, sensores y diseño mecánico se enfrentan en batallas cortas pero intensas donde cada movimiento puede definir la victoria.
                             </p>
                             <p>
                                 Este evento reúne a estudiantes de nivel medio superior y superior para demostrar habilidades en electrónica, programación, diseño mecánico y control. Más que una competencia, es un escenario donde la ingeniería se pone a prueba en tiempo real.

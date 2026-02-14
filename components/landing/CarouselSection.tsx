@@ -32,9 +32,6 @@ export default function CarouselSection() {
 
 
     useGSAP(() => {
-        const track = trackRef.current
-        if (!track) return
-
         // 1. Initial fade in of the section
         gsap.from(sectionRef.current, {
             autoAlpha: 0,
@@ -44,18 +41,6 @@ export default function CarouselSection() {
                 start: "top 80%",
             }
         })
-
-        // 2. Infinite Marquee Animation
-        // Duplicate content is handled in JSX for seamless loop
-        const totalWidth = track.scrollWidth / 2 // Since we doubled it
-
-        gsap.to(track, {
-            x: -totalWidth,
-            ease: "none",
-            duration: 40, // Slow speed (adjust as needed)
-            repeat: -1,
-        })
-
     }, { scope: sectionRef })
 
     return (
