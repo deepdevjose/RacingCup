@@ -137,7 +137,7 @@ export default function RoboFutPage() {
             </ContentSection>
 
             <div className="bg-[#1a1a1a] py-12 text-center">
-                <a href="https://racing-cup.vercel.app/eventos" className="btn btn-primary text-xl px-12 py-4">
+                <a href="https://racing-cup.vercel.app/login" className="btn btn-primary text-xl px-12 py-4">
                     Inscríbete Ahora
                 </a>
                 <p className="mt-4 text-white/50 text-sm">¿Dudas? Contacto: 55 4706 1280</p>
