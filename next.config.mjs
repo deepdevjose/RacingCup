@@ -3,9 +3,7 @@ const nextConfig = {
     reactStrictMode: true,
     transpilePackages: ['three', '@react-three/fiber', '@react-three/drei'],
     // Fix for pdfjs-dist compatibility
-    experimental: {
-        esmExternals: 'loose',
-    },
+
     webpack: (config, { isServer }) => {
         // Configure canvas handling  
         config.externals = [...(config.externals || []), { canvas: 'canvas' }];
