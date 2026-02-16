@@ -1,4 +1,4 @@
-import { initializeApp, getApps, getApp } from "firebase/app"
+import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app"
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -7,6 +7,7 @@ import {
   signOut,
   onAuthStateChanged,
   type User,
+  type Auth,
 } from "firebase/auth"
 import {
   getFirestore,
@@ -23,6 +24,7 @@ import {
   orderBy,
   Timestamp,
   type DocumentData,
+  type Firestore,
 } from "firebase/firestore"
 
 const firebaseConfig = {
@@ -37,9 +39,10 @@ const firebaseConfig = {
 
 // Initialize Firebase
 // Initialize Firebase
-let app;
-let db;
-let auth;
+// Initialize Firebase
+let app: FirebaseApp;
+let db: Firestore;
+let auth: Auth;
 
 const isClient = typeof window !== 'undefined';
 const hasApiKey = !!firebaseConfig.apiKey;
@@ -54,6 +57,9 @@ if (getApps().length > 0) {
   auth = getAuth(app)
 } else {
   console.warn("Firebase config missing (likely during build). Skipping initialization.")
+  app = {} as any
+  db = {} as any
+  auth = {} as any
 }
 
 // ==================== TYPES ====================
