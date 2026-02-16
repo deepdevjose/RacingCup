@@ -250,8 +250,9 @@ export default function NewsSection() {
                             </div>
                             <div className="news-item-right">
                                 <Link href={item.link} className="eye-icon-link">
+                                    <span className="eye-label">Clic aquí para ver más</span>
                                     <div className="eye-icon">
-                                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                        <svg className="eye-svg" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                     </div>
                                 </Link>
                             </div>

@@ -130,6 +130,29 @@
     padding-right: 1rem;
 }
 
+.eye-icon-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.eye-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.news-item:hover .eye-label {
+    opacity: 1;
+    transform: translateX(0);
+}
+
 .eye-icon {
     width: 40px;
     height: 30px;
@@ -140,6 +163,20 @@
     align-items: center;
     justify-content: center;
     border-radius: 30px;
+}
+
+.eye-svg {
+    transform-origin: center;
+    animation: blink 4s infinite;
+}
+
+@keyframes blink {
+    0%, 48%, 52%, 100% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY(0.1);
+    }
 }
 
 /* Responsive */
@@ -177,6 +214,10 @@
 
     .news-item-left {
         gap: 1rem;
+    }
+    
+    .eye-label {
+        display: none; /* Hide label on mobile to save space */
     }
 }
 

@@ -115,6 +115,7 @@ function Navbar() {
                     <li><Link href="/racing-cars" className="nav-link" onClick={() => setIsMenuOpen(false)}>Racing Cars</Link></li>
                     <li><Link href="/sumo-rc" className="nav-link" onClick={() => setIsMenuOpen(false)}>Sumo RC</Link></li>
                     <li><Link href="/robofut" className="nav-link" onClick={() => setIsMenuOpen(false)}>RoboFut</Link></li>
+                    <li><Link href="/ayuda" className="nav-link" onClick={() => setIsMenuOpen(false)}>Ayuda</Link></li>
                     <li><Link href="/about" className="nav-link" onClick={() => setIsMenuOpen(false)}>Acerca de</Link></li>
                 </ul>
 
