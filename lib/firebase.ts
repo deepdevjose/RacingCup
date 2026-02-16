@@ -36,9 +36,25 @@ const firebaseConfig = {
 }
 
 // Initialize Firebase
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig)
-const db = getFirestore(app)
-const auth = getAuth(app)
+// Initialize Firebase
+let app;
+let db;
+let auth;
+
+const isClient = typeof window !== 'undefined';
+const hasApiKey = !!firebaseConfig.apiKey;
+
+if (getApps().length > 0) {
+  app = getApp()
+  db = getFirestore(app)
+  auth = getAuth(app)
+} else if (hasApiKey) {
+  app = initializeApp(firebaseConfig)
+  db = getFirestore(app)
+  auth = getAuth(app)
+} else {
+  console.warn("Firebase config missing (likely during build). Skipping initialization.")
+}
 
 // ==================== TYPES ====================
 
@@ -294,6 +310,10 @@ export async function logoutUser(): Promise<void> {
 }
 
 export function onAuthChange(callback: (user: User | null) => void) {
+  if (!auth) {
+    // If auth is not initialized (e.g. during build), just return a no-op unsubscribe
+    return () => { }
+  }
   return onAuthStateChanged(auth, callback)
 }
 
