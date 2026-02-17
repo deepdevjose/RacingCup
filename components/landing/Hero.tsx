@@ -1,7 +1,9 @@
 import { useRef } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
+import { useAuth } from '@/lib/auth-context'
 import './Hero.css'
 import { Event } from '@/types'
 
@@ -17,6 +19,7 @@ function Hero({ event }: HeroProps) {
     const containerRef = useRef<HTMLDivElement>(null)
     const carRef = useRef<HTMLImageElement>(null)
     const badgeRef = useRef<HTMLDivElement>(null)
+    const { user } = useAuth()
 
     useGSAP(() => {
         // Car entrance - Zoom in and slight rotation
@@ -29,6 +32,16 @@ function Hero({ event }: HeroProps) {
         })
 
 
+
+        // CTA entrance
+        gsap.from(".hero-cta-wrapper", {
+            autoAlpha: 0,
+            y: 30,
+            scale: 0.9,
+            duration: 1,
+            delay: 0.8,
+            ease: "back.out(1.5)"
+        })
 
         // Badge entrance - Spin in
         gsap.from(badgeRef.current, {
@@ -68,6 +81,22 @@ function Hero({ event }: HeroProps) {
                     <p className="hero-career-text">
                         Ingeniería en Tecnologías de la Información y Comunicaciones
                     </p>
+                </div>
+
+                {/* CTA Button */}
+                <div className="hero-cta-wrapper">
+                    <Link
+                        href={user ? "/dashboard" : "/signup"}
+                        className="hero-cta-btn"
+                    >
+                        <span className="hero-cta-icon"></span>
+                        {user ? "Ir al Dashboard" : "Regístrate Ahora"}
+                    </Link>
+                    {!user && (
+                        <Link href="/login" className="hero-cta-secondary">
+                            ¿Ya tienes cuenta? <span>Inicia sesión</span>
+                        </Link>
+                    )}
                 </div>
             </div>
 

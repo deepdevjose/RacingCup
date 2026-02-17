@@ -5,6 +5,7 @@ import Footer from '@/components/common/Footer'
 import CategoryHero from '@/components/pages/CategoryHero'
 import ContentSection from '@/components/pages/ContentSection'
 import dynamic from 'next/dynamic'
+
 const PDFViewer = dynamic(() => import('@/components/common/PDFViewer'), { ssr: false })
 
 /**
@@ -30,47 +31,62 @@ export default function RoboFutPage() {
                     <strong>RoboFut</strong> es una competencia donde la estrategia y el control lo son todo.
                     Dos equipos de robots controlados vía remota se enfrentan en una cancha para anotar la mayor cantidad de goles.
                 </p>
-                <p className="mt-4">
-                    <strong>Fecha del evento:</strong> 13 de marzo de 2026.<br />
-                    <strong>Costo de inscripción:</strong> $100.00 MXN.<br />
-                    <strong>Integrantes:</strong> Máximo 5 personas por equipo.<br />
-                    <strong>Premios:</strong> 1er Lugar: $1,000 MXN, 2do y 3er Lugar: Reconocimiento y obsequio.
+                <p>
+                    La combinación de ingeniería mecánica, electrónica y trabajo en equipo
+                    hacen de RoboFut una experiencia única e intensa de principio a fin.
+                </p>
+            </ContentSection>
+
+            <ContentSection title="Generalidades de Inscripción" variant="dark" backgroundColor="#2E7D32" accentColor="#EA80FC">
+                <p>
+                    <strong>Fecha Límite:</strong> 13 de marzo de 2026.<br />
+                    <strong>Costo:</strong> $100.00 MXN.<br />
+                    <strong>Integrantes:</strong> Máximo 5 personas por equipo, incluyendo opcionalmente a un docente.<br />
+                    <strong>Registro:</strong> En línea a través de <a href="/signup" className="text-[#EA80FC] hover:underline">racing-cup.vercel.app</a>.<br />
+                    <strong>Asistencia:</strong> Teléfono 55 4706 1280.
                 </p>
             </ContentSection>
 
             <ContentSection title="Especificaciones Técnicas" variant="light">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-white/5 p-6 rounded-lg border border-black/10">
-                        <h3 className="text-xl font-bold mb-4 text-[#2E7D32]">Dimensiones y Peso</h3>
-                        <ul className="list-disc list-inside space-y-2 text-gray-700">
-                            <li><strong>Máximo:</strong> 15 x 15 x 15 cm.</li>
-                            <li><strong>Peso:</strong> Máximo 500g.</li>
-                            <li>El área total no debe exceder los 15 cm.</li>
-                            <li><strong>Construcción:</strong> Libre (ruedas, orugas, patas).</li>
-                        </ul>
+                <div className="rules-grid">
+                    <div className="rule-card">
+                        <div className="rule-card-icon">📏</div>
+                        <h3 className="rule-card-title">Dimensiones y Peso</h3>
+                        <p className="rule-card-text">
+                            Máximo: 15 x 15 x 15 cm.<br />
+                            Peso: Máximo 500g.<br />
+                            Construcción: Libre (ruedas, orugas, patas).
+                        </p>
                     </div>
-                    <div className="bg-white/5 p-6 rounded-lg border border-black/10">
-                        <h3 className="text-xl font-bold mb-4 text-[#2E7D32]">Electrónica y Control</h3>
-                        <ul className="list-disc list-inside space-y-2 text-gray-700">
-                            <li><strong>Voltaje Máximo:</strong> 12V.</li>
-                            <li><strong>Control:</strong> 100% Remoto (Bluetooth, RF, Wi-Fi).</li>
-                            <li><strong>Prohibido:</strong> Sensores para autonomía (ultrasónicos, proximidad).</li>
-                            <li><strong>Baterías:</strong> Arreglos no pueden superar 12V.</li>
-                        </ul>
+                    <div className="rule-card">
+                        <div className="rule-card-icon">⚡</div>
+                        <h3 className="rule-card-title">Electrónica</h3>
+                        <p className="rule-card-text">
+                            Voltaje Máximo: 12V.<br />
+                            Baterías: Arreglos no pueden superar 12V.
+                        </p>
+                    </div>
+                    <div className="rule-card">
+                        <div className="rule-card-icon">🎮</div>
+                        <h3 className="rule-card-title">Control</h3>
+                        <p className="rule-card-text">
+                            100% Remoto (Bluetooth, RF, Wi-Fi).<br />
+                            <strong>Prohibido:</strong> Sensores para autonomía (ultrasónicos, proximidad).
+                        </p>
+                    </div>
+                    <div className="rule-card">
+                        <div className="rule-card-icon">⚽</div>
+                        <h3 className="rule-card-title">Equipo en Cancha</h3>
+                        <p className="rule-card-text">
+                            2 robots por equipo en cancha simultáneamente.<br />
+                            Cambios ilimitados permitidos.
+                        </p>
                     </div>
                 </div>
             </ContentSection>
 
             <ContentSection title="Reglas del Juego" variant="dark">
                 <div className="rules-grid">
-                    <div className="rule-card">
-                        <div className="rule-card-icon">⚽</div>
-                        <h3 className="rule-card-title">Equipos</h3>
-                        <p className="rule-card-text">
-                            2 robots por equipo en cancha simultáneamente.
-                            Cambios ilimitados permitidos.
-                        </p>
-                    </div>
                     <div className="rule-card">
                         <div className="rule-card-icon">🥅</div>
                         <h3 className="rule-card-title">Cancha</h3>
@@ -96,16 +112,94 @@ export default function RoboFutPage() {
                             Sanción: Tiro penal.
                         </p>
                     </div>
+                    <div className="rule-card">
+                        <div className="rule-card-icon">🏟️</div>
+                        <h3 className="rule-card-title">Desempate</h3>
+                        <p className="rule-card-text">
+                            En caso de empate al final del tiempo reglamentario, se procede a penales con tiro libre directo.
+                        </p>
+                    </div>
+                </div>
+            </ContentSection>
+
+            <ContentSection title="Área de Competencia e Incidentes" variant="light">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 className="text-xl font-bold mb-2 text-[#2E7D32]">Cancha</h3>
+                        <p className="text-gray-800 mb-4">
+                            Mesa de MDF de 1500 mm de largo con porterías de 200 mm. Superficie plana y uniforme.
+                        </p>
+
+                        <h3 className="text-xl font-bold mb-2 text-[#2E7D32]">Tiempo de Partido</h3>
+                        <p className="text-gray-800">
+                            2 tiempos de 2 minutos. Si al término no hay ganador, se procede a ronda de penales.
+                        </p>
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-bold mb-2 text-[#2E7D32]">Tiempo Técnico</h3>
+                        <p className="text-gray-800 mb-4">
+                            Se permite un tiempo fuera de 30 segundos por equipo por partido para reparaciones.
+                        </p>
+
+                        <h3 className="text-xl font-bold mb-2 text-[#2E7D32]">Intervención</h3>
+                        <p className="text-gray-800">
+                            Prohibido tocar los robots o la cancha durante el juego. Solo el Staff puede intervenir en situaciones de emergencia.
+                        </p>
+                    </div>
+                </div>
+            </ContentSection>
+
+            <ContentSection title="Premios y Reconocimientos" variant="primary">
+                <p className="text-center mb-8">Se otorgan premios según el nivel educativo:</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="bg-black/20 p-6 rounded-xl border border-white/10">
+                        <h3 className="text-2xl font-bold mb-4 text-center">🏆 Nivel Media Superior</h3>
+                        <ul className="space-y-4">
+                            <li className="flex justify-between items-center border-b border-white/10 pb-2">
+                                <span>1er Lugar</span>
+                                <span className="font-bold text-[#FFD700]">$1,500 MXN + Diploma</span>
+                            </li>
+                            <li className="flex justify-between items-center border-b border-white/10 pb-2">
+                                <span>2do Lugar</span>
+                                <span className="font-bold text-[#C0C0C0]">$1,000 MXN + Diploma</span>
+                            </li>
+                            <li className="flex justify-between items-center">
+                                <span>3er Lugar</span>
+                                <span className="font-bold text-[#CD7F32]">Diploma + Obsequio Especial</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div className="bg-black/20 p-6 rounded-xl border border-white/10">
+                        <h3 className="text-2xl font-bold mb-4 text-center">🏆 Nivel Superior</h3>
+                        <ul className="space-y-4">
+                            <li className="flex justify-between items-center border-b border-white/10 pb-2">
+                                <span>1er Lugar</span>
+                                <span className="font-bold text-[#FFD700]">$1,000 MXN + Diploma</span>
+                            </li>
+                            <li className="flex justify-between items-center border-b border-white/10 pb-2">
+                                <span>2do Lugar</span>
+                                <span className="font-bold text-[#C0C0C0]">$500 MXN + Diploma</span>
+                            </li>
+                            <li className="flex justify-between items-center">
+                                <span>3er Lugar</span>
+                                <span className="font-bold text-[#CD7F32]">Diploma + Obsequio Especial</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="cta-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
+                    <a href="/ayuda" className="btn btn-accent">Ver Guía de Inscripción</a>
+                    <a href="/signup" className="btn btn-primary">Inscribete</a>
                 </div>
             </ContentSection>
 
             <ContentSection title="Reglamento Oficial" variant="light" customMaxWidth="100%">
-                {/* CAMBIO AQUÍ: w-[80%] define el ancho y mx-auto lo centra */}
-                <div className="w-[80%] mx-auto">
-
-                    <div className="bg-[#1a1a1a] p-2 rounded-xl shadow-2xl border border-white/10">
-                        {/* ... resto de tu código del header ... */}
-                        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#0D0D1A] rounded-t-lg">
+                <div className="w-full max-w-[1600px] mx-auto">
+                    <div className="bg-[#1a1a1a] rounded-xl shadow-2xl border border-white/10 overflow-hidden">
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#0D0D1A]">
                             <div className="flex items-center gap-2">
                                 <span className="text-red-500">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -128,20 +222,15 @@ export default function RoboFutPage() {
                                 Descargar
                             </a>
                         </div>
+
                         <PDFViewer url="/api/docs/ROBOFUT_REGLAMENTO%20OFICIALv1.pdf" />
+
                     </div>
                     <p className="text-center mt-4 text-sm text-gray-500">
                         ¿No puedes ver el documento? <a href="/api/docs/ROBOFUT_REGLAMENTO%20OFICIALv1.pdf" target="_blank" className="text-blue-600 hover:underline">Ábrelo en una nueva pestaña</a>
                     </p>
                 </div>
             </ContentSection>
-
-            <div className="bg-[#1a1a1a] py-12 text-center">
-                <a href="https://racing-cup.vercel.app/login" className="btn btn-primary text-xl px-12 py-4">
-                    Inscríbete Ahora
-                </a>
-                <p className="mt-4 text-white/50 text-sm">¿Dudas? Contacto: 55 4706 1280</p>
-            </div>
 
             <Footer />
         </div>

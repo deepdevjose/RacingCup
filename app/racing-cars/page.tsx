@@ -177,8 +177,9 @@ export default function RacingCarsPage() {
                     </div>
                 </div>
 
-                <div className="cta-container">
-                    <a href="https://racing-cup.vercel.app/ayuda" className="btn btn-accent" target="_blank" rel="noopener noreferrer">Ver Guía de Inscripción</a>
+                <div className="cta-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
+                    <a href="/ayuda" className="btn btn-accent">Ver Guía de Inscripción</a>
+                    <a href="/signup" className="btn btn-primary">Inscribete</a>
                 </div>
             </ContentSection>
 

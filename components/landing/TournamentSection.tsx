@@ -2,9 +2,11 @@
 
 import { useRef, useEffect, useCallback } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useAuth } from '@/lib/auth-context'
 import './TournamentSection.css'
 
 // Register ScrollTrigger if not already done globally
@@ -44,6 +46,7 @@ export default function TournamentSection() {
     const sectionRef = useRef<HTMLElement>(null)
     const fireContainerRef = useRef<HTMLDivElement>(null)
     const isFireActive = useRef(false)
+    const { user } = useAuth()
 
     // Fire spawning effect when scrolling (DISABLED ON MOBILE)
     useEffect(() => {
@@ -207,6 +210,13 @@ export default function TournamentSection() {
                             <div className="fire-container" id="fire-container"></div>
                             ¿Tienes lo necesario para competir?
                         </div>
+                        <Link
+                            href={user ? "/dashboard" : "/signup"}
+                            className="tournament-cta-btn"
+                        >
+                            {user ? "Ir al Dashboard" : "Inscríbete Aquí"}
+                            <span className="tournament-cta-arrow"></span>
+                        </Link>
                     </div>
                 </div>
 
