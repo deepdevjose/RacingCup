@@ -46,9 +46,9 @@ export const dynamic = 'force-dynamic'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
-        <html lang="es" suppressHydrationWarning className={`${outfit.variable} ${racingSansOne.variable} ${unifraktur.variable}`}>
+        <html lang="es" suppressHydrationWarning={true} className={`${outfit.variable} ${racingSansOne.variable} ${unifraktur.variable}`}>
             <head />
-            <body>
+            <body suppressHydrationWarning={true}>
                 <AuthProvider>
                     <SmoothScroll />
                     {children}

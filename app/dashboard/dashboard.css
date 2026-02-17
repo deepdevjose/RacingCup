@@ -276,7 +276,8 @@
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     color: #fff;
-    font-family: 'Racing Sans One', cursive;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -338,7 +339,8 @@
 }
 
 .info-label {
-    font-family: 'Racing Sans One', cursive;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -382,8 +384,8 @@
     background: none;
     border: none;
     color: rgba(255, 255, 255, 0.6);
-    font-family: 'Racing Sans One', cursive;
-    font-weight: 400;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
     font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -442,9 +444,9 @@
 }
 
 .empty-title {
-    font-family: 'Racing Sans One', cursive;
+    font-family: 'Outfit', sans-serif;
     font-size: 1.5rem;
-    font-weight: 400;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 0.5rem;
@@ -1500,14 +1502,16 @@
 }
 
 .modal-title {
-    font-family: 'Racing Sans One', cursive;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
     font-size: 1.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
 .form-label {
-    font-family: 'Racing Sans One', cursive;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -1563,4 +1567,548 @@
     .dashboard-tabs {
         width: 100%;
     }
+}
+
+/* --- New Dashboard Widgets --- */
+
+.dashboard-widgets-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-widget {
+    background: linear-gradient(145deg, rgba(20, 20, 35, 0.6), rgba(10, 10, 20, 0.8));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 250px;
+    backdrop-filter: blur(10px);
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.widget-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+    margin: 0;
+}
+
+.widget-link {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.widget-link:hover {
+    color: #E32636;
+}
+
+.widget-skeleton {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 1.25rem;
+    height: 250px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0.6;
+    }
+}
+
+/* Event Widget */
+.next-event-card {
+    display: grid;
+    grid-template-areas:
+        "date info"
+        "action action";
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    flex: 1;
+}
+
+.event-date-box {
+    grid-area: date;
+    background: rgba(227, 38, 54, 0.1);
+    border: 1px solid rgba(227, 38, 54, 0.2);
+    border-radius: 0.75rem;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.event-date-box .day {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.event-date-box .month {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #E32636;
+    margin-top: 2px;
+}
+
+.event-info {
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.event-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.3;
+}
+
+.event-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.status-badge {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.status-badge.registro_abierto {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.status-badge.en_curso {
+    background: rgba(234, 179, 8, 0.2);
+    color: #facc15;
+}
+
+.btn-event-action {
+    grid-area: action;
+    margin-top: auto;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.btn-event-action:hover {
+    background: #E32636;
+    border-color: #E32636;
+}
+
+/* Teams Widget */
+.teams-list-widget {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.team-item-mini {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 0.75rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+}
+
+.team-item-mini:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+.team-icon-mini {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid;
+}
+
+.team-info-mini {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.team-name-mini {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.team-status-dot {
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.team-status-dot::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #666;
+}
+
+.team-status-dot.confirmed {
+    color: #4ade80;
+}
+
+.team-status-dot.confirmed::before {
+    background: #4ade80;
+}
+
+.team-status-dot.pending {
+    color: #facc15;
+}
+
+.team-status-dot.pending::before {
+    background: #facc15;
+}
+
+.arrow-icon {
+    opacity: 0.3;
+}
+
+.more-teams-link {
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+    margin-top: 0.5rem;
+}
+
+.more-teams-link:hover {
+    color: #fff;
+}
+
+/* Empty Widget */
+.empty-widget {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.empty-icon-small {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.5;
+}
+
+.btn-text-action {
+    margin-top: 1rem;
+    color: #E32636;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.btn-text-action:hover {
+    text-decoration: underline;
+}
+
+/* Revised Dashboard Hero for Widget Layout */
+.dashboard-hero.compact {
+    text-align: left;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dashboard-hero.compact .hero-badge {
+    margin: 0 0 1rem 0;
+}
+
+.dashboard-hero.compact .hero-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-hero.compact .hero-desc {
+    max-width: 600px;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.dashboard-hero.compact .hero-icon-large {
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 120px;
+    height: 120px;
+    opacity: 0.05;
+}
+
+/* Quick Actions Grid (Smaller) */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.quick-action-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+.quick-action-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.quick-action-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.quick-action-info h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.quick-action-info p {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Mobile Responsive */
+@media (max-width: 900px) {
+
+    /* Tablet breakpoint */
+    .dashboard-widgets-section {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-hero.compact .hero-icon-large {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+
+    /* Mobile */
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .event-date-box {
+        width: 60px;
+        height: 60px;
+    }
+
+    .event-date-box .day {
+        font-size: 1.5rem;
+    }
+
+    .next-event-card {
+        grid-template-areas:
+            "date info"
+            "action action";
+    }
+}
+
+/* Responsive Navigation */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.mobile-menu {
+    position: fixed;
+    top: 70px;
+    /* Navbar height */
+    left: 0;
+    width: 100%;
+    height: 0;
+    background: rgba(10, 10, 20, 0.95);
+    backdrop-filter: blur(15px);
+    overflow: hidden;
+    transition: height 0.3s ease-in-out;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 999;
+}
+
+.mobile-menu.open {
+    height: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mobile-nav-link {
+    font-family: 'Racing Sans One', cursive;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 0.5rem 0;
+    transition: color 0.2s;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link.active {
+    color: #E32636;
+}
+
+.mobile-menu-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0.5rem 0;
+}
+
+/* Mobile Responsive Rules */
+@media (max-width: 768px) {
+    .dashboard-nav {
+        padding: 0.75rem 0;
+    }
+
+    .desktop-only {
+        display: none !important;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .nav-content {
+        justify-content: space-between;
+    }
+
+    /* Hero Responsive */
+    .dashboard-hero {
+        padding: 2rem 1.5rem;
+        /* Reduced padding */
+        min-height: auto;
+    }
+
+    .dashboard-hero.compact .hero-title {
+        font-size: 2rem;
+        /* Smaller font */
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-hero.compact .hero-desc {
+        max-width: 100%;
+        font-size: 0.95rem;
+    }
+
+    .hero-icon-large {
+        display: none;
+        /* Hide large decoration on mobile */
+    }
+
+    /* Widgets Stacking */
+    .dashboard-widgets-section {
+        grid-template-columns: 1fr;
+        /* Stack vertically */
+        gap: 1rem;
+    }
+
+    .dashboard-widget {
+        min-height: auto;
+        /* Allow flexible height */
+    }
+
+    /* Quick Actions Stacking */
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+        /* Stack vertically */
+        gap: 1rem;
+    }
+
+    .quick-action-card {
+        padding: 1rem;
+        /* Smaller padding */
+    }
+}
+/* Typography Corrections for Mobile */
+.mobile-nav-link {
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 700 !important;
 }
