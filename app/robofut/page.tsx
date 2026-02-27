@@ -150,41 +150,13 @@ export default function RoboFutPage() {
             </ContentSection>
 
             <ContentSection title="Premios y Reconocimientos" variant="primary">
-                <p className="text-center mb-8">Se otorgan premios según el nivel educativo:</p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="max-w-xl mx-auto mb-10 mt-4">
                     <div className="bg-black/20 p-6 rounded-xl border border-white/10">
-                        <h3 className="text-2xl font-bold mb-4 text-center">🏆 Nivel Media Superior</h3>
-                        <ul className="space-y-4">
-                            <li className="flex justify-between items-center border-b border-white/10 pb-2">
-                                <span>1er Lugar</span>
-                                <span className="font-bold text-[#FFD700]">$1,500 MXN + Diploma</span>
-                            </li>
-                            <li className="flex justify-between items-center border-b border-white/10 pb-2">
-                                <span>2do Lugar</span>
-                                <span className="font-bold text-[#C0C0C0]">$1,000 MXN + Diploma</span>
-                            </li>
-                            <li className="flex justify-between items-center">
-                                <span>3er Lugar</span>
-                                <span className="font-bold text-[#CD7F32]">Diploma + Obsequio Especial</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div className="bg-black/20 p-6 rounded-xl border border-white/10">
-                        <h3 className="text-2xl font-bold mb-4 text-center">🏆 Nivel Superior</h3>
-                        <ul className="space-y-4">
-                            <li className="flex justify-between items-center border-b border-white/10 pb-2">
-                                <span>1er Lugar</span>
-                                <span className="font-bold text-[#FFD700]">$1,000 MXN + Diploma</span>
-                            </li>
-                            <li className="flex justify-between items-center border-b border-white/10 pb-2">
-                                <span>2do Lugar</span>
-                                <span className="font-bold text-[#C0C0C0]">$500 MXN + Diploma</span>
-                            </li>
-                            <li className="flex justify-between items-center">
-                                <span>3er Lugar</span>
-                                <span className="font-bold text-[#CD7F32]">Diploma + Obsequio Especial</span>
+                        <h3 className="text-2xl font-bold mb-6 text-center">🏆 Premio Único</h3>
+                        <ul className="space-y-6">
+                            <li className="flex justify-between items-center px-4">
+                                <span className="text-xl">1er Lugar</span>
+                                <span className="text-xl font-bold text-[#FFD700]">$1,000 MXN + Diploma</span>
                             </li>
                         </ul>
                     </div>
