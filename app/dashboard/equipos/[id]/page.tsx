@@ -24,7 +24,6 @@ import {
     type TeamCategoryEntry,
 } from '@/lib/firebase'
 import { TeamIcon } from '@/components/tournament/TeamIcon'
-import Footer from '@/components/common/Footer'
 
 interface MemberWithProfile extends TeamMember {
     profile?: UserProfile
@@ -368,7 +367,6 @@ export default function EquipoDetailPage() {
                         </Link>
                     </div>
                 </main>
-                <Footer />
             </div>
         )
     }

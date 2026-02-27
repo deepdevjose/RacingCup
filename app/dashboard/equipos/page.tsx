@@ -17,7 +17,6 @@ import {
     type TeamMember
 } from '@/lib/firebase'
 import { TeamIcon } from '@/components/tournament/TeamIcon'
-import Footer from '@/components/common/Footer'
 
 interface TeamWithDetails extends Team {
     members: TeamMember[]
@@ -305,7 +304,6 @@ export default function TeamsPage() {
                     </div>
                 </div>
             </main>
-            <Footer />
         </div>
     )
 }
