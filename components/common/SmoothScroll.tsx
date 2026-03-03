@@ -32,16 +32,17 @@ export default function SmoothScroll() {
         lenis.on('scroll', ScrollTrigger.update)
 
         // Add Lenis to GSAP's ticker for smooth animation loop
-        gsap.ticker.add((time) => {
+        const raf = (time: number) => {
             lenis.raf(time * 1000)
-        })
+        }
+        gsap.ticker.add(raf)
 
         // Turn off GSAP's default lag smoothing to avoid jitter with Lenis
         gsap.ticker.lagSmoothing(0)
 
         // Cleanup
         return () => {
-            gsap.ticker.remove(lenis.raf)
+            gsap.ticker.remove(raf)
             lenis.destroy()
         }
     }, [])

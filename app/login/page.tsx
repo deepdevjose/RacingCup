@@ -7,6 +7,7 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import './login.css'
 import { loginUser } from '@/lib/firebase'
+import Image from 'next/image'
 
 /**
  * Login/Signup Page
@@ -100,7 +101,7 @@ export default function LoginPage() {
                 <div className="login-brand" ref={brandRef}>
                     <div className="login-brand-content">
                         <Link href="/" className="login-brand-logo">
-                            <img src="/logotypes/logo.png" alt="Racing Cup Logo" className="w-24 h-auto" />
+                            <Image src="/logotypes/logo.png" alt="Racing Cup Logo" width={96} height={96} className="w-24 h-auto" priority />
                         </Link>
                         <h1 className="login-heading">
                             Racing Cup <br />

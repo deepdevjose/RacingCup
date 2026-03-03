@@ -8,6 +8,7 @@ import { useGSAP } from '@gsap/react'
 import '../login/login.css'
 import { registerUser, createProfile, isGamertagAvailable } from '@/lib/firebase'
 import { useEffect } from 'react'
+import Image from 'next/image'
 
 /**
  * Login/Signup Page
@@ -71,6 +72,8 @@ export default function SignupPage() {
     }, { scope: formRef })
 
     useEffect(() => {
+        let timeoutId: NodeJS.Timeout;
+
         const checkAvailability = async () => {
             if (formData.gamerTag.length === 8) {
                 setGamertagStatus('checking')
@@ -80,7 +83,10 @@ export default function SignupPage() {
                 setGamertagStatus('idle')
             }
         }
-        checkAvailability()
+
+        timeoutId = setTimeout(checkAvailability, 500)
+
+        return () => clearTimeout(timeoutId)
     }, [formData.gamerTag])
 
     const handleNextStep = async (e: React.FormEvent) => {
@@ -214,7 +220,7 @@ export default function SignupPage() {
                 <div className="login-brand" ref={brandRef}>
                     <div className="login-brand-content">
                         <Link href="/" className="login-brand-logo">
-                            <img src="/logotypes/logo.png" alt="Racing Cup Logo" className="w-24 h-auto" />
+                            <Image src="/logotypes/logo.png" alt="Racing Cup Logo" width={96} height={96} className="w-24 h-auto" priority />
                         </Link>
                         <h1 className="login-heading">
                             Únete a la <br />

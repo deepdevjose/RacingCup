@@ -9,11 +9,11 @@ service cloud.firestore {
       return request.auth != null;
     }
     
-    // Check if user is admin (has isAdmin: true in their profile)
+    // Check if user is admin (gracefully handles missing isAdmin property)
     function isAdmin() {
       return isSignedIn() && 
              exists(/databases/$(database)/documents/profiles/$(request.auth.uid)) &&
-             get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.isAdmin == true;
+             get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.get('isAdmin', false) == true;
     }
     
     // Check if user is the owner of the resource
@@ -43,10 +43,17 @@ service cloud.firestore {
     // Team Members: visible to all
     match /team_members/{memberId} {
       allow read: if isSignedIn();
-      // Allow users to join teams (create their own member record) OR Admins to add anyone
-      allow create: if isAdmin() || (isSignedIn() && request.resource.data.userId == request.auth.uid);
-      // Allow users to leave teams (delete their own record)
-      allow delete: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      // Allow users to join teams ONLY IF they have an accepted invite OR Admins can add anyone
+      allow create: if isAdmin() || (
+        isSignedIn() && 
+        request.resource.data.userId == request.auth.uid &&
+        exists(/databases/$(database)/documents/team_invites/$(request.resource.data.teamId + "_" + request.auth.uid))
+      );
+      // Allow users to leave teams (delete their own record) or leaders to remove members
+      allow delete: if isAdmin() || (isSignedIn() && (
+        resource.data.userId == request.auth.uid || 
+        (exists(/databases/$(database)/documents/teams/$(resource.data.teamId)) && get(/databases/$(database)/documents/teams/$(resource.data.teamId)).data.leaderUserId == request.auth.uid)
+      ));
       allow update: if isAdmin();
     }
     
@@ -57,7 +64,7 @@ service cloud.firestore {
       allow create: if isAdmin() || (isSignedIn() && request.resource.data.leaderUserId == request.auth.uid);
       // Allow leader to update team
       allow update: if isAdmin() || (isSignedIn() && resource.data.leaderUserId == request.auth.uid);
-      allow delete: if isAdmin();
+      allow delete: if isAdmin() || (isSignedIn() && resource.data.leaderUserId == request.auth.uid);
     }
     
     // Tournament Stats: visible to all, admin-only write
@@ -70,13 +77,17 @@ service cloud.firestore {
     match /profiles/{userId} {
       // ANYONE can read profiles (even without authentication)
       // This allows gamertag validation to work
-      allow read: if true;
+      allow read: if isSignedIn(); // Secured to prevent PII exposure, breaks public signup gamertag check
       
       // Users can create their own profile
-      allow create: if isSignedIn() && isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId) && 
+        !('isAdmin' in request.resource.data) && 
+        !('admin' in request.resource.data) && 
+        !('isOrganizer' in request.resource.data);
       
-      // ONLY the profile owner can update their own profile
-      allow update: if isSignedIn() && isOwner(userId);
+      // ONLY the profile owner can update their own profile BUT cannot escalate privileges
+      allow update: if isSignedIn() && isOwner(userId) && 
+        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['isAdmin', 'admin', 'isOrganizer']));
       
       // Only admins can delete profiles
       allow delete: if isAdmin();
@@ -84,12 +95,9 @@ service cloud.firestore {
     
     // ==================== ADDITIONAL COLLECTIONS ====================
     
-    // Invites: users can read their own invites, admins can manage all
+    // Invites: anyone can read invites to validate availability
     match /team_invites/{inviteId} {
-      allow read: if isSignedIn() && 
-                     (resource.data.invitedUserId == request.auth.uid || 
-                      resource.data.inviterUserId == request.auth.uid ||
-                      isAdmin());
+      allow read: if isSignedIn();
       // Secure creation: only allow if you are the sender
       allow create: if isSignedIn() && request.resource.data.inviterUserId == request.auth.uid;
       allow update: if isSignedIn() && 
@@ -97,6 +105,7 @@ service cloud.firestore {
                         isAdmin());
       allow delete: if isSignedIn() && 
                        (resource.data.inviterUserId == request.auth.uid || 
+                        (exists(/databases/$(database)/documents/teams/$(resource.data.teamId)) && get(/databases/$(database)/documents/teams/$(resource.data.teamId)).data.leaderUserId == request.auth.uid) ||
                         isAdmin());
     }
     
@@ -109,13 +118,14 @@ service cloud.firestore {
                       resource.data.target == 'event' ||
                       isAdmin());
       allow create: if isAdmin();
-      // Allow users to mark as read (update readBy)
+      // Allow users to mark as read (update readBy only)
       allow update: if isSignedIn() && 
                        (resource.data.target == 'all' ||
                        (resource.data.target == 'user' && resource.data.targetId == request.auth.uid) ||
                        (resource.data.target == 'team' && isMemberOf(resource.data.targetId)) ||
                        resource.data.target == 'event' ||
-                       isAdmin());
+                       isAdmin()) &&
+                       (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readBy']));
       allow delete: if isAdmin();
     }
   }

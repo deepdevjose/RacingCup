@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Image from 'next/image'
 import './CarouselSection.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -49,14 +50,14 @@ export default function CarouselSection() {
                 <div className="carousel-track" ref={trackRef}>
                     {/* Render Loop 1 */}
                     {IMAGES.map((src, i) => (
-                        <div key={`img-1-${i}`} className="carousel-item">
-                            <img src={src} alt={`Racing Cup Gallery ${i}`} loading="lazy" decoding="async" />
+                        <div key={`img-1-${i}`} className="carousel-item" style={{ position: 'relative', height: '400px' }}>
+                            <Image src={src} alt={`Racing Cup Gallery ${i}`} fill style={{ objectFit: 'cover' }} loading="lazy" />
                         </div>
                     ))}
                     {/* Render Loop 2 (Duplicate for Seamless Infinite Scroll) */}
                     {IMAGES.map((src, i) => (
-                        <div key={`img-2-${i}`} className="carousel-item">
-                            <img src={src} alt={`Racing Cup Gallery ${i}`} loading="lazy" decoding="async" />
+                        <div key={`img-2-${i}`} className="carousel-item" style={{ position: 'relative', height: '400px' }}>
+                            <Image src={src} alt={`Racing Cup Gallery ${i}`} fill style={{ objectFit: 'cover' }} loading="lazy" />
                         </div>
                     ))}
                 </div>

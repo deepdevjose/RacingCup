@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -10,6 +10,29 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function VideoSection() {
     const sectionRef = useRef<HTMLElement>(null)
+    const videoRef = useRef<HTMLVideoElement>(null)
+
+    useEffect(() => {
+        const video = videoRef.current
+        if (!video) return
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (!video.src) {
+                        video.src = "/videos/racingcup.mp4"
+                    }
+                    video.play().catch(() => { })
+                } else {
+                    video.pause()
+                }
+            })
+        }, { rootMargin: '400px' })
+
+        observer.observe(video)
+
+        return () => observer.disconnect()
+    }, [])
 
     useGSAP(() => {
         const videoSection = sectionRef.current
@@ -95,15 +118,15 @@ export default function VideoSection() {
             <div className="video-container">
                 <div className="video-wrapper">
                     <video
+                        ref={videoRef}
                         width="100%"
                         height="100%"
-                        src="/videos/racingcup.mp4"
                         title="Racing Cup Video"
                         controls
-                        autoPlay
                         loop
                         muted
                         playsInline
+                        preload="none"
                         className="video-frame"
                     >
                         Your browser does not support the video tag.

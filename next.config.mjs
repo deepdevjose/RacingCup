@@ -2,6 +2,15 @@
 const nextConfig = {
     reactStrictMode: true,
     transpilePackages: ['three', '@react-three/fiber', '@react-three/drei'],
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'res.cloudinary.com',
+                pathname: '/**',
+            },
+        ],
+    },
     // Fix for pdfjs-dist compatibility
 
     webpack: (config, { isServer }) => {

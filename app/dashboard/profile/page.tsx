@@ -97,6 +97,29 @@ export default function ProfilePage() {
             if (!user) return
             setLoadingData(true)
             try {
+                // Shared Local Caches for this page load
+                const teamCache = new Map<string, Promise<Team | null>>()
+                const eventCache = new Map<string, Promise<Event | null>>()
+                const profileCache = new Map<string, Promise<UserProfile | null>>()
+                const memberCache = new Map<string, Promise<any[]>>()
+
+                const getCachedTeam = (id: string) => {
+                    if (!teamCache.has(id)) teamCache.set(id, getTeamById(id))
+                    return teamCache.get(id)!
+                }
+                const getCachedEvent = (id: string) => {
+                    if (!eventCache.has(id)) eventCache.set(id, getEventById(id))
+                    return eventCache.get(id)!
+                }
+                const getCachedProfile = (id: string) => {
+                    if (!profileCache.has(id)) profileCache.set(id, getProfile(id))
+                    return profileCache.get(id)!
+                }
+                const getCachedMembers = (id: string) => {
+                    if (!memberCache.has(id)) memberCache.set(id, getTeamMembers(id))
+                    return memberCache.get(id)!
+                }
+
                 // Pending Invites
                 console.log('[Profile] Fetching pending invites...')
                 const pendingInvites = await getUserPendingInvites(user.uid)
@@ -105,9 +128,11 @@ export default function ProfilePage() {
                 console.log('[Profile] Fetching invite details...')
                 const invitesWithDetails = await Promise.all(
                     pendingInvites.map(async (invite) => {
-                        const team = invite.teamId ? await getTeamById(invite.teamId) : null
-                        const event = invite.eventId ? await getEventById(invite.eventId) : null
-                        const inviterProfile = invite.inviterUserId ? await getProfile(invite.inviterUserId) : null
+                        const teamPromise = invite.teamId ? getCachedTeam(invite.teamId) : Promise.resolve(null)
+                        const eventPromise = invite.eventId ? getCachedEvent(invite.eventId) : Promise.resolve(null)
+                        const inviterProfilePromise = invite.inviterUserId ? getCachedProfile(invite.inviterUserId) : Promise.resolve(null)
+
+                        const [team, event, inviterProfile] = await Promise.all([teamPromise, eventPromise, inviterProfilePromise])
                         return {
                             ...invite,
                             team: team || undefined,
@@ -127,8 +152,10 @@ export default function ProfilePage() {
                 console.log('[Profile] Fetching team details...')
                 const teamsWithDetails = await Promise.all(
                     allMyTeams.map(async (team) => {
-                        const event = team.eventId ? await getEventById(team.eventId) : null
-                        const members = team.id ? await getTeamMembers(team.id) : []
+                        const eventPromise = team.eventId ? getCachedEvent(team.eventId) : Promise.resolve(null)
+                        const membersPromise = team.id ? getCachedMembers(team.id) : Promise.resolve([])
+
+                        const [event, members] = await Promise.all([eventPromise, membersPromise])
                         return {
                             ...team,
                             event: event || undefined,
@@ -208,6 +235,8 @@ export default function ProfilePage() {
     }, [profile])
 
     useEffect(() => {
+        let timeoutId: NodeJS.Timeout;
+
         const checkAvailability = async () => {
             if (editForm.gamertag.length === 8 && user) {
                 // If it's the same as the current profile, it's available
@@ -222,7 +251,10 @@ export default function ProfilePage() {
                 setGamertagStatus('idle')
             }
         }
-        checkAvailability()
+
+        timeoutId = setTimeout(checkAvailability, 500)
+
+        return () => clearTimeout(timeoutId)
     }, [editForm.gamertag, user, profile])
 
     // GSAP

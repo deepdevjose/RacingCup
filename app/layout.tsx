@@ -39,10 +39,8 @@ export const metadata = {
 
 export const viewport = {
     width: 'device-width',
-    initialScale: 0.8,
+    initialScale: 1,
 }
-
-export const dynamic = 'force-dynamic'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (

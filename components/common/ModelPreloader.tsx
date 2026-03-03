@@ -53,8 +53,16 @@ async function preloadAndCacheModels() {
 
 export default function ModelPreloader() {
     useEffect(() => {
-        // Start preloading immediately on mount
-        preloadAndCacheModels()
+        // Start preloading after initial page rendering is completed
+        const delay = setTimeout(() => {
+            if ('requestIdleCallback' in window) {
+                (window as any).requestIdleCallback(() => preloadAndCacheModels())
+            } else {
+                preloadAndCacheModels()
+            }
+        }, 2000)
+
+        return () => clearTimeout(delay)
     }, [])
 
     // This component renders nothing

@@ -265,37 +265,60 @@ export interface Notification {
 export async function getPublicTeams(): Promise<PublicTeam[]> {
   const teamsSnapshot = await getDocs(teamsCollection)
 
-  const publicTeams: PublicTeam[] = []
+  // Use Maps to cache profiles and events to avoid N+1 queries
+  const profileCache = new Map<string, UserProfile | null>()
+  const eventCache = new Map<string, Event | null>()
 
-  for (const docSnapshot of teamsSnapshot.docs) {
+  const getCachedProfile = async (userId: string) => {
+    if (profileCache.has(userId)) return profileCache.get(userId)
+    const profile = await getProfile(userId)
+    profileCache.set(userId, profile)
+    return profile
+  }
+
+  const getCachedEvent = async (eventId: string) => {
+    if (eventCache.has(eventId)) return eventCache.get(eventId)
+    const event = await getEventById(eventId)
+    eventCache.set(eventId, event)
+    return event
+  }
+
+  const publicTeamsPromises = teamsSnapshot.docs.map(async (docSnapshot) => {
     const teamData = convertTimestamps(docSnapshot.data()) as Team
     const teamId = docSnapshot.id
 
-    // Get members
-    const members = await getTeamMembers(teamId)
-    const membersWithNames = await Promise.all(members.map(async (m) => {
-      const profile = await getProfile(m.userId)
-      return { name: profile?.displayName || "Usuario" }
-    }))
+    // Get members (run concurrently with leader/event fetches)
+    const membersPromise = getTeamMembers(teamId).then(members =>
+      Promise.all(members.map(async (m) => {
+        const profile = await getCachedProfile(m.userId)
+        return { name: profile?.displayName || "Usuario" }
+      }))
+    )
 
     // Get leader profile for institution/school
-    const leaderProfile = await getProfile(teamData.leaderUserId)
+    const leaderProfilePromise = getCachedProfile(teamData.leaderUserId)
 
     // Get event for category/location
-    const event = await getEventById(teamData.eventId)
+    const eventPromise = getCachedEvent(teamData.eventId)
 
-    publicTeams.push({
+    const [membersWithNames, leaderProfile, event] = await Promise.all([
+      membersPromise,
+      leaderProfilePromise,
+      eventPromise
+    ])
+
+    return {
       ...teamData,
       id: teamId,
-      status: teamData.isConfirmed ? "confirmado" : "por_confirmar",
+      status: (teamData.isConfirmed ? "confirmado" : "por_confirmar") as TeamStatus,
       institution: leaderProfile?.school || "Sin escuela",
       city: event?.location || "Sin ubicación",
       category: "all", // Placeholder as team doesn't have specific category
       members: membersWithNames,
-    })
-  }
+    }
+  })
 
-  return publicTeams
+  return Promise.all(publicTeamsPromises)
 }
 
 // ==================== AUTH FUNCTIONS ====================
@@ -592,13 +615,10 @@ export async function getUserTeams(userId: string): Promise<Team[]> {
   const q = query(membersCollection, where("userId", "==", userId), where("inviteStatus", "==", "accepted"))
   const snapshot = await getDocs(q)
 
-  const teams: Team[] = []
-  for (const doc of snapshot.docs) {
-    const teamId = doc.data().teamId
-    const team = await getTeamById(teamId)
-    if (team) teams.push(team)
-  }
-  return teams
+  const teamPromises = snapshot.docs.map(docSnap => getTeamById(docSnap.data().teamId))
+  const teams = await Promise.all(teamPromises)
+
+  return teams.filter((t): t is Team => t !== null)
 }
 
 export async function leaveTeam(userId: string, teamId: string): Promise<void> {
@@ -687,19 +707,17 @@ export async function removeMemberFromTeam(memberId: string): Promise<void> {
 const invitesCollection = collection(db, "team_invites")
 
 export async function createInvite(teamId: string, eventId: string, invitedUserId: string, inviterUserId: string): Promise<string> {
+  // We use deterministic IDs so Firestore rules can validate check invites without a query
+  const inviteId = `${teamId}_${invitedUserId}`
+  const docRef = doc(db, "team_invites", inviteId)
+
   // Check if invite already exists
-  const existing = query(
-    invitesCollection,
-    where("teamId", "==", teamId),
-    where("invitedUserId", "==", invitedUserId),
-    where("status", "==", "pending")
-  )
-  const existingSnapshot = await getDocs(existing)
-  if (!existingSnapshot.empty) {
-    throw new Error("Ya existe una invitacion pendiente para este usuario")
+  const existingSnap = await getDoc(docRef)
+  if (existingSnap.exists() && existingSnap.data().status === "pending") {
+    throw new Error("Ya existe una invitacion pendiente para este usuario en este equipo")
   }
 
-  const docRef = await addDoc(invitesCollection, {
+  await setDoc(docRef, {
     teamId,
     eventId,
     invitedUserId,
@@ -707,7 +725,7 @@ export async function createInvite(teamId: string, eventId: string, invitedUserI
     status: "pending",
     createdAt: Timestamp.now(),
   })
-  return docRef.id
+  return inviteId
 }
 
 export async function getUserPendingInvites(userId: string): Promise<TeamInvite[]> {
