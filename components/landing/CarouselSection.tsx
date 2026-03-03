@@ -50,14 +50,14 @@ export default function CarouselSection() {
                 <div className="carousel-track" ref={trackRef}>
                     {/* Render Loop 1 */}
                     {IMAGES.map((src, i) => (
-                        <div key={`img-1-${i}`} className="carousel-item" style={{ position: 'relative', height: '400px' }}>
-                            <Image src={src} alt={`Racing Cup Gallery ${i}`} fill style={{ objectFit: 'cover' }} loading="lazy" />
+                        <div key={`img-1-${i}`} className="carousel-item" style={{ position: 'relative', height: '100%', aspectRatio: '16/9' }}>
+                            <Image src={src} alt={`Racing Cup Gallery ${i}`} fill style={{ objectFit: 'cover' }} unoptimized />
                         </div>
                     ))}
                     {/* Render Loop 2 (Duplicate for Seamless Infinite Scroll) */}
                     {IMAGES.map((src, i) => (
-                        <div key={`img-2-${i}`} className="carousel-item" style={{ position: 'relative', height: '400px' }}>
-                            <Image src={src} alt={`Racing Cup Gallery ${i}`} fill style={{ objectFit: 'cover' }} loading="lazy" />
+                        <div key={`img-2-${i}`} className="carousel-item" style={{ position: 'relative', height: '100%', aspectRatio: '16/9' }}>
+                            <Image src={src} alt={`Racing Cup Gallery ${i}`} fill style={{ objectFit: 'cover' }} unoptimized />
                         </div>
                     ))}
                 </div>
