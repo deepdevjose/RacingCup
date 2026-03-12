@@ -133,7 +133,7 @@ export default function DashboardPage() {
                         </div>
                     </Link>
 
-                    <Link href="/dashboard/equipos" className="quick-action-card">
+                    <Link href="/dashboard/eventos/dNa2TptMBEaGHRRsGx5V" className="quick-action-card">
                         <div className="quick-action-icon">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
