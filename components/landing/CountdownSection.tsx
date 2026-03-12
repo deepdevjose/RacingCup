@@ -14,7 +14,7 @@ gsap.registerPlugin(ScrollTrigger)
  * Target date for the countdown timer
  * Set to Friday, March 13, 2026 at 10:00 AM
  */
-const TARGET_DATE = new Date('2026-03-13T10:00:00').getTime()
+const TARGET_DATE = new Date('2026-03-13T08:00:00').getTime()
 
 interface TimeLeft {
     days: number
@@ -162,7 +162,7 @@ export default function CountdownSection() {
 
                 {/* Subtitle */}
                 <p className="countdown-subtitle">
-                    <br />Viernes 13 de Marzo, 2026 <br />
+                    <br />Viernes 13 de Marzo del 2026, a las 8:00 AM <br />
                     Insituto Tecnológico Superior del Occidente del Estado de Hidalgo
                 </p>
 

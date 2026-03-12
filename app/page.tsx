@@ -27,7 +27,7 @@ export default function Home() {
     const event: Event = {
         id: 'racing-cup-5',
         name: '5ª Racing Cup',
-        date: '15 de Marzo, 2026',
+        date: '14 de Marzo, 2026',
         status: 'registro_abierto',
         description: 'Torneo de eliminación directa con los mejores equipos de la región.'
     }
