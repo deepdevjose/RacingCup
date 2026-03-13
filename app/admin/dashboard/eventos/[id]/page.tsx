@@ -12,6 +12,7 @@ import {
 import { MatchList } from '@/components/organizer/match-list'
 import { BracketGenerator } from '@/components/organizer/bracket-generator'
 import { QualifiersGenerator } from '@/components/organizer/qualifiers-generator'
+import { StandingsTable } from '@/components/organizer/standings-table'
 
 export default function EventDetailPage() {
     const params = useParams()
@@ -22,8 +23,10 @@ export default function EventDetailPage() {
     const [teams, setTeams] = useState<Team[]>([])
     const [loading, setLoading] = useState(true)
     const [selectedCategory, setSelectedCategory] = useState<string>('')
-    const [selectedTab, setSelectedTab] = useState<'management' | 'qualifiers' | 'bracket'>('management')
+    const [selectedTab, setSelectedTab] = useState<'management' | 'qualifiers' | 'standings' | 'bracket'>('management')
     const [refreshKey, setRefreshKey] = useState(0)
+
+    // ... skipping a bit ... -> wait, I have to replace everything exactly.
 
     useEffect(() => {
         loadData()
@@ -45,7 +48,6 @@ export default function EventDetailPage() {
             setEvent(eventData)
             setTeams(teamsData)
 
-            // Set first category as default
             if (eventData.categories.length > 0 && !selectedCategory) {
                 setSelectedCategory(eventData.categories[0])
             }
@@ -60,10 +62,10 @@ export default function EventDetailPage() {
 
     if (!event) return null
 
-    // Filter teams by selected category
-    const categoryTeams = teams.filter(t =>
-        t.categories?.some(c => c.category === selectedCategory) ||
-        (event.categories.length === 1) // Fallback for single-category events
+    // Pass ALL confirmed teams for this event. 
+    // The components will handle category-level matches and standings without filtering here.
+    const allTeams = teams.filter(team =>
+        team.categories?.some(cat => cat.category === selectedCategory)
     )
 
     return (
@@ -83,28 +85,17 @@ export default function EventDetailPage() {
                 </div>
             </header>
 
-            {/* Winner Banner */}
             {event.winnersConfirmed && event.categoryWinners && selectedCategory && event.categoryWinners[selectedCategory] && (
                 <div style={{
-                    marginBottom: '2rem',
-                    padding: '1.5rem',
+                    marginBottom: '2rem', padding: '1.5rem',
                     background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(249, 115, 22, 0.1))',
-                    border: '1px solid rgba(234, 179, 8, 0.3)',
-                    borderRadius: '0.75rem'
+                    border: '1px solid rgba(234, 179, 8, 0.3)', borderRadius: '0.75rem'
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         <div style={{
-                            width: '48px',
-                            height: '48px',
-                            borderRadius: '50%',
-                            background: '#EAB308',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '1.5rem'
-                        }}>
-                            🏆
-                        </div>
+                            width: '48px', height: '48px', borderRadius: '50%', background: '#EAB308',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem'
+                        }}>🏆</div>
                         <div>
                             <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#EAB308' }}>
                                 ¡Torneo Finalizado!
@@ -119,7 +110,6 @@ export default function EventDetailPage() {
                 </div>
             )}
 
-            {/* Category Tabs */}
             {event.categories.length > 1 && (
                 <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                     {event.categories.map(cat => (
@@ -127,8 +117,7 @@ export default function EventDetailPage() {
                             key={cat}
                             className={selectedCategory === cat ? 'btn-admin-login' : ''}
                             style={{
-                                padding: '0.5rem 1rem',
-                                fontSize: '0.9rem',
+                                padding: '0.5rem 1rem', fontSize: '0.9rem',
                                 background: selectedCategory === cat ? undefined : 'transparent',
                                 border: selectedCategory === cat ? undefined : '1px solid #334155',
                                 color: selectedCategory === cat ? undefined : '#94a3b8',
@@ -142,37 +131,32 @@ export default function EventDetailPage() {
                 </div>
             )}
 
-            {/* Management Tabs */}
             <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '0.5rem', borderBottom: '1px solid #334155' }}>
-                {(['management', 'qualifiers', 'bracket'] as const).map(tab => (
+                {(['management', 'qualifiers', 'standings', 'bracket'] as const).map(tab => (
                     <button
                         key={tab}
                         style={{
-                            padding: '0.75rem 1.5rem',
-                            fontSize: '0.9rem',
-                            background: 'transparent',
-                            border: 'none',
-                            borderBottom: selectedTab === tab ? '2px solid #E32636' : '2px solid transparent',
-                            color: selectedTab === tab ? '#fff' : '#94a3b8',
-                            cursor: 'pointer',
+                            padding: '0.75rem 1.5rem', fontSize: '0.9rem', background: 'transparent',
+                            border: 'none', borderBottom: selectedTab === tab ? '2px solid #E32636' : '2px solid transparent',
+                            color: selectedTab === tab ? '#fff' : '#94a3b8', cursor: 'pointer',
                             fontWeight: selectedTab === tab ? 600 : 400
                         }}
                         onClick={() => setSelectedTab(tab)}
                     >
                         {tab === 'management' ? 'Gestión' :
-                            tab === 'qualifiers' ? 'Clasificatorias' : 'Eliminatorias'}
+                            tab === 'qualifiers' ? 'Clasificatorias' :
+                                tab === 'standings' ? 'Posiciones' : 'Eliminatorias'}
                     </button>
                 ))}
             </div>
 
-            {/* Tab Content */}
             {selectedTab === 'management' && (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                     <div className="admin-card" style={{ padding: '1.5rem' }}>
                         <QualifiersGenerator
                             eventId={eventId}
                             categoryId={selectedCategory}
-                            teams={categoryTeams}
+                            teams={allTeams}
                             onGenerated={() => setRefreshKey(prev => prev + 1)}
                         />
                     </div>
@@ -180,7 +164,7 @@ export default function EventDetailPage() {
                         <BracketGenerator
                             eventId={eventId}
                             categoryId={selectedCategory}
-                            teams={categoryTeams}
+                            teams={allTeams}
                             onGenerated={() => setRefreshKey(prev => prev + 1)}
                         />
                     </div>
@@ -192,9 +176,18 @@ export default function EventDetailPage() {
                     key={`qual-${selectedCategory}-${refreshKey}`}
                     eventId={eventId}
                     categoryId={selectedCategory}
-                    teams={categoryTeams}
+                    teams={allTeams}
                     filterStage="group"
                     viewMode="list"
+                />
+            )}
+
+            {selectedTab === 'standings' && (
+                <StandingsTable
+                    key={`standings-${selectedCategory}-${refreshKey}`}
+                    eventId={eventId}
+                    categoryId={selectedCategory}
+                    teams={allTeams}
                 />
             )}
 
@@ -203,7 +196,7 @@ export default function EventDetailPage() {
                     key={`brack-${selectedCategory}-${refreshKey}`}
                     eventId={eventId}
                     categoryId={selectedCategory}
-                    teams={categoryTeams}
+                    teams={allTeams}
                     filterStage="bracket"
                     viewMode="list"
                 />

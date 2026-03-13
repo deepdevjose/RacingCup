@@ -36,14 +36,14 @@ async function preloadAndCacheModels() {
                 const response = await fetch(modelUrl)
                 if (response.ok) {
                     await cache.put(modelUrl, response.clone())
-                    console.log(`[ModelPreloader] Cached: ${modelUrl}`)
+                    // console.log(`[ModelPreloader] Cached: ${modelUrl}`)
                 }
             } else {
-                console.log(`[ModelPreloader] Already cached: ${modelUrl}`)
+                // console.log(`[ModelPreloader] Already cached: ${modelUrl}`)
             }
         }
     } catch (error) {
-        console.warn('[ModelPreloader] Cache failed, using standard fetch:', error)
+        // console.warn('[ModelPreloader] Cache failed, using standard fetch:', error)
         // Fallback to standard preload
         MODELS_TO_PRELOAD.forEach(url => {
             fetch(url).catch(() => { })
@@ -53,16 +53,8 @@ async function preloadAndCacheModels() {
 
 export default function ModelPreloader() {
     useEffect(() => {
-        // Start preloading after initial page rendering is completed
-        const delay = setTimeout(() => {
-            if ('requestIdleCallback' in window) {
-                (window as any).requestIdleCallback(() => preloadAndCacheModels())
-            } else {
-                preloadAndCacheModels()
-            }
-        }, 2000)
-
-        return () => clearTimeout(delay)
+        // Start preloading immediately on mount
+        preloadAndCacheModels()
     }, [])
 
     // This component renders nothing

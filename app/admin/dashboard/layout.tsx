@@ -71,6 +71,8 @@ export default function AdminDashboardLayout({
                     ))}
                 </nav>
 
+                <div style={{ flex: 1 }} />
+
                 <div className="admin-user-profile">
                     <div className="admin-avatar">A</div>
                     <div style={{ flex: 1 }}>

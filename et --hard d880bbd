@@ -1,0 +1,27 @@
+[33m39054a3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mintegracionahorasiquesisinfalta[m[33m, [m[1;31morigin/integracionahorasiquesisinfalta[m[33m)[m HEAD@{0}: commit: sistema de matches
+[33mcd37f41[m HEAD@{1}: checkout: moving from main to integracionahorasiquesisinfalta
+[33me2af4ac[m HEAD@{2}: reset: moving to HEAD
+[33me2af4ac[m HEAD@{3}: pull --ff --recurse-submodules --progress origin: Fast-forward
+[33md880bbd[m HEAD@{4}: checkout: moving from integracionahorasiquesisinfalta to main
+[33mcd37f41[m HEAD@{5}: commit: sponsors animation
+[33md20751e[m HEAD@{6}: checkout: moving from main to integracionahorasiquesisinfalta
+[33md880bbd[m HEAD@{7}: reset: moving to HEAD
+[33md880bbd[m HEAD@{8}: commit: update
+[33mc170a07[m HEAD@{9}: commit: remove duplicate footer
+[33mc808c4a[m HEAD@{10}: checkout: moving from integracionahorasiquesisinfalta to main
+[33m237ec20[m HEAD@{11}: reset: moving to HEAD
+[33m237ec20[m HEAD@{12}: commit: admin login implemented
+[33m812b16b[m HEAD@{13}: commit: fix visual bugs and add page equipo
+[33m2bb9690[m HEAD@{14}: checkout: moving from main to integracionahorasiquesisinfalta
+[33m0183b4c[m HEAD@{15}: checkout: moving from integracionahorasiquesisinfalta to main
+[33m2bb9690[m HEAD@{16}: checkout: moving from lalotest to integracionahorasiquesisinfalta
+[33m3be5f71[m[33m ([m[1;31morigin/lalotest[m[33m, [m[1;32mlalotest[m[33m)[m HEAD@{17}: checkout: moving from integracionahorasiquesisinfalta to lalotest
+[33m2bb9690[m HEAD@{18}: commit: delete equipo
+[33m4ed5710[m HEAD@{19}: checkout: moving from lalotest to integracionahorasiquesisinfalta
+[33m3be5f71[m[33m ([m[1;31morigin/lalotest[m[33m, [m[1;32mlalotest[m[33m)[m HEAD@{20}: commit: organizador panel, table and bracket.
+[33m6bbe669[m HEAD@{21}: pull --ff --recurse-submodules --progress origin: Fast-forward
+[33mc60ef35[m HEAD@{22}: commit: fixed notifications
+[33m6f5c536[m HEAD@{23}: commit: fixed issues and add registred options
+[33m28fcbc6[m HEAD@{24}: commit: demo and first tests
+[33m88a1d56[m HEAD@{25}: checkout: moving from main to lalotest
+[33m88a1d56[m HEAD@{26}: clone: from https://github.com/deepdevjose/RacingCup.git

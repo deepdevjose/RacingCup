@@ -337,7 +337,7 @@ export default function EventoDetailPage() {
                                                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                                                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                             </svg>
-                                            Requisitos de evento
+                                            Requisitos del evento
                                         </h4>
                                         <ul className="requirements-list">
                                             <li>
@@ -361,17 +361,106 @@ export default function EventoDetailPage() {
                                         </ul>
                                     </div>
 
-                                    <div className="detail-card">
+                                    <div className="detail-card" style={{ gridColumn: '1 / -1' }}>
                                         <h4 className="detail-card-title">
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E32636" strokeWidth="2">
                                                 <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                                             </svg>
-                                            Categorías
+                                            Categorías y Ganadores
                                         </h4>
-                                        <div className="categories-tags">
-                                            {event.categories.map((cat, i) => (
-                                                <span key={i} className="category-tag">{cat}</span>
-                                            ))}
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
+                                            {event.categories.map((cat, i) => {
+                                                // Find final matches for this category
+                                                const finalMatches = matches.filter(m => m.categoryId === cat && m.round === 1 && m.status === 'completed' && m.winnerId);
+
+                                                // Group finals by education level
+                                                const finalsByLevel = finalMatches.reduce<Record<string, Match>>((acc, match) => {
+                                                    const level = match.educationLevel || 'General';
+                                                    acc[level] = match;
+                                                    return acc;
+                                                }, {});
+
+                                                const hasWinners = Object.keys(finalsByLevel).length > 0;
+
+                                                return (
+                                                    <div key={i} style={{
+                                                        background: 'rgba(255, 255, 255, 0.03)',
+                                                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                                                        borderRadius: '0.75rem',
+                                                        padding: '1.5rem',
+                                                        position: 'relative',
+                                                        overflow: 'hidden',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        gap: hasWinners ? '1.5rem' : '0'
+                                                    }}>
+                                                        <h5 style={{ fontSize: '1.1rem', color: '#fff', margin: 0, borderBottom: hasWinners ? '1px solid rgba(255,255,255,0.1)' : 'none', paddingBottom: hasWinners ? '0.5rem' : '1rem' }}>
+                                                            {cat}
+                                                        </h5>
+
+                                                        {hasWinners ? (
+                                                            Object.entries(finalsByLevel).map(([level, finalMatch]) => {
+                                                                const firstId = finalMatch.winnerId;
+                                                                const secondId = firstId === finalMatch.teamAId ? finalMatch.teamBId : finalMatch.teamAId;
+                                                                const firstPlaceTeam = teams.find(t => t.id === firstId);
+                                                                const secondPlaceTeam = teams.find(t => t.id === secondId);
+
+                                                                return (
+                                                                    <div key={level} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                                                                        {Object.keys(finalsByLevel).length > 1 && (
+                                                                            <h6 style={{ fontSize: '0.85rem', color: '#94a3b8', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                                                                {level}
+                                                                            </h6>
+                                                                        )}
+
+                                                                        {firstPlaceTeam && (
+                                                                            <>
+                                                                                {/* 1st Place */}
+                                                                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                                                    <div style={{
+                                                                                        width: '50px', height: '50px', borderRadius: '50%', background: 'linear-gradient(135deg, #FFD700 0%, #FDB931 100%)',
+                                                                                        display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontSize: '1.5rem', boxShadow: '0 0 15px rgba(255,215,0,0.4)', flexShrink: 0
+                                                                                    }}>
+                                                                                        🏆
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <div style={{ fontSize: '0.8rem', color: '#FFD700', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>1er Lugar</div>
+                                                                                        <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff' }}>{firstPlaceTeam.name}</div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                {/* 2nd Place */}
+                                                                                {secondPlaceTeam && (
+                                                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginLeft: '1rem', opacity: 0.9 }}>
+                                                                                        <div style={{
+                                                                                            width: '35px', height: '35px', borderRadius: '50%', background: 'linear-gradient(135deg, #C0C0C0 0%, #A9A9A9 100%)',
+                                                                                            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontSize: '1.1rem', flexShrink: 0
+                                                                                        }}>
+                                                                                            🥈
+                                                                                        </div>
+                                                                                        <div>
+                                                                                            <div style={{ fontSize: '0.7rem', color: '#C0C0C0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>2do Lugar</div>
+                                                                                            <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>{secondPlaceTeam.name}</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                )}
+                                                                            </>
+                                                                        )}
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        ) : (
+                                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100px', flexDirection: 'column', color: 'rgba(255,255,255,0.4)', textAlign: 'center', fontSize: '0.9rem', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '0.5rem' }}>
+                                                                Torneo en curso <br /> Ganadores por definirse
+                                                            </div>
+                                                        )}
+
+                                                        {hasWinners && (
+                                                            <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(255,215,0,0.15) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
+                                                        )}
+                                                    </div>
+                                                )
+                                            })}
                                         </div>
                                     </div>
                                 </div>

@@ -1,11 +1,9 @@
 'use client'
 
 import { useRef, useEffect, useState, useCallback } from 'react'
-import Link from 'next/link'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useAuth } from '@/lib/auth-context'
 import './CountdownSection.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -29,7 +27,6 @@ interface TimeLeft {
  */
 export default function CountdownSection() {
     const sectionRef = useRef<HTMLElement>(null)
-    const { user } = useAuth()
     const [timeLeft, setTimeLeft] = useState<TimeLeft>({
         days: 0,
         hours: 0,
@@ -111,14 +108,6 @@ export default function CountdownSection() {
             ease: "power2.out"
         }, "-=0.3")
 
-        // Animate CTA button
-        tl.from(".countdown-cta-btn", {
-            autoAlpha: 0,
-            y: 20,
-            duration: 0.8,
-            ease: "back.out(1.5)"
-        }, "-=0.3")
-
     }, { scope: sectionRef })
 
     /**
@@ -165,15 +154,6 @@ export default function CountdownSection() {
                     <br />Viernes 13 de Marzo, 2026 <br />
                     Insituto Tecnológico Superior del Occidente del Estado de Hidalgo
                 </p>
-
-                {/* CTA Button */}
-                <Link
-                    href={user ? "/dashboard" : "/signup"}
-                    className="countdown-cta-btn"
-                >
-                    {user ? "Ir al Dashboard" : "Asegura tu lugar"}
-                    <span className="countdown-cta-arrow"> </span>
-                </Link>
 
             </div>
         </section>

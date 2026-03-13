@@ -16,6 +16,7 @@ export function BracketGenerator({ eventId, categoryId, teams, onGenerated }: Br
     const [stats, setStats] = useState<TournamentStats[]>([])
     const [generating, setGenerating] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [showConfirm, setShowConfirm] = useState(false)
 
     useEffect(() => {
         loadStats()
@@ -32,34 +33,34 @@ export function BracketGenerator({ eventId, categoryId, teams, onGenerated }: Br
         }
     }
 
-    const handleGenerate = async () => {
+    const mediaSuperiorStats = stats.filter(s => {
+        const team = teams.find(t => t.id === s.teamId)
+        return team?.educationLevel === 'Media Superior'
+    })
+    const superiorStats = stats.filter(s => {
+        const team = teams.find(t => t.id === s.teamId)
+        return team?.educationLevel === 'Superior'
+    })
+
+    const handleConfirmRequest = () => {
         if (!separateByEducation) {
             // Original behavior
             if (stats.length < bracketSize) {
                 alert(`Se necesitan al menos ${bracketSize} equipos con estadísticas`)
                 return
             }
-            if (!confirm(`¿Generar bracket de ${bracketSize} equipos?`)) return
         } else {
             // Separate by education level
-            const mediaSuperiorStats = stats.filter(s => {
-                const team = teams.find(t => t.id === s.teamId)
-                return team?.educationLevel === 'Media Superior'
-            })
-            const superiorStats = stats.filter(s => {
-                const team = teams.find(t => t.id === s.teamId)
-                return team?.educationLevel === 'Superior'
-            })
-
             if (mediaSuperiorStats.length < bracketSize && superiorStats.length < bracketSize) {
                 alert(`Se necesitan al menos ${bracketSize} equipos en algún nivel educativo`)
                 return
             }
-
-            const msg = `¿Generar brackets separados?\n\nMedia Superior: ${mediaSuperiorStats.length} equipos (${Math.min(bracketSize, mediaSuperiorStats.length)} en bracket)\nSuperior: ${superiorStats.length} equipos (${Math.min(bracketSize, superiorStats.length)} en bracket)`
-            if (!confirm(msg)) return
         }
+        setShowConfirm(true);
+    }
 
+    const executeGeneration = async () => {
+        setShowConfirm(false)
         setGenerating(true)
         try {
             let matchNumber = 1
@@ -80,21 +81,12 @@ export function BracketGenerator({ eventId, categoryId, teams, onGenerated }: Br
                         teamBId: topTeams[i + 1].teamId,
                         stage: 'bracket',
                         status: 'pending',
-                        educationLevel: levelLabel
+                        ...(levelLabel ? { educationLevel: levelLabel } : {})
                     })
                 }
             }
 
             if (separateByEducation) {
-                const mediaSuperiorStats = stats.filter(s => {
-                    const team = teams.find(t => t.id === s.teamId)
-                    return team?.educationLevel === 'Media Superior'
-                })
-                const superiorStats = stats.filter(s => {
-                    const team = teams.find(t => t.id === s.teamId)
-                    return team?.educationLevel === 'Superior'
-                })
-
                 await generateBracket(mediaSuperiorStats, 'Media Superior')
                 await generateBracket(superiorStats, 'Superior')
             } else {
@@ -112,15 +104,6 @@ export function BracketGenerator({ eventId, categoryId, teams, onGenerated }: Br
     }
 
     if (loading) return <div style={{ color: '#94a3b8' }}>Cargando estadísticas...</div>
-
-    const mediaSuperiorStats = stats.filter(s => {
-        const team = teams.find(t => t.id === s.teamId)
-        return team?.educationLevel === 'Media Superior'
-    })
-    const superiorStats = stats.filter(s => {
-        const team = teams.find(t => t.id === s.teamId)
-        return team?.educationLevel === 'Superior'
-    })
 
     return (
         <div>
@@ -181,14 +164,39 @@ export function BracketGenerator({ eventId, categoryId, teams, onGenerated }: Br
                 </div>
             )}
 
-            <button
-                className="btn-admin-login"
-                style={{ width: '100%', fontSize: '0.9rem' }}
-                onClick={handleGenerate}
-                disabled={generating || stats.length < bracketSize}
-            >
-                {generating ? 'Generando...' : `🏆 Generar Bracket (${bracketSize} equipos)`}
-            </button>
+            {showConfirm ? (
+                <div style={{ padding: '1rem', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: '0.5rem', marginBottom: '1rem' }}>
+                    <h5 style={{ margin: '0 0 0.5rem 0', color: '#93C5FD', fontSize: '0.9rem' }}>Confirmar Generación</h5>
+                    <p style={{ margin: '0 0 1rem 0', fontSize: '0.8rem', color: '#CBD5E1' }}>
+                        ¿Estás seguro de generar el bracket eliminatorio?
+                    </p>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button
+                            onClick={() => setShowConfirm(false)}
+                            disabled={generating}
+                            style={{ flex: 1, padding: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#CBD5E1', borderRadius: '0.35rem', cursor: 'pointer', fontSize: '0.85rem' }}
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            onClick={executeGeneration}
+                            disabled={generating}
+                            style={{ flex: 1, padding: '0.5rem', background: '#2563EB', border: '1px solid #3B82F6', color: 'white', borderRadius: '0.35rem', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem' }}
+                        >
+                            {generating ? 'Guardando...' : 'Sí, Generar Bracket'}
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <button
+                    className="btn-admin-login"
+                    style={{ width: '100%', fontSize: '0.9rem' }}
+                    onClick={handleConfirmRequest}
+                    disabled={generating || stats.length < bracketSize}
+                >
+                    {generating ? 'Generando...' : `🏆 Generar Bracket (${bracketSize} equipos)`}
+                </button>
+            )}
         </div>
     )
 }

@@ -8,7 +8,6 @@ import {
     getTeamMembers,
     getProfile,
     updateTeamConfirmation,
-    updateTeamSeed,
     deleteTeam,
     type Team,
     type Event,
@@ -32,6 +31,7 @@ export default function AdminEquiposPage() {
     const [selectedEvent, setSelectedEvent] = useState<string>('all')
     const [searchQuery, setSearchQuery] = useState('')
     const [statusFilter, setStatusFilter] = useState<'all' | 'confirmed' | 'pending'>('all')
+    const [levelFilter, setLevelFilter] = useState<'all' | 'Superior' | 'Media Superior'>('all')
 
     // Modals
     const [isWinnerModalOpen, setIsWinnerModalOpen] = useState(false)
@@ -96,14 +96,6 @@ export default function AdminEquiposPage() {
         }
     }
 
-    const handleUpdateSeed = async (teamId: string, seed: number) => {
-        try {
-            await updateTeamSeed(teamId, seed)
-            await loadData()
-        } catch (error) {
-            console.error("Error updating seed:", error)
-        }
-    }
 
     const handleDeleteTeam = async (teamId: string) => {
         if (!confirm('¿Estás seguro de eliminar este equipo?')) return
@@ -126,6 +118,7 @@ export default function AdminEquiposPage() {
         if (selectedEvent !== 'all' && team.eventId !== selectedEvent) return false
         if (statusFilter === 'confirmed' && !team.isConfirmed) return false
         if (statusFilter === 'pending' && team.isConfirmed) return false
+        if (levelFilter !== 'all' && team.educationLevel !== levelFilter) return false
         if (searchQuery) {
             const query = searchQuery.toLowerCase()
             return (
@@ -284,6 +277,16 @@ export default function AdminEquiposPage() {
                         <option value="confirmed">Confirmados</option>
                         <option value="pending">Pendientes</option>
                     </select>
+                    <select
+                        className="admin-input"
+                        style={{ width: '190px', padding: '0.5rem 1rem' }}
+                        value={levelFilter}
+                        onChange={(e) => setLevelFilter(e.target.value as typeof levelFilter)}
+                    >
+                        <option value="all">Todos los niveles</option>
+                        <option value="Superior">Superior</option>
+                        <option value="Media Superior">Media Superior</option>
+                    </select>
                 </div>
             </div>
 
@@ -294,9 +297,9 @@ export default function AdminEquiposPage() {
                             <th>Equipo</th>
                             <th>Líder</th>
                             <th>Evento</th>
+                            <th>Nivel</th>
                             <th>Miembros</th>
                             <th>Estado</th>
-                            <th>Seed</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -330,22 +333,35 @@ export default function AdminEquiposPage() {
                                     </div>
                                 </td>
                                 <td>{team.eventName}</td>
-                                <td>{team.members?.length || 0}</td>
+                                <td>
+                                    <span style={{
+                                        fontSize: '0.75rem',
+                                        padding: '0.2rem 0.5rem',
+                                        borderRadius: '0.25rem',
+                                        background: team.educationLevel === 'Superior' ? 'rgba(59,130,246,0.15)' : team.educationLevel === 'Media Superior' ? 'rgba(139,92,246,0.15)' : 'rgba(148,163,184,0.1)',
+                                        color: team.educationLevel === 'Superior' ? '#60a5fa' : team.educationLevel === 'Media Superior' ? '#a78bfa' : '#94a3b8',
+                                        whiteSpace: 'nowrap'
+                                    }}>
+                                        {team.educationLevel || '—'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.3rem',
+                                        fontWeight: 600,
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        👥 {team.members?.length || 0}
+                                    </span>
+                                </td>
                                 <td>
                                     <span className={`status-badge ${team.isConfirmed ? 'success' : 'warning'}`}>
                                         {team.isConfirmed ? 'Confirmado' : 'Pendiente'}
                                     </span>
                                 </td>
-                                <td>
-                                    <input
-                                        type="number"
-                                        className="admin-input"
-                                        style={{ width: '70px', padding: '0.25rem 0.5rem' }}
-                                        value={team.seed || ''}
-                                        onChange={(e) => team.id && handleUpdateSeed(team.id, Number(e.target.value))}
-                                        placeholder="—"
-                                    />
-                                </td>
+
                                 <td>
                                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                                         {team.isConfirmed ? (
@@ -389,7 +405,7 @@ export default function AdminEquiposPage() {
                         ))}
                         {filteredTeams.length === 0 && (
                             <tr>
-                                <td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>
+                                <td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>
                                     No hay equipos que coincidan con los filtros
                                 </td>
                             </tr>

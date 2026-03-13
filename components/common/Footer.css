@@ -2,8 +2,6 @@
  * Footer Styles
  */
 
-/* Import Luckiest Guy font for logo */
-@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
 
 .footer-section {
     width: 100%;
@@ -13,6 +11,17 @@
     font-family: 'Outfit', sans-serif;
     position: relative;
     z-index: 10;
+}
+
+/* ... existing styles ... */
+
+.vroom-logo-text {
+    font-family: var(--font-luckiest-guy), 'Luckiest Guy', cursive;
+    font-size: 28px;
+    color: #ffffff;
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: 0.02em;
 }
 
 .footer-container {
@@ -124,7 +133,7 @@
 }
 
 .vroom-logo-text {
-    font-family: 'Luckiest Guy', cursive;
+    font-family: var(--font-luckiest-guy), 'Luckiest Guy', cursive;
     font-size: 28px;
     color: #ffffff;
     margin: 0;

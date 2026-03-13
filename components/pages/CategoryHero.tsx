@@ -13,6 +13,7 @@ interface CategoryHeroProps {
     backgroundColor?: string
     backgroundImage?: string
     titleImage?: string
+    children?: React.ReactNode
 }
 
 /**
@@ -26,7 +27,8 @@ export default function CategoryHero({
     accentColor = '#E32636',
     backgroundColor,
     backgroundImage,
-    titleImage
+    titleImage,
+    children
 }: CategoryHeroProps) {
     const containerRef = useRef<HTMLDivElement>(null)
 
@@ -62,6 +64,17 @@ export default function CategoryHero({
             }, '-=0.3')
         }
 
+        // CTA fade in
+        if (children) {
+            tl.from('.category-hero-cta', {
+                opacity: 0,
+                y: 20,
+                duration: 0.6,
+                ease: 'back.out(1.5)',
+                delay: 0.2
+            }, '-=0.2')
+        }
+
     }, { scope: containerRef })
 
     return (
@@ -91,6 +104,12 @@ export default function CategoryHero({
 
                 {description && (
                     <p className="category-hero-description">{description}</p>
+                )}
+
+                {children && (
+                    <div className="category-hero-cta">
+                        {children}
+                    </div>
                 )}
             </div>
 

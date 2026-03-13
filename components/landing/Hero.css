@@ -47,6 +47,30 @@
     /* Slight grow on hover */
 }
 
+/* Orbiting Sponsors (Hero) */
+.orbiting-sponsor-container {
+    position: absolute;
+    width: 200px;
+    height: 120px;
+    transition: opacity 0.5s ease-in-out, top 0.5s, left 0.5s, right 0.5s, bottom 0.5s;
+    overflow: hidden;
+    background: transparent;
+    z-index: 10;
+}
+
+.orbiting-sponsor-img {
+    object-fit: contain;
+    padding: 0;
+}
+
+@media (max-width: 900px) {
+    .orbiting-sponsor-container {
+        width: 130px;
+        height: 80px;
+    }
+}
+
+
 
 
 /* Partners Section (Below Main Logo) */
@@ -89,75 +113,6 @@
     letter-spacing: 0.05em;
     margin: 0;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* CTA Button */
-.hero-cta-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2.5rem;
-    visibility: hidden;
-    /* GSAP autoAlpha */
-}
-
-.hero-cta-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-family: 'Outfit', sans-serif;
-    font-size: 1rem;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #FFFFFF;
-    background: #E32636;
-    padding: 1rem 2.4rem;
-    border: 3px solid #000000;
-    text-decoration: none;
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.6);
-    transition: all 0.2s ease;
-    position: relative;
-}
-
-.hero-cta-btn:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 9px 9px 0 rgba(0, 0, 0, 0.6);
-    background: #cc1f2d;
-}
-
-.hero-cta-btn:active {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
-}
-
-.hero-cta-icon {
-    font-size: 1.5rem;
-    line-height: 1;
-}
-
-.hero-cta-secondary {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.6);
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.hero-cta-secondary span {
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.85);
-    text-decoration: underline;
-    text-decoration-color: rgba(227, 38, 54, 0.5);
-    text-underline-offset: 3px;
-    transition: all 0.3s ease;
-}
-
-.hero-cta-secondary:hover span {
-    color: #E32636;
-    text-decoration-color: #E32636;
 }
 
 /* Bottom Left Badge */
@@ -307,19 +262,6 @@
         width: 40px;
         margin-right: 0;
     }
-
-    .hero-cta-wrapper {
-        margin-top: 1.5rem;
-    }
-
-    .hero-cta-btn {
-        font-size: 1.1rem;
-        padding: 0.85rem 2rem;
-    }
-
-    .hero-cta-secondary {
-        font-size: 0.85rem;
-    }
 }
 
 @media (max-width: 480px) {
@@ -355,14 +297,5 @@
 
     .hand-icon-img {
         width: 32px;
-    }
-
-    .hero-cta-btn {
-        font-size: 1rem;
-        padding: 0.75rem 1.5rem;
-    }
-
-    .hero-cta-icon {
-        font-size: 1.2rem;
     }
 }

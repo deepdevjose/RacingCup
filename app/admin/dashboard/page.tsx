@@ -2,7 +2,10 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { getAllEvents, getAllTeams, getAllProfiles } from '@/lib/firebase'
+import {
+    getAllEvents, getAllTeams, getAllProfiles,
+    getMatchesByEvent, getTournamentStats, getAllNotifications
+} from '@/lib/firebase'
 
 export default function AdminDashboardPage() {
     const [stats, setStats] = useState({
@@ -14,6 +17,8 @@ export default function AdminDashboardPage() {
         pendingTeams: 0
     })
     const [loading, setLoading] = useState(true)
+    const [exporting, setExporting] = useState(false)
+    const [backupReady, setBackupReady] = useState<{ url: string; filename: string } | null>(null)
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -47,6 +52,68 @@ export default function AdminDashboardPage() {
         fetchStats()
     }, [])
 
+    const handleExportBackup = async () => {
+        setExporting(true)
+        setBackupReady(null)
+        try {
+            const [events, teams, profiles, notifications] = await Promise.all([
+                getAllEvents(),
+                getAllTeams(),
+                getAllProfiles(),
+                getAllNotifications(),
+            ])
+
+            const matchesByEvent: Record<string, object[]> = {}
+            const statsByEvent: Record<string, object[]> = {}
+            for (const event of events) {
+                if (!event.id) continue
+                const matches = await getMatchesByEvent(event.id)
+                matchesByEvent[event.id] = matches
+                const categories = [...new Set(matches.map(m => m.categoryId))]
+                const allStats: object[] = []
+                for (const cat of categories) {
+                    const stats = await getTournamentStats(event.id, cat)
+                    allStats.push(...stats)
+                }
+                statsByEvent[event.id] = allStats
+            }
+
+            const backup = {
+                exportedAt: new Date().toISOString(),
+                counts: { events: events.length, teams: teams.length, profiles: profiles.length, notifications: notifications.length },
+                data: { events, teams, profiles, notifications, matchesByEvent, statsByEvent }
+            }
+
+            const jsonStr = JSON.stringify(backup, null, 2)
+            const date = new Date().toISOString().slice(0, 10)
+            const filename = `racing-cup-backup-${date}.json`
+            const blob = new Blob([jsonStr], { type: 'application/json' })
+
+            // Use File System Access API (native Save As dialog) — bypasses all browser restrictions
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            if (typeof (window as any).showSaveFilePicker === 'function') {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const fileHandle = await (window as any).showSaveFilePicker({
+                    suggestedName: filename,
+                    types: [{ description: 'JSON File', accept: { 'application/json': ['.json'] } }],
+                })
+                const writable = await fileHandle.createWritable()
+                await writable.write(blob)
+                await writable.close()
+                setBackupReady(null) // no need for phase 2
+            } else {
+                // Fallback: store blob URL for user to click
+                const url = URL.createObjectURL(blob)
+                setBackupReady({ url, filename })
+            }
+        } catch (error) {
+            console.error('Error exporting backup:', error)
+            alert('Error al exportar los datos. Revisa la consola.')
+        } finally {
+            setExporting(false)
+        }
+    }
+
 
     return (
         <div>
@@ -55,9 +122,62 @@ export default function AdminDashboardPage() {
                     <h1 className="admin-title">Visión General</h1>
                     <p style={{ color: '#94a3b8', marginTop: '0.25rem' }}>Bienvenido al panel de control de Racing Cup</p>
                 </div>
-                <Link href="/admin/dashboard/eventos" className="btn-admin-login" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', textDecoration: 'none' }}>
-                    + Gestionar Eventos
-                </Link>
+                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    {/* Phase 1: prepare button */}
+                    {!backupReady && (
+                        <button
+                            onClick={handleExportBackup}
+                            disabled={exporting}
+                            className="btn-admin-login"
+                            style={{
+                                width: 'auto',
+                                padding: '0.5rem 1rem',
+                                fontSize: '0.9rem',
+                                background: 'transparent',
+                                border: '1px solid #10B981',
+                                color: '#10B981',
+                                opacity: exporting ? 0.6 : 1,
+                                cursor: exporting ? 'not-allowed' : 'pointer',
+                            }}
+                        >
+                            {exporting ? '⏳ Preparando backup...' : '⬇️ Backup JSON'}
+                        </button>
+                    )}
+                    {/* Phase 2: real <a> the user clicks — genuine user gesture → download works */}
+                    {backupReady && (
+                        <a
+                            href={backupReady.url}
+                            download={backupReady.filename}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => {
+                                setTimeout(() => {
+                                    URL.revokeObjectURL(backupReady.url)
+                                    setBackupReady(null)
+                                }, 2000)
+                            }}
+                            className="btn-admin-login"
+                            style={{
+                                width: 'auto',
+                                padding: '0.5rem 1rem',
+                                fontSize: '0.9rem',
+                                background: '#10B981',
+                                border: '1px solid #10B981',
+                                color: '#fff',
+                                textDecoration: 'none',
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.4rem',
+                            }}
+                        >
+                            📥 Descargar Backup
+                        </a>
+                    )}
+                    <Link href="/admin/dashboard/eventos" className="btn-admin-login" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', textDecoration: 'none' }}>
+                        + Gestionar Eventos
+                    </Link>
+                </div>
             </header>
 
             {/* Stats Grid */}
@@ -142,11 +262,12 @@ export default function AdminDashboardPage() {
                     <Link href="/admin/dashboard/usuarios" className="btn-admin-login" style={{ width: 'auto', background: 'transparent', border: '1px solid #334155' }}>
                         Ver Usuarios
                     </Link>
-                    <Link href="/admin/test-teams" className="btn-admin-login" style={{ width: 'auto', background: 'transparent', border: '1px solid #10B981' }}>
-                        🧪 Generar Equipos de Prueba
-                    </Link>
+
                 </div>
             </div>
+
+
+
         </div>
     )
 }

@@ -1,9 +1,7 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { useAuth } from '@/lib/auth-context'
 import './Hero.css'
 import { Event } from '@/types'
 
@@ -15,11 +13,80 @@ interface HeroProps {
     event: Event
 }
 
+const ORBITING_SPONSORS = [
+    { name: 'Zaragoza Boxing', src: '/sponsors/S-ZaragozaBoxing.jpeg' },
+]
+
+function SponsorOrbit() {
+    const [isVisible, setIsVisible] = useState(false)
+    const [sponsorIndex, setSponsorIndex] = useState(0)
+    const [posIndex, setPosIndex] = useState(0)
+
+    useEffect(() => {
+        // Start showing sponsors after 4 seconds
+        const initialDelay = setTimeout(() => {
+            setIsVisible(true)
+
+            const interval = setInterval(() => {
+                setIsVisible(false) // Fade out
+
+                setTimeout(() => {
+                    // Change sponsor and position while hidden
+                    if (ORBITING_SPONSORS.length > 1) {
+                        setSponsorIndex(prev => (prev + 1) % ORBITING_SPONSORS.length)
+                    }
+
+                    setPosIndex(prev => {
+                        let next = Math.floor(Math.random() * 6)
+                        while (next === prev) next = Math.floor(Math.random() * 6)
+                        return next
+                    })
+                    setIsVisible(true) // Fade in
+                }, 500)
+            }, 5000) // Change every 5s instead of 3s
+
+            return () => clearInterval(interval)
+        }, 4000)
+
+        return () => clearTimeout(initialDelay)
+    }, [])
+
+    if (ORBITING_SPONSORS.length === 0) return null
+
+    const positions = [
+        { top: '10%', left: '5%' },
+        { top: '10%', right: '5%' },
+        { bottom: '15%', left: '0%' },
+        { bottom: '15%', right: '0%' },
+        { top: '50%', left: '-5%', transform: 'translateY(-50%)' },
+        { top: '50%', right: '-5%', transform: 'translateY(-50%)' },
+    ]
+
+    const currentSponsor = ORBITING_SPONSORS[sponsorIndex]
+    const currentPos = positions[posIndex]
+
+    return (
+        <div
+            className="orbiting-sponsor-container"
+            style={{
+                ...currentPos,
+                opacity: isVisible ? 1 : 0,
+            }}
+        >
+            <Image
+                src={currentSponsor.src}
+                alt={currentSponsor.name}
+                fill
+                className="orbiting-sponsor-img"
+            />
+        </div>
+    )
+}
+
 function Hero({ event }: HeroProps) {
     const containerRef = useRef<HTMLDivElement>(null)
     const carRef = useRef<HTMLImageElement>(null)
     const badgeRef = useRef<HTMLDivElement>(null)
-    const { user } = useAuth()
 
     useGSAP(() => {
         // Car entrance - Zoom in and slight rotation
@@ -32,16 +99,6 @@ function Hero({ event }: HeroProps) {
         })
 
 
-
-        // CTA entrance
-        gsap.from(".hero-cta-wrapper", {
-            autoAlpha: 0,
-            y: 30,
-            scale: 0.9,
-            duration: 1,
-            delay: 0.8,
-            ease: "back.out(1.5)"
-        })
 
         // Badge entrance - Spin in
         gsap.from(badgeRef.current, {
@@ -70,6 +127,7 @@ function Hero({ event }: HeroProps) {
                         height={500}
                         priority
                     />
+                    <SponsorOrbit />
                 </div>
 
                 {/* Partners Logos - Below Main Logo */}
@@ -81,22 +139,6 @@ function Hero({ event }: HeroProps) {
                     <p className="hero-career-text">
                         Ingeniería en Tecnologías de la Información y Comunicaciones
                     </p>
-                </div>
-
-                {/* CTA Button */}
-                <div className="hero-cta-wrapper">
-                    <Link
-                        href={user ? "/dashboard" : "/signup"}
-                        className="hero-cta-btn"
-                    >
-                        <span className="hero-cta-icon"></span>
-                        {user ? "Ir al Dashboard" : "Regístrate Ahora"}
-                    </Link>
-                    {!user && (
-                        <Link href="/login" className="hero-cta-secondary">
-                            ¿Ya tienes cuenta? <span>Inicia sesión</span>
-                        </Link>
-                    )}
                 </div>
             </div>
 

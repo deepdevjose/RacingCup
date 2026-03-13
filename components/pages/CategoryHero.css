@@ -76,6 +76,13 @@
     line-height: 1.6;
 }
 
+/* CTA Container */
+.category-hero-cta {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
 /* Decorative lines */
 .category-hero-line {
     width: 120px;
@@ -145,6 +152,10 @@
     }
 
     .bottom-line {
+        margin-top: 1.5rem;
+    }
+
+    .category-hero-cta {
         margin-top: 1.5rem;
     }
 }

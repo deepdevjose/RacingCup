@@ -2,7 +2,6 @@
  * 3D Section Styles
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
 /* Fun, chunky font */
 
 .threed-section {
@@ -30,7 +29,7 @@
 }
 
 .threed-title {
-    font-family: 'Luckiest Guy', 'Impact', sans-serif;
+    font-family: var(--font-luckiest-guy), 'Luckiest Guy', 'Impact', sans-serif;
     font-size: 35vw;
     /* Large background text */
     color: rgba(255, 255, 255, 0.9);
