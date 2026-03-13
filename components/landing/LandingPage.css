@@ -101,3 +101,87 @@
     content: '🏁';
     flex-shrink: 0;
 }
+
+/* About Preview CTA */
+.about-preview-section {
+    padding: var(--space-20) var(--space-6);
+    background:
+        radial-gradient(circle at top right, rgba(255, 215, 0, 0.18), transparent 45%),
+        linear-gradient(180deg, #111127 0%, #0d0d1a 100%);
+}
+
+.about-preview-card {
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(27, 27, 58, 0.9);
+    border: 3px solid #000;
+    border-radius: var(--radius-lg);
+    padding: var(--space-12);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+
+.about-preview-kicker {
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-accent);
+    margin-bottom: var(--space-3);
+}
+
+.about-preview-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-weight: var(--font-black);
+    line-height: 1.1;
+    color: var(--color-text-primary);
+    text-transform: uppercase;
+    margin-bottom: var(--space-4);
+}
+
+.about-preview-text {
+    max-width: 680px;
+    margin: 0 auto var(--space-8);
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+}
+
+.about-preview-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3) var(--space-8);
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #fff;
+    background: var(--color-primary);
+    border: 3px solid #000;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.about-preview-cta:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-lg);
+    background: var(--color-primary-dark);
+}
+
+@media (max-width: 768px) {
+    .about-preview-section {
+        padding: var(--space-16) var(--space-4);
+    }
+
+    .about-preview-card {
+        padding: var(--space-8) var(--space-5);
+    }
+
+    .about-preview-text {
+        font-size: var(--text-base);
+    }
+}

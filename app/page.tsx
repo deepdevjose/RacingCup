@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import Hero from '@/components/landing/Hero'
 import Navbar from '@/components/common/Navbar'
 import ModelPreloader from '@/components/common/ModelPreloader'
@@ -45,6 +46,19 @@ export default function Home() {
             <NewsSection />
             <CarouselSection />
             <ThreeDSection />
+
+            <section className="about-preview-section">
+                <div className="about-preview-card">
+                    <p className="about-preview-kicker">Racing Cup Team</p>
+                    <h2 className="about-preview-title">Conoce quiénes somos</h2>
+                    <p className="about-preview-text">
+                        Descubre la historia, el equipo organizador y la visión que impulsa cada edición del torneo.
+                    </p>
+                    <Link href="/about" className="about-preview-cta">
+                        Ir a Acerca de
+                    </Link>
+                </div>
+            </section>
 
 
             <Footer />
