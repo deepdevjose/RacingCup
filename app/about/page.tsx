@@ -13,17 +13,52 @@ import './about.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const PARTNERS = [
-    { name: 'Racing Cup', src: '/logotypes/logo.png', width: 150, height: 150 },
-    { name: 'TICS', src: '/logotypes/tics.png', width: 80, height: 80 },
-    { name: 'ITSOEH', src: '/logotypes/itsoeg.png', width: 200, height: 80 },
-    { name: 'Educación', src: '/logotypes/educacion.png', width: 200, height: 80 },
-    { name: 'Sparko', src: '/logotypes/sparko.png', width: 180, height: 80 },
-]
-
 const DEVELOPERS = [
     { name: 'José Developer', role: 'Lead Developer', github: 'deepdevjose' },
     { name: 'Measly543', role: 'Backend', github: 'EDUARDOVAZQUE' },
+]
+
+const SPONSORS = [
+    {
+        name: 'Zaragoza Boxing',
+        category: 'Escuela de boxeo',
+        map: 'https://maps.app.goo.gl/YjejDfFmg35t2iD77',
+        facebook: 'https://www.facebook.com/profile.php?id=100095632082401',
+        image: '/partners/zarbox.png'
+    },
+    {
+        name: 'Bateria Express',
+        category: 'Local de venta de baterias',
+        map: 'https://maps.app.goo.gl/HkHTDBrcUHXYsXo58',
+        facebook: 'https://www.facebook.com/profile.php?id=61579509916298',
+        image: '/partners/bateriaexpress.jpg'
+    },
+    {
+        name: 'El mero mero',
+        category: 'Asados',
+        map: 'https://maps.app.goo.gl/JbmcMpHWNkWguxbg6',
+        image: '/partners/meromero.png'
+    },
+    {
+        name: 'Ing. Gustavo Antonio Rojas Morales',
+        category: 'Laboratorios STEM',
+        image: '/partners/gus.png'
+    },
+    {
+        name: 'Christian Elias Cruz González',
+        category: 'Egresado',
+        image: '/partners/cristian.png'
+    },
+    {
+        name: 'Jorge Alberto Villeda',
+        category: 'Egresado',
+        image: '/partners/villeda.png'
+    },
+    {
+        name: 'Edwin Jair Castillo',
+        category: 'Egresado',
+        image: '/partners/castillo.png'
+    },
 ]
 
 /**
@@ -31,27 +66,6 @@ const DEVELOPERS = [
  * Information about Racing Cup and ITSOEH
  */
 export default function AboutPage() {
-    const partnersRef = useRef<HTMLDivElement>(null)
-
-    useGSAP(() => {
-        const section = partnersRef.current
-        if (!section) return
-
-        gsap.from('.partner-card', {
-            scrollTrigger: {
-                trigger: section,
-                start: 'top 75%',
-                toggleActions: 'play none none reset'
-            },
-            autoAlpha: 0,
-            y: 40,
-            scale: 0.9,
-            duration: 0.8,
-            stagger: 0.15,
-            ease: 'back.out(1.7)'
-        })
-    }, { scope: partnersRef })
-
     return (
         <div className="category-page">
             <Navbar />
@@ -112,21 +126,31 @@ export default function AboutPage() {
                 </div>
             </ContentSection>
 
-            {/* Partners Section */}
-            <section className="about-partners-section" ref={partnersRef}>
-                <div className="about-partners-container">
-                    <h2 className="about-partners-title">Nuestros Patrocinadores</h2>
-                    <div className="partners-grid">
-                        {PARTNERS.map((partner) => (
-                            <div key={partner.name} className="partner-card">
-                                <Image
-                                    src={partner.src}
-                                    alt={`${partner.name} Logo`}
-                                    width={partner.width}
-                                    height={partner.height}
-                                    className="partner-card-img"
-                                />
-                                <span className="partner-card-name">{partner.name}</span>
+            {/* Sponsors Section */}
+            <section className="about-sponsors-section">
+                <div className="about-sponsors-container">
+                    <h2 className="about-sponsors-title">Patrocinadores</h2>
+                    <div className="sponsors-grid">
+                        {SPONSORS.map((sponsor) => (
+                            <div key={sponsor.name} className="sponsor-card">
+                                <div className="sponsor-photo-container">
+                                    {sponsor.image ? (
+                                        <Image
+                                            src={sponsor.image}
+                                            alt={sponsor.name}
+                                            fill
+                                            className="sponsor-photo"
+                                        />
+                                    ) : (
+                                        <div className="sponsor-photo-placeholder">
+                                            <span className="sponsor-icon">📸</span>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="sponsor-info">
+                                    <h3 className="sponsor-name">{sponsor.name}</h3>
+                                    <p className="sponsor-category">{sponsor.category}</p>
+                                </div>
                             </div>
                         ))}
                     </div>
