@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import '../dashboard.css'
@@ -33,6 +33,8 @@ import {
     getMatchesByEvent, // Added import
     type Match, // Added type
 } from '@/lib/firebase'
+
+import DashboardNavbar from '@/components/dashboard/DashboardNavbar'
 
 // types for details
 interface InviteWithDetails extends TeamInvite {
@@ -65,7 +67,13 @@ export default function ProfilePage() {
     const [filterMyMatches, setFilterMyMatches] = useState(true)
 
     // Tab State
-    const [activeTab, setActiveTab] = React.useState('teams')
+    const searchParams = useSearchParams()
+    const tabParam = searchParams.get('tab')
+    const [activeTab, setActiveTab] = React.useState(tabParam || 'teams')
+
+    useEffect(() => {
+        if (tabParam) setActiveTab(tabParam)
+    }, [tabParam])
 
     // Modals
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -673,31 +681,7 @@ export default function ProfilePage() {
 
     return (
         <div className="dashboard-layout">
-            {/* Extended Navbar */}
-            <nav className="dashboard-nav">
-                <div className="container nav-content">
-                    <Link href="/dashboard" className="nav-logo">
-                        <img src="/logotypes/logo.png" alt="Racing Cup" style={{ height: '30px' }} />
-                        <span>Racing Cup TICs</span>
-                    </Link>
-
-                    <div className="nav-links">
-                        <Link href="/dashboard" className="nav-link">Inicio</Link>
-                        <Link href="/dashboard/eventos" className="nav-link">Eventos</Link>
-                        <Link href="/dashboard/equipos" className="nav-link">Equipos</Link>
-                    </div>
-
-                    <Link href="/dashboard/profile" className="nav-user-pill active" style={{ textDecoration: 'none' }}>
-                        <div style={{ color: profile.playerColor || 'inherit' }}>
-                            {icons[getIconIdx(profile.playerIcon || 'user')]}
-                        </div>
-                        <div className="pill-content">
-                            <span className="pill-gamertag">{profile.gamertag}</span>
-                            <span className="pill-subtitle">Ver mi perfil</span>
-                        </div>
-                    </Link>
-                </div>
-            </nav>
+            <DashboardNavbar />
 
             <main className="dashboard-main container" ref={containerRef}>
                 {/* Profile Header Card */}

@@ -46,7 +46,8 @@ export default function DashboardNavbar() {
                     <Link href="/dashboard" className={`nav-link ${isActive('/dashboard')}`}>Inicio</Link>
                     <Link href="/dashboard/eventos" className={`nav-link ${isActive('/dashboard/eventos')}`}>Eventos</Link>
                     <Link href="/dashboard/equipos" className={`nav-link ${isActive('/dashboard/equipos')}`}>Equipos</Link>
-                    <Link href="/ayuda" className={`nav-link ${isActive('/ayuda')}`}>Ayuda</Link>
+                    <Link href="/dashboard/mis-partidos" className={`nav-link ${isActive('/dashboard/mis-partidos')}`}>Mis Partidos</Link>
+                    <Link href="/dashboard/mi-equipo" className={`nav-link ${isActive('/dashboard/mi-equipo')}`}>Mi Equipo</Link>
                 </div>
 
                 <div className="nav-right">
@@ -85,8 +86,11 @@ export default function DashboardNavbar() {
                     <Link href="/dashboard/equipos" className={`mobile-nav-link ${isActive('/dashboard/equipos')}`} onClick={toggleMenu}>
                         Equipos
                     </Link>
-                    <Link href="/ayuda" className={`mobile-nav-link ${isActive('/ayuda')}`} onClick={toggleMenu}>
-                        Ayuda
+                    <Link href="/dashboard/mis-partidos" className={`mobile-nav-link ${isActive('/dashboard/mis-partidos')}`} onClick={toggleMenu}>
+                        Mis Partidos
+                    </Link>
+                    <Link href="/dashboard/mi-equipo" className={`mobile-nav-link ${isActive('/dashboard/mi-equipo')}`} onClick={toggleMenu}>
+                        Mi Equipo
                     </Link>
 
                     <div className="mobile-menu-divider"></div>

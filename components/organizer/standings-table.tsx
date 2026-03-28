@@ -12,7 +12,6 @@ interface StandingsTableProps {
 export function StandingsTable({ eventId, categoryId, teams }: StandingsTableProps) {
     const [stats, setStats] = useState<TournamentStats[]>([])
     const [loading, setLoading] = useState(true)
-    const [filterLevel, setFilterLevel] = useState<string>('all')
 
     useEffect(() => {
         loadStats()
@@ -33,11 +32,6 @@ export function StandingsTable({ eventId, categoryId, teams }: StandingsTablePro
     const getTeamLevel = (teamId: string) => teams.find(t => t.id === teamId)?.educationLevel
 
     const levelsPresent = [...new Set(stats.map(s => getTeamLevel(s.teamId)).filter(Boolean))] as string[]
-    const hasLevelFilter = levelsPresent.length > 1
-
-    const visibleStats = filterLevel === 'all'
-        ? stats
-        : stats.filter(s => getTeamLevel(s.teamId) === filterLevel)
 
     if (loading) return <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>Cargando posiciones...</div>
 
@@ -51,31 +45,11 @@ export function StandingsTable({ eventId, categoryId, teams }: StandingsTablePro
         )
     }
 
-    return (
-        <div>
-            {hasLevelFilter && (
-                <div style={{ display: 'flex', gap: '0.35rem', fontSize: '0.8rem', marginBottom: '1rem', justifyContent: 'flex-end' }}>
-                    {['all', ...levelsPresent].map(lv => (
-                        <button
-                            key={lv}
-                            onClick={() => setFilterLevel(lv)}
-                            style={{
-                                padding: '0.35rem 0.75rem',
-                                borderRadius: '0.35rem',
-                                border: '1px solid',
-                                borderColor: filterLevel === lv ? '#E32636' : '#334155',
-                                background: filterLevel === lv ? 'rgba(227,38,54,0.1)' : 'transparent',
-                                color: filterLevel === lv ? '#F87171' : '#94a3b8',
-                                cursor: 'pointer',
-                                fontWeight: filterLevel === lv ? 600 : 400
-                            }}
-                        >
-                            {lv === 'all' ? 'Ver Todos' : lv}
-                        </button>
-                    ))}
-                </div>
-            )}
-
+    const renderTable = (levelStats: TournamentStats[], levelName: string) => (
+        <div key={levelName} style={{ marginBottom: '2rem' }}>
+            <h4 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem', color: '#E2E8F0' }}>
+                {levelName}
+            </h4>
             <div className="admin-table-container">
                 <table className="admin-table">
                     <thead>
@@ -99,7 +73,7 @@ export function StandingsTable({ eventId, categoryId, teams }: StandingsTablePro
                         </tr>
                     </thead>
                     <tbody>
-                        {visibleStats.map((s, index) => {
+                        {levelStats.map((s, index) => {
                             const team = teams.find(t => t.id === s.teamId)
                             if (!team) return null
 
@@ -145,6 +119,19 @@ export function StandingsTable({ eventId, categoryId, teams }: StandingsTablePro
                     </tbody>
                 </table>
             </div>
+        </div>
+    )
+
+    return (
+        <div>
+            {levelsPresent.length === 1 ? (
+                renderTable(stats, levelsPresent[0])
+            ) : (
+                levelsPresent.map(level => {
+                    const levelStats = stats.filter(s => getTeamLevel(s.teamId) === level).sort((a, b) => b.points - a.points)
+                    return renderTable(levelStats, level)
+                })
+            )}
         </div>
     )
 }

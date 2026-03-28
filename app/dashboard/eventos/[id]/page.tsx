@@ -16,11 +16,11 @@ import {
     getMatchesByEvent,
     type Event,
     type Team,
-    type Match,
-    PLAYER_ICONS
+    type Match
 } from '@/lib/firebase'
 import { Scoreboard } from '@/components/tournament/Scoreboard'
-import { LiveBracket } from '@/components/tournament/LiveBracket'
+import { PublicBracket } from '@/components/tournament/PublicBracket'
+import DashboardNavbar from '@/components/dashboard/DashboardNavbar'
 
 export default function EventoDetailPage() {
     const params = useParams()
@@ -42,20 +42,7 @@ export default function EventoDetailPage() {
 
     const containerRef = useRef(null)
 
-    // Icons helper (identical to main eventos page)
-    const profileIcons = [
-        <svg key="0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>,
-        <svg key="1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>,
-        <svg key="2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 12h4"></path><path d="M14 12h4"></path><path d="M8 8v8"></path><path d="M16 8v8"></path></svg>,
-        <svg key="3" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>,
-        <svg key="4" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
-    ]
 
-    const getIconIdx = (iconStr: string | undefined) => {
-        if (!iconStr) return 0
-        const idx = PLAYER_ICONS.indexOf(iconStr as any)
-        return idx !== -1 ? idx % 5 : 0
-    }
 
     useEffect(() => {
         async function loadData() {
@@ -130,30 +117,7 @@ export default function EventoDetailPage() {
 
     return (
         <div className="dashboard-layout">
-            <nav className="dashboard-nav">
-                <div className="container nav-content">
-                    <Link href="/dashboard" className="nav-logo">
-                        <img src="/logotypes/logo.png" alt="Racing Cup" style={{ height: '30px' }} />
-                        <span>Racing Cup TICs</span>
-                    </Link>
-                    <div className="nav-links">
-                        <Link href="/dashboard" className="nav-link">Inicio</Link>
-                        <Link href="/dashboard/eventos" className="nav-link active">Eventos</Link>
-                        <Link href="/dashboard/equipos" className="nav-link">Equipos</Link>
-                    </div>
-                    {profile && (
-                        <Link href="/dashboard/profile" className="nav-user-pill" style={{ textDecoration: 'none' }}>
-                            <div style={{ color: profile.playerColor || 'inherit', display: 'flex' }}>
-                                {profileIcons[getIconIdx(profile.playerIcon || 'user')]}
-                            </div>
-                            <div className="pill-content">
-                                <span className="pill-gamertag">{profile.gamertag}</span>
-                                <span className="pill-subtitle">Ver mi perfil</span>
-                            </div>
-                        </Link>
-                    )}
-                </div>
-            </nav>
+            <DashboardNavbar />
 
             <main className="dashboard-main container" ref={containerRef}>
                 {loading || authLoading || !event ? (
@@ -370,15 +334,39 @@ export default function EventoDetailPage() {
                                         </h4>
                                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
                                             {event.categories.map((cat, i) => {
-                                                // Find final matches for this category
-                                                const finalMatches = matches.filter(m => m.categoryId === cat && m.round === 1 && m.status === 'completed' && m.winnerId);
-
-                                                // Group finals by education level
-                                                const finalsByLevel = finalMatches.reduce<Record<string, Match>>((acc, match) => {
+                                                // Get all bracket matches for this category
+                                                const categoryMatches = matches.filter(m => m.categoryId === cat && m.stage === 'bracket');
+                                                
+                                                // Group by education level
+                                                const matchesByLevel = categoryMatches.reduce<Record<string, Match[]>>((acc, match) => {
                                                     const level = match.educationLevel || 'General';
-                                                    acc[level] = match;
+                                                    if (!acc[level]) acc[level] = [];
+                                                    acc[level].push(match);
                                                     return acc;
                                                 }, {});
+                                                
+                                                const finalsByLevel: Record<string, Match> = {};
+                                                for (const [level, levelMatches] of Object.entries(matchesByLevel)) {
+                                                    const roundMap = new Map<number, Match[]>();
+                                                    for (const m of levelMatches) {
+                                                        if (!roundMap.has(m.round)) roundMap.set(m.round, []);
+                                                        roundMap.get(m.round)!.push(m);
+                                                    }
+                                                    
+                                                    const sortedRounds = [...roundMap.keys()].sort((a, b) => {
+                                                        const countA = roundMap.get(a)?.length || 0;
+                                                        const countB = roundMap.get(b)?.length || 0;
+                                                        if (countA !== countB) return countB - countA;
+                                                        return a - b;
+                                                    });
+                                                    
+                                                    const finalRound = sortedRounds[sortedRounds.length - 1];
+                                                    const finalMatch = finalRound !== undefined ? roundMap.get(finalRound)?.[0] : undefined;
+                                                    
+                                                    if (finalMatch && finalMatch.status === 'completed' && finalMatch.winnerId) {
+                                                        finalsByLevel[level] = finalMatch;
+                                                    }
+                                                }
 
                                                 const hasWinners = Object.keys(finalsByLevel).length > 0;
 
@@ -685,7 +673,7 @@ export default function EventoDetailPage() {
                                         <h3 className="section-title" style={{ fontSize: '1.2rem', marginBottom: '1rem', color: '#E32636' }}>
                                             🎯 Bracket: {cat}
                                         </h3>
-                                        <LiveBracket event={event} categoryId={cat} teams={teams} />
+                                        <PublicBracket eventId={event.id!} categoryId={cat} teams={teams} />
                                     </div>
                                 ))}
                             </div>

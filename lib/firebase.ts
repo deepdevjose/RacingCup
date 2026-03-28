@@ -62,6 +62,22 @@ if (getApps().length > 0) {
   auth = {} as any
 }
 
+// ==================== HELPER FUNCTIONS ====================
+
+/**
+ * Cleans an object by removing undefined values before sending to Firestore
+ * Firestore doesn't accept undefined values in updateDoc operations
+ */
+function cleanFirestoreData(data: Record<string, any>): Record<string, any> {
+  const cleaned: Record<string, any> = {}
+  for (const [key, value] of Object.entries(data)) {
+    if (value !== undefined) {
+      cleaned[key] = value
+    }
+  }
+  return cleaned
+}
+
 // ==================== TYPES ====================
 
 export type EventStatus = "registro_abierto" | "cerrado" | "en_curso" | "finalizado"
@@ -376,7 +392,7 @@ export async function getProfile(userId: string): Promise<UserProfile | null> {
 
 export async function updateProfile(userId: string, updates: Partial<UserProfile>): Promise<void> {
   const docRef = doc(db, "profiles", userId)
-  await updateDoc(docRef, updates)
+  await updateDoc(docRef, cleanFirestoreData(updates))
 }
 
 export async function canUserEditProfile(userId: string): Promise<{ canEdit: boolean; reason?: string }> {
@@ -632,7 +648,14 @@ export async function leaveTeam(userId: string, teamId: string): Promise<void> {
 
 export async function updateTeam(id: string, updates: Partial<Team>): Promise<void> {
   const docRef = doc(db, "teams", id)
-  await updateDoc(docRef, updates)
+  // Filter out undefined values before sending to Firestore
+  const cleanUpdates: Record<string, any> = {}
+  for (const [key, value] of Object.entries(updates)) {
+    if (value !== undefined) {
+      cleanUpdates[key] = value
+    }
+  }
+  await updateDoc(docRef, cleanUpdates)
 }
 
 export async function deleteTeam(id: string): Promise<void> {
@@ -978,7 +1001,14 @@ export async function getMatchesByCategory(eventId: string, categoryId: string):
 
 export async function updateMatch(matchId: string, updates: Partial<Match>): Promise<void> {
   const docRef = doc(db, "matches", matchId)
-  await updateDoc(docRef, updates)
+  // Filter out undefined values before sending to Firestore
+  const cleanUpdates: Record<string, any> = {}
+  for (const [key, value] of Object.entries(updates)) {
+    if (value !== undefined) {
+      cleanUpdates[key] = value
+    }
+  }
+  await updateDoc(docRef, cleanUpdates)
 }
 
 export async function deleteMatch(matchId: string): Promise<void> {

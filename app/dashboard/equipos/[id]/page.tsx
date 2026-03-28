@@ -24,6 +24,7 @@ import {
     type TeamCategoryEntry,
 } from '@/lib/firebase'
 import { TeamIcon } from '@/components/tournament/TeamIcon'
+import DashboardNavbar from '@/components/dashboard/DashboardNavbar'
 
 interface MemberWithProfile extends TeamMember {
     profile?: UserProfile
@@ -152,12 +153,7 @@ const Loader2Icon = () => (
     <div className="spinner"></div>
 )
 
-// Profile icons fallback helper (matching Navbar)
-const profileIcons = [
-    <svg key="user" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>,
-    <svg key="smile" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-]
-const getIconIdx = (iconName: string | undefined) => iconName === 'smile' ? 1 : 0
+
 
 export default function EquipoDetailPage() {
     const params = useParams()
@@ -330,30 +326,7 @@ export default function EquipoDetailPage() {
     if (!team) {
         return (
             <div className="dashboard-layout">
-                <nav className="dashboard-nav">
-                    <div className="container nav-content">
-                        <Link href="/dashboard" className="nav-logo">
-                            <img src="/logotypes/logo.png" alt="Racing Cup" style={{ height: '30px' }} />
-                            <span>Racing Cup TICs</span>
-                        </Link>
-                        <div className="nav-links">
-                            <Link href="/dashboard" className="nav-link">Inicio</Link>
-                            <Link href="/dashboard/eventos" className="nav-link">Eventos</Link>
-                            <Link href="/dashboard/equipos" className="nav-link active">Equipos</Link>
-                        </div>
-                        {profile && (
-                            <Link href="/dashboard/profile" className="nav-user-pill" style={{ textDecoration: 'none' }}>
-                                <div style={{ color: profile.playerColor || 'inherit', display: 'flex' }}>
-                                    {profileIcons[getIconIdx(profile.playerIcon || 'user')]}
-                                </div>
-                                <div className="pill-content">
-                                    <span className="pill-gamertag">{profile.gamertag}</span>
-                                    <span className="pill-subtitle">Ver mi perfil</span>
-                                </div>
-                            </Link>
-                        )}
-                    </div>
-                </nav>
+                <DashboardNavbar />
 
                 <main className="dashboard-main container">
                     <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
@@ -373,30 +346,7 @@ export default function EquipoDetailPage() {
 
     return (
         <div className="dashboard-layout">
-            <nav className="dashboard-nav">
-                <div className="container nav-content">
-                    <Link href="/dashboard" className="nav-logo">
-                        <img src="/logotypes/logo.png" alt="Racing Cup" style={{ height: '30px' }} />
-                        <span>Racing Cup TICs</span>
-                    </Link>
-                    <div className="nav-links">
-                        <Link href="/dashboard" className="nav-link">Inicio</Link>
-                        <Link href="/dashboard/eventos" className="nav-link">Eventos</Link>
-                        <Link href="/dashboard/equipos" className="nav-link active">Equipos</Link>
-                    </div>
-                    {profile && (
-                        <Link href="/dashboard/profile" className="nav-user-pill" style={{ textDecoration: 'none' }}>
-                            <div style={{ color: profile.playerColor || 'inherit', display: 'flex' }}>
-                                {profileIcons[getIconIdx(profile.playerIcon || 'user')]}
-                            </div>
-                            <div className="pill-content">
-                                <span className="pill-gamertag">{profile.gamertag}</span>
-                                <span className="pill-subtitle">Ver mi perfil</span>
-                            </div>
-                        </Link>
-                    )}
-                </div>
-            </nav>
+            <DashboardNavbar />
 
             <main className="dashboard-main container">
                 <Link href="/dashboard/equipos" className="back-button">

@@ -13,6 +13,8 @@ import { MatchList } from '@/components/organizer/match-list'
 import { BracketGenerator } from '@/components/organizer/bracket-generator'
 import { QualifiersGenerator } from '@/components/organizer/qualifiers-generator'
 import { StandingsTable } from '@/components/organizer/standings-table'
+import { CustomBracketGenerator } from '@/components/organizer/custom-bracket-generator'
+import { AdminBracket } from '@/components/organizer/admin-bracket'
 
 export default function EventDetailPage() {
     const params = useParams()
@@ -168,6 +170,12 @@ export default function EventDetailPage() {
                             onGenerated={() => setRefreshKey(prev => prev + 1)}
                         />
                     </div>
+                    <div className="admin-card" style={{ padding: '1.5rem', gridColumn: '1 / -1' }}>
+                        <CustomBracketGenerator
+                            eventId={eventId}
+                            onGenerated={() => setRefreshKey(prev => prev + 1)}
+                        />
+                    </div>
                 </div>
             )}
 
@@ -192,13 +200,12 @@ export default function EventDetailPage() {
             )}
 
             {selectedTab === 'bracket' && (
-                <MatchList
+                <AdminBracket
                     key={`brack-${selectedCategory}-${refreshKey}`}
                     eventId={eventId}
                     categoryId={selectedCategory}
                     teams={allTeams}
-                    filterStage="bracket"
-                    viewMode="list"
+                    onMatchUpdated={() => setRefreshKey(prev => prev + 1)}
                 />
             )}
         </div>

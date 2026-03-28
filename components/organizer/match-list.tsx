@@ -5,6 +5,7 @@ import {
     getMatchesByCategory,
     updateMatch,
     updateStandingStats,
+    deleteMatch,
     type Match,
     type Team
 } from '@/lib/matchDB'
@@ -30,10 +31,22 @@ export function MatchList({ eventId, categoryId, teams, filterStage, viewMode = 
     const [loading, setLoading] = useState(true)
     const [editingMatch, setEditingMatch] = useState<Match | null>(null)
     const [filterLevel, setFilterLevel] = useState<string>('all')
+    const [deletingBracket, setDeletingBracket] = useState(false)
 
     // RC Timer States
     const [rcTimerStart, setRcTimerStart] = useState<number | null>(null)
     const [rcTimerCurrent, setRcTimerCurrent] = useState<number>(0)
+
+    // Helper function to clean undefined values before sending to Firestore
+    const cleanFirestoreData = (data: Record<string, any>) => {
+        const cleaned: Record<string, any> = {}
+        for (const [key, value] of Object.entries(data)) {
+            if (value !== undefined) {
+                cleaned[key] = value
+            }
+        }
+        return cleaned
+    }
 
     useEffect(() => {
         let interval: NodeJS.Timeout
@@ -48,6 +61,20 @@ export function MatchList({ eventId, categoryId, teams, filterStage, viewMode = 
     useEffect(() => {
         loadMatches()
     }, [eventId, categoryId, filterStage])
+
+    // Auto-select first education level when multiple levels are present and filter is 'all'
+    useEffect(() => {
+        if (matches.length > 0 && filterLevel === 'all') {
+            const levelsPresent = [...new Set(matches.map(m => m.educationLevel).filter(Boolean))] as string[]
+            if (levelsPresent.length === 1) {
+                // If only one level is present, select it automatically
+                setFilterLevel(levelsPresent[0])
+            } else if (levelsPresent.length > 1) {
+                // If multiple levels are present, keep 'all' to show all (user can filter manually)
+                // This allows seeing all brackets when multiple education levels have brackets
+            }
+        }
+    }, [matches, filterLevel])
 
     async function loadMatches() {
         setLoading(true)
@@ -64,6 +91,40 @@ export function MatchList({ eventId, categoryId, teams, filterStage, viewMode = 
         }
     }
 
+    const handleDeleteBracket = async (level?: string) => {
+        const levelText = level ? ` del nivel "${level}"` : ''
+        const confirmMessage = level
+            ? `¿Estás seguro de que quieres eliminar TODOS los partidos de eliminatorias de la categoría "${categoryId}"${levelText}?\n\nEsta acción no se puede deshacer.`
+            : `¿Estás seguro de que quieres eliminar TODOS los partidos de eliminatorias de la categoría "${categoryId}"?\n\nEsta acción no se puede deshacer.`
+
+        if (!confirm(confirmMessage)) {
+            return
+        }
+
+        setDeletingBracket(true)
+        try {
+            let bracketMatches = matches.filter(m => m.stage === 'bracket')
+
+            // Filter by level if specified
+            if (level && level !== 'all') {
+                bracketMatches = bracketMatches.filter(m => m.educationLevel === level)
+            }
+
+            // Delete all filtered bracket matches
+            await Promise.all(
+                bracketMatches.map(match => match.id ? deleteMatch(match.id) : Promise.resolve())
+            )
+
+            await loadMatches()
+            alert(`✅ Eliminados ${bracketMatches.length} partidos de eliminatorias${levelText}`)
+        } catch (error) {
+            console.error('Error deleting bracket matches:', error)
+            alert('❌ Error al eliminar los partidos de eliminatorias')
+        } finally {
+            setDeletingBracket(false)
+        }
+    }
+
     const getTeamName = (teamId?: string) => {
         if (!teamId) return 'TBD'
         return teams.find(t => t.id === teamId)?.name || 'Desconocido'
@@ -77,7 +138,7 @@ export function MatchList({ eventId, categoryId, teams, filterStage, viewMode = 
     const handleSaveMatch = async (match: Match) => {
         if (!match.id) return
         try {
-            await updateMatch(match.id, {
+            await updateMatch(match.id, cleanFirestoreData({
                 scoreA: match.scoreA,
                 scoreB: match.scoreB,
                 koPointsA: match.koPointsA,
@@ -88,7 +149,7 @@ export function MatchList({ eventId, categoryId, teams, filterStage, viewMode = 
                 timeB: match.timeB,
                 winnerId: match.winnerId,
                 status: 'completed'
-            })
+            }))
 
             if (match.stage === 'group') {
                 await updateStandingStats(eventId, categoryId)
@@ -104,7 +165,7 @@ export function MatchList({ eventId, categoryId, teams, filterStage, viewMode = 
                     const updatedRoundMatches = sortedRoundMatches.map(m => m.id === match.id ? match : m);
                     const winners = updatedRoundMatches.map(m => m.winnerId as string);
 
-                    const nextRound = match.round / 2; // e.g., 4 (cuartos) -> 2 (semis) -> 1 (final)
+                    const nextRound = match.round + 1; // Next round number
                     const nextRoundMatches = matches.filter(m => m.stage === 'bracket' && m.round === nextRound && m.educationLevel === match.educationLevel).sort((a, b) => a.matchNumber - b.matchNumber);
 
                     let nextMatchNumber = Math.max(...matches.map(m => m.matchNumber)) + 1;
@@ -114,7 +175,7 @@ export function MatchList({ eventId, categoryId, teams, filterStage, viewMode = 
 
                         if (nextRoundMatches[targetMatchIndex]) {
                             // Match already exists, just update the participants (in case they changed previous round results)
-                            await updateMatch(nextRoundMatches[targetMatchIndex].id || "", {
+                            await updateMatch(nextRoundMatches[targetMatchIndex].id || "", cleanFirestoreData({
                                 teamAId: winners[i] || "",
                                 teamBId: winners[i + 1] || "",
                                 // Reset score if we are overriding an existing match with new teams
@@ -122,9 +183,9 @@ export function MatchList({ eventId, categoryId, teams, filterStage, viewMode = 
                                 scoreB: 0,
                                 koPointsA: 0,
                                 koPointsB: 0,
-                                winnerId: undefined,
+                                winnerId: undefined, // This will be filtered out by cleanFirestoreData
                                 status: 'pending'
-                            });
+                            }));
                         } else {
                             // Match doesn't exist, create it
                             const { createMatch } = await import('@/lib/matchDB');
@@ -227,6 +288,51 @@ export function MatchList({ eventId, categoryId, teams, filterStage, viewMode = 
                                 {lv === 'all' ? 'Todos' : lv}
                             </button>
                         ))}
+                    </div>
+                )}
+
+                {/* Delete bracket button - only show for bracket stage */}
+                {filterStage === 'bracket' && matches.some(m => m.stage === 'bracket') && (
+                    <div style={{ marginLeft: hasLevelFilter ? '1rem' : 'auto', display: 'flex', gap: '0.5rem' }}>
+                        {filterLevel !== 'all' ? (
+                            // Show button to delete specific level
+                            <button
+                                onClick={() => handleDeleteBracket(filterLevel)}
+                                disabled={deletingBracket}
+                                style={{
+                                    padding: '0.25rem 0.75rem',
+                                    borderRadius: '0.35rem',
+                                    border: '1px solid #DC2626',
+                                    background: 'rgba(220,38,38,0.1)',
+                                    color: '#F87171',
+                                    cursor: deletingBracket ? 'not-allowed' : 'pointer',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 500,
+                                    opacity: deletingBracket ? 0.6 : 1
+                                }}
+                            >
+                                {deletingBracket ? 'Eliminando...' : `🗑️ Borrar Bracket "${filterLevel}"`}
+                            </button>
+                        ) : (
+                            // Show button to delete all levels
+                            <button
+                                onClick={() => handleDeleteBracket()}
+                                disabled={deletingBracket}
+                                style={{
+                                    padding: '0.25rem 0.75rem',
+                                    borderRadius: '0.35rem',
+                                    border: '1px solid #DC2626',
+                                    background: 'rgba(220,38,38,0.1)',
+                                    color: '#F87171',
+                                    cursor: deletingBracket ? 'not-allowed' : 'pointer',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 500,
+                                    opacity: deletingBracket ? 0.6 : 1
+                                }}
+                            >
+                                {deletingBracket ? 'Eliminando...' : '🗑️ Borrar Todo el Bracket'}
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
