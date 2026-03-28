@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import gsap from 'gsap'
@@ -49,7 +49,7 @@ interface TeamWithDetails extends Team {
     isLeader?: boolean
 }
 
-export default function ProfilePage() {
+function ProfileContent() {
     const router = useRouter()
     const { user, profile, loading, refreshProfile } = useAuth()
     const containerRef = useRef(null)
@@ -984,5 +984,18 @@ export default function ProfilePage() {
                 </div>
             )}
         </div>
+    )
+}
+
+export default function ProfilePage() {
+    return (
+        <Suspense fallback={
+            <div className="dashboard-layout" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#0a0a0a' }}>
+                <div className="loading-spinner" style={{ width: '40px', height: '40px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: '#E32636', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            </div>
+        }>
+            <ProfileContent />
+        </Suspense>
     )
 }
